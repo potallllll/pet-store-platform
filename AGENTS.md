@@ -9,9 +9,12 @@
 - 项目定位：`docs/01-project-positioning.md`
 - 角色与账号：`docs/02-roles-and-accounts.md`
 - 当前客户端总纲：`docs/03-customer-miniapp.md`
-- 客户端详细子模块：`docs/03a-*.md` ～ `docs/03n-*.md`
+- 客户端详细子模块：`docs/03a-*.md` ～ `docs/03o-*.md`
 - 当前客户端主产品蓝图：`docs/03i-customer-screen-blueprint.md`
 - 新增功能 / 寄养动态详细页面补充：`docs/03n-customer-screen-blueprint-extension.md`
+- 首页底部微信 Banner 广告：`docs/03o-customer-home-banner-ad.md`
+- 客户端 UI Design System：`docs/10a-customer-ui-design-system.md`
+- 客户端首页详细 UI 规格：`docs/10b-customer-homepage-ui-spec.md`
 
 聊天记录、临时 H5、外部方案、旧 AI 方案、口头描述、其他仓库内容均不是正式规格，除非已经同步到本仓库的已确认文档。
 
@@ -20,7 +23,9 @@
 - 先查看文档状态；`已确认` 才可作为正式开发依据。
 - 详细子模块文档用于解释总纲；全局安全、租户隔离、财务审计原则同时生效。
 - `03i-customer-screen-blueprint.md` 是当前统一客户端页面地图与关键验收蓝图。
-- `03n-customer-screen-blueprint-extension.md` 用于细化 2026-09-06 新增的上门喂养、积分、养宠顾问、广告权益和寄养动态时间轴，不得与当前 `03i` 主蓝图冲突。
+- `03n-customer-screen-blueprint-extension.md` 用于细化新增的上门喂养、积分、养宠顾问、广告权益和寄养动态时间轴。
+- `03o-customer-home-banner-ad.md` 负责首页底部微信 Banner 广告曝光位；不得与激励广告权益混为一套业务。
+- `10a` / `10b` 负责已确认客户端视觉与首页 UI 具体规格，不得反向修改业务规则。
 - 如果两个已确认文件存在无法同时满足的明确冲突，**不得自行选择、脑补或静默修改**；必须提出冲突并等待需求变更处理。
 - `REQUIREMENTS-STATUS.md` 负责阶段与基线摘要，不替代详细业务规格。
 
@@ -48,9 +53,11 @@
 2. `docs/README.md`
 3. `docs/REQUIREMENTS-STATUS.md`
 4. `docs/03-customer-miniapp.md`
-5. `docs/03a`～`03n` 客户端详细文档
+5. `docs/03a`～`03o` 客户端详细文档
+6. `docs/10a-customer-ui-design-system.md`
+7. `docs/10b-customer-homepage-ui-spec.md`（涉及首页时必须读取）
 
-必须按照当前 `03i-customer-screen-blueprint.md` 主蓝图与 `03n-customer-screen-blueprint-extension.md` 细化场景覆盖完整客户端结构，不得只生成少数代表性页面冒充“完整客户端预览”。
+必须按照当前 `03i` 主蓝图及已确认详细文档覆盖完整客户端结构。首页预览必须包含顶部品牌 Banner 与底部 `home_bottom_banner` 广告位的明确区分。
 
 临时 H5 只是验收 / 沟通工具，不是正式需求源；如果 H5 与正式 GitHub 文档冲突，应修改 H5。
 
@@ -64,7 +71,9 @@
 - V1.0 正式包含 Platform User 级平台积分体系，独立于商户钱包。
 - V1.0 正式包含平台级上门喂养需求市场。
 - V1.0 正式包含全局养宠顾问与统一激励广告权益。
-- 首页当前正式顺序：当前门店 → 当前服务 → 宠物交友 → 上门喂养 → 推荐商品。
+- 首页业务顺序：当前门店 → 当前服务 → 宠物交友 → 上门喂养 → 推荐商品。
+- 首页精选商品之后、底部导航之前新增 `home_bottom_banner` 微信 Banner 广告曝光位；广告失败 / 无填充时收起，不影响业务。
+- 顶部生活方式 Banner 不是微信广告位，底部 Banner 广告也不属于激励广告权益。
 - 寄养详情支持按真实发生时间倒序的动态时间轴；实际投喂完成后寄养加餐写回时间轴。
 
 ## 6. 禁止事项
@@ -72,10 +81,10 @@
 后续进入 Codex / 开发阶段后仍必须遵守：
 
 - 不得删除、弱化或跳过难实现的已冻结需求。
-- 不得用 Mock、TODO、静态假数据或仅 UI 演示冒充正式实现。
+- 不得用 Mock、TODO、静态假数据或仅 UI 演示冒充正式实现；开发 / H5 的广告 Mock 必须明确标注调试用途，正式生产切换真实广告组件。
 - 不得绕过租户隔离、权限、服务端校验、财务审计和错误处理。
 - 不得让前端直接可信地决定金额、余额、积分、库存、权限、广告权益或支付结果。
-- 不得硬编码密钥、Token 或第三方凭证。
+- 不得硬编码密钥、Token、广告 Credential 或散落广告单元配置。
 - 不得因为构建 / 测试失败而注释掉功能或修改业务规则来“过测试”。
 
 ## 7. 阅读入口
