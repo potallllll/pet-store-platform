@@ -1,7 +1,11 @@
 # 03 客户端微信小程序
 
-> 状态：已确认
-> 版本：V1.0
+> status: confirmed
+> status_scope: full_document
+> change_policy: record_required
+> development_readiness: partial
+> blocked_by: DEC-APPT-01, DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01
+> version: V1.0
 
 ## 1. 客户端定位
 
@@ -27,7 +31,7 @@ V1.0 客户端已确认支持：
 
 客户端不承担真实线上支付，不提供会员充值入口。
 
-详细规则以 `03a`～`03p` 为准；页面蓝图以 `03i` 为准。
+详细规则以 `03a`～`03m`、`03o`～`03p` 为准；页面蓝图以 `03i` 为准。原 `03n` 已归档，不属于现行需求。
 
 ---
 
@@ -323,7 +327,7 @@ V1 不做客户 / 店员私聊、在线客服、客户直接聊天或营销群�
 
 当前门店显示 / 允许使用至少同时满足：
 
-1. Platform Super Admin 已给当前 Merchant / Store 授予有效 `pet_advisor` 付费权益；
+1. Platform Super Admin 已给当前 Store 授予有效 `pet_advisor` 付费权益；唯一归属字段为 `owner_type=store`、`owner_id=store_id`，Merchant 仅作为购买、管理和审计主体；
 2. 权益未过期 / 未停用；
 3. 门店已向本店客户开启；
 4. 当前 Platform User 已与本店建立有效 Customer 关系；
@@ -382,7 +386,7 @@ placement：`home_bottom_banner`
 
 placement：`launch_cover_ad`
 
-进入首页前按配置展示，支持平台自定义图片、自定义视频或微信官方广告。
+小程序启动 / 符合频控的重新进入时，在恢复本次业务目标前按配置展示；没有明确目标时，目标才是最近有效门店首页。支持平台自定义图片、自定义视频或微信官方广告。
 
 图片 / 视频可单独替换；微信广告单元独立配置；支持时效、频控、跳过和测试 / 正式环境。
 
@@ -444,7 +448,6 @@ placement：`launch_cover_ad`
 - `03k-customer-loyalty-points.md`：平台积分 / 签到 / 积分商城
 - `03l-customer-pet-advisor.md`：养宠顾问 + 门店付费权益
 - `03m-customer-rewarded-ads.md`：激励广告权益
-- `03n-customer-screen-blueprint-extension.md`：新增功能页面补充
 - `03o-customer-home-banner-ad.md`：首页底部 Banner 广告
 - `03p-customer-launch-cover-ad.md`：启动封面广告
 
@@ -452,32 +455,4 @@ placement：`launch_cover_ad`
 
 ## 18. 需求变更记录
 
-### 2026-09-06：客户端总纲更新到当前基线
-
-- 合并上门喂养、平台积分、寄养加餐、宠物交友热度、广告体系等当前已确认能力。
-- 首页业务顺序固定为当前门店 → 当前服务 → 宠物交友 → 上门喂养 → 推荐商品。
-
-### 2026-09-06：寄养动态时间轴
-
-- 点击“查看寄养动态”进入按真实发生时间倒序的寄养时间轴；媒体绑定对应动态；实际发生时间与录入时间分离。
-
-### 2026-09-06：首页底部广告
-
-- 精选商品后、底部导航前新增 `home_bottom_banner` 微信广告曝光位。
-
-### 2026-09-06：启动封面广告
-
-- 新增 `launch_cover_ad`；支持平台自定义图片、自定义视频或微信官方广告，允许平台单独替换 / 配置 / 调试；失败 / 无填充不阻塞首页。
-
-### 2026-09-06：养宠顾问改为付费门店权益
-
-- 原规则：养宠顾问作为默认全局入口。
-- 新规则：只有当前门店有有效 `pet_advisor` 付费权益、门店已开启且用户属于本店 Customer 时才开放；跨店必须重新校验。
-- 用户额度继续按 Platform User 累计，终身前三次免费，切换付费门店不重新赠送。
-
-
-### 2026-09-08：客户端交互与验收收口
-
-- 原规则：启动结束统一进入首页，少量交友数据、跨流程恢复和验收编号衔接不完整。
-- 新规则：按 03p / 03g 恢复入口目标和有效门店；按 03h 处理少量数据与轮播控制；投喂执行与付款分别展示；03i 统一验收索引，10a / 10b 统一视觉变量及首屏目标。
-- 影响范围：启动、身份、首页、消息、寄养加餐、积分、上门喂养、原型与后续正式开发验收。
+历史变更已移至 [`docs/history/2026-client-requirements-changes.md`](history/2026-client-requirements-changes.md)。本文件正文仅保留当前有效规则。

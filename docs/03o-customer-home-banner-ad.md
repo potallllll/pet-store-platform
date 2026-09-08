@@ -1,8 +1,10 @@
 # 03O 客户端「首页底部微信 Banner 广告」模块
 
-> 状态：已确认子模块
-> 所属阶段：03 客户端微信小程序
-> 版本：V1.0
+> status: confirmed
+> status_scope: full_document
+> change_policy: record_required
+> parent_stage: 03 客户端微信小程序
+> version: V1.0
 
 ## 1. 产品定位
 
@@ -164,10 +166,4 @@ V1.0 建议由 Platform Super Admin 管理平台广告配置，普通 Merchant O
 
 ## 11. 需求变更记录
 
-### 2026-09-06：新增首页底部微信 Banner 广告位
-
-【需求变更】
-
-- 原规则：首页底部在精选商品后直接进入底部导航，没有独立曝光广告位。
-- 新规则：精选商品之后、底部导航之前新增 `home_bottom_banner` 微信 Banner 广告位，用于广告曝光变现；广告配置化、可独立关闭，失败 / 无填充时自动收起，不影响任何核心业务。
-- 影响范围：首页产品蓝图、UI / Design System、微信广告 SDK、平台超级管理员广告配置、开发调试、监控和后续广告收益统计。
+历史变更已移至 [`docs/history/2026-client-requirements-changes.md`](history/2026-client-requirements-changes.md)。本文件正文仅保留当前有效规则。

@@ -1,8 +1,12 @@
 # 10C 客户端启动封面广告 UI 规格
 
-> 状态：已确认基线，持续细化
-> 所属阶段：10 UI / Design System（提前与阶段 04 并行）
-> 版本：V1.0
+> status: confirmed
+> status_scope: full_document
+> change_policy: record_required
+> development_readiness: partial
+> blocked_by: DEC-LAUNCH-01
+> parent_stage: 10 UI / Design System（提前与阶段 04 并行）
+> version: V1.0
 
 ## 1. 文档职责
 
@@ -142,15 +146,4 @@
 
 ## 10. UI 变更记录
 
-### 2026-09-08：启动后目标恢复和等待状态
-
-- 原规则：图示及图片 / 视频 / 官方广告结束说明统一衔接首页，未表达分享、消息、登录和后台页面恢复。
-- 新规则：按 `03p` / `03g` 展示目标恢复、身份校验及无有效门店选店分支，增加最多一次兜底与统一加载等待预算；不改变首页视觉顺序，不自行设定待决运营常数。
-- 影响范围：启动流程图、各广告模式、调试面板、目标异常 / 选店页面与验收。下方历史变更描述不作为现行统一返回首页规则。
-
-### 2026-09-06：新增启动封面广告 UI
-
-- 新增进入首页前的可配置封面层。
-- 支持自定义图片、自定义视频、微信官方广告。
-- 支持调试态与失败降级。
-- 启动封面不改变首页原有业务层级，只在进入首页前插入展示流程。
+历史变更已移至 [`docs/history/2026-client-requirements-changes.md`](history/2026-client-requirements-changes.md)。本文件正文仅保留当前有效规则。

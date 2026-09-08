@@ -1,14 +1,16 @@
 # 10B 客户端首页 UI 最终设计规格
 
-> 状态：已确认基线，持续细化
-> 所属阶段：10 UI / Design System（提前与阶段 04 并行）
-> 版本：V1.0
+> status: confirmed
+> status_scope: full_document
+> change_policy: record_required
+> parent_stage: 10 UI / Design System（提前与阶段 04 并行）
+> version: V1.0
 
 ## 1. 文档职责
 
 本文件用于收口客户端首页的具体视觉与布局规格，是 `10a-customer-ui-design-system.md` 的首页专项细化。
 
-业务逻辑仍以 `03-customer-miniapp.md`、`03a`～`03p` 为准；本文件不得自行修改业务状态、广告权益、门店付费权益、隐私、订单、积分或多租户规则。
+业务逻辑仍以 `03-customer-miniapp.md`、`03a`～`03m`、`03o`～`03p` 为准；原 `03n` 已归档。本文件不得自行修改业务状态、广告权益、门店付费权益、隐私、订单、积分或多租户规则。
 
 启动封面广告由 `03p-customer-launch-cover-ad.md` 与 `10c-customer-launch-cover-ad-ui-spec.md` 负责，不计入首页内部模块高度；广告结束 / 降级后按 `03p` 恢复原始业务目标，仅无目标启动进入首页。
 
@@ -273,7 +275,7 @@
 
 展示前提：
 
-- 当前 Merchant / Store 有有效 `pet_advisor` Feature Entitlement；
+- 当前 Store 有有效 `pet_advisor` Feature Entitlement；唯一归属字段为 `owner_type=store`、`owner_id=store_id`，Merchant 仅作为购买、管理和审计主体；
 - 门店已开启该功能；
 - 当前 Platform User 已与本店建立有效 Customer 关系；
 - 服务端资格校验通过。
@@ -400,32 +402,4 @@ Banner 广告需要真实曝光机会，但不得通过遮挡核心业务或破�
 
 ## 17. 需求 / UI 变更记录
 
-### 2026-09-06：首页底部新增微信 Banner 广告位
-
-【UI / 产品变更】
-
-- 原结构：精选商品后直接进入底部导航。
-- 新结构：精选商品后新增 `home_bottom_banner` 微信 Banner 广告横幅，再进入底部导航。
-- 目的：用于微信广告曝光变现，并提供配置化开关和可调试状态。
-- 影响范围：首页高度 / 间距、广告 SDK、底部安全区、养宠顾问避让、H5 调试原型、平台广告配置和后续收益监控。
-
-### 2026-09-06：养宠顾问改为付费门店条件显示
-
-【UI / 产品变更】
-
-- 原规则：满足普通身份条件时，首页把养宠顾问作为全局悬浮入口展示。
-- 新规则：只有当前门店存在有效 `pet_advisor` 付费权益、门店已开启、当前用户与本店存在 Customer 关系且服务端校验通过时，首页才显示圆形悬浮入口；切换到无资格门店立即隐藏。
-- 影响范围：首页条件渲染、门店切换、悬浮入口、Feature Entitlement API、测试和故障降级。
-
-### 2026-09-06：启动封面广告与首页解耦
-
-- `launch_cover_ad` 在启动阶段按配置展示，支持图片 / 视频 / 微信官方广告。
-- 它不占用首页卡片高度，不改变首页业务模块顺序。
-- 广告结束 / 降级后的目标按 `03p` 当前恢复规则执行（2026-09-08 已更新，不再一律进入首页）。
-- 具体 UI 见 `10c-customer-launch-cover-ad-ui-spec.md`。
-
-### 2026-09-08：紧凑品牌变体、移动适配与可控交互
-
-- 原规则：品牌 Banner 固定参考 164px，无有无服务之分；卡宽 / 卡高和字数未规定窄屏长文降级，部分按钮只有视觉尺寸；轮播和动效参数未冻结。
-- 新规则：有服务用紧凑 Banner，无服务用完整变体，保持模块顺序并增加首屏任务验收；通用 Token 只引用 `10a`，明确 rpx、热区、长文、字号、安全区、异步状态和广告布局稳定；社交数量、暂停和单屏规则按 `03h`；启动结束按 `03p` 恢复业务目标。
-- 影响范围：首页品牌 / 服务 / 社交 / 喂养 / 商品卡、底部栏、顾问、广告、原型与真机验收；不改变业务授权、数据归属、订单和广告权益。
+历史变更已移至 [`docs/history/2026-client-requirements-changes.md`](history/2026-client-requirements-changes.md)。本文件正文仅保留当前有效规则。

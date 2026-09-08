@@ -1,15 +1,17 @@
 # 10A 客户端 UI Design System（提前进行的客户端子阶段）
 
-> 状态：已确认基线，持续补充
-> 所属阶段：10 UI / Design System（经产品方确认允许提前与阶段 04 并行推进）
-> 当前范围：客户端通用视觉方向 + 首页 UI 已确认规则
-> 版本：V1.0
+> status: confirmed
+> status_scope: full_document
+> change_policy: record_required
+> parent_stage: 10 UI / Design System（经产品方确认允许提前与阶段 04 并行推进）
+> scope: 客户端通用视觉方向 + 首页 UI 已确认规则
+> version: V1.0
 
 ## 1. 文档职责
 
 本文件用于冻结客户端已经由产品方确认的视觉语言、首页 UI 结构与组件表现。
 
-- 业务规则仍以 `03-customer-miniapp.md`、`03a`～`03p` 为准。
+- 业务规则仍以 `03-customer-miniapp.md`、`03a`～`03m`、`03o`～`03p` 为准；原 `03n` 已归档，不属于现行规则。
 - 页面地图与业务入口以 `03i-customer-screen-blueprint.md` 为主产品蓝图。
 - 首页具体尺寸、间距、文案长度、卡片高度和底部广告位细节见 `10b-customer-homepage-ui-spec.md`。
 - 启动封面广告视觉 / 调试见 `10c-customer-launch-cover-ad-ui-spec.md`。
@@ -168,7 +170,7 @@
 
 顶部品牌 Banner 属于产品视觉承载；底部微信 Banner 广告属于广告曝光变现位，两者不得混淆。
 
-小程序启动前还存在独立的 `launch_cover_ad` 启动封面广告层；它发生在进入首页之前，不属于首页内容流，也不改变上述首页模块顺序。
+小程序启动 / 符合频控的重新进入时还存在独立的 `launch_cover_ad` 启动封面广告层；它发生在恢复本次业务目标之前，没有明确目标时才衔接最近有效门店首页。它不属于首页内容流，也不改变上述首页模块顺序。
 
 ---
 
@@ -360,7 +362,7 @@
 
 展示前提：
 
-- 当前 Merchant / Store 有有效 `pet_advisor` Feature Entitlement；
+- 当前 Store 有有效 `pet_advisor` Feature Entitlement；唯一归属字段为 `owner_type=store`、`owner_id=store_id`，Merchant 仅作为购买、管理和审计主体；
 - 门店已向本店客户开启；
 - 当前 Platform User 已与当前门店建立有效 Customer 关系；
 - 服务端资格校验通过。
@@ -450,7 +452,7 @@
 
 ## 14. 本轮已确认事项
 
-2026-09-06 客户端 UI 设计确认：
+以下是当前仍然有效的客户端 UI 设计确认事项：
 
 1. 客户端主视觉不使用绿色为基底，采用浅米白 / 奶油暖色 + 杏橙 / 浅金棕体系。
 2. 首页顶部右侧只放消息入口。
@@ -470,8 +472,4 @@
 
 ## 15. 需求 / UI 变更记录
 
-### 2026-09-08：通用 Token、首屏优先级与交互可用性
-
-- 原规则：颜色主要以暖色名称描述，字号 / 间距散见首页；有无服务共用完整 Banner；只列通用加载状态，轮播会自动恢复，对比以拖动为主。
-- 新规则：本文件成为唯一通用 Token 来源，冻结色值配对、字号 / 行高、间距例外、圆角、按钮状态及实算对比度；有服务使用紧凑 Banner；统一异步状态、窄屏 / 字号 / 安全区、暂停与减少动态效果及非拖动替代；启动结束按 `03p` 恢复原始业务目标。
-- 影响范围：客户端所有页面、WXSS / H5 适配层、共享组件、首页、宠物交友、前后对比、顾问、原型与无障碍验收；保留既定品牌、模块顺序和业务授权边界。
+历史变更已移至 [`docs/history/2026-client-requirements-changes.md`](history/2026-client-requirements-changes.md)。本文件正文仅保留当前有效规则。

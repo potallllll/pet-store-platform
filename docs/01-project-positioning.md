@@ -1,7 +1,9 @@
 # 01 项目定位
 
-> 状态：已确认
-> 版本：V1.0
+> status: confirmed
+> status_scope: full_document
+> change_policy: record_required
+> version: V1.0
 
 ## 1. 产品定位
 
@@ -351,8 +353,4 @@ V1.0 需求设计必须考虑：
 
 ## 17. 需求变更记录
 
-### 2026-09-08：同步已确认平台积分边界
-
-- 原规则：客户端定位段落仍保留“不设计积分机制”的早期总结。
-- 新规则：同步 `03k` 已确认的 V1.0 平台积分、广告签到与积分商城；积分属于 Platform User，与商户钱包及其资金账本分离；客户端仍无真实线上支付和会员充值入口。
-- 影响范围：项目定位、客户端总纲阅读、钱包 / 积分边界和需求一致性；本次同步不另行新增积分业务规则。
+历史变更已移至 [`docs/history/2026-client-requirements-changes.md`](history/2026-client-requirements-changes.md)。本文件正文仅保留当前有效规则。

@@ -1,7 +1,9 @@
 # 02 用户角色与账号体系
 
-> 状态：已确认
-> 版本：V1.0
+> status: confirmed
+> status_scope: full_document
+> change_policy: record_required
+> version: V1.0
 
 ## 1. 总体原则
 
@@ -45,7 +47,7 @@ V1.0 不支持同一老板拥有多家门店。
 
 商户老板：
 
-- 只能访问自己商户 / 门店的数据
+- 只能访问 `merchant_id = 当前老板所属 merchant_id` 的租户数据；记录若以门店隔离，还必须满足 `store_id = 当前经营门店 store_id`
 - 默认拥有本门店全部经营权限
 - 可使用 Web 管理后台
 - 可使用店员端小程序
@@ -121,7 +123,7 @@ V1.0 注册主流程：
 → 店员使用微信扫码 / 打开链接
 → 店员完成登录或注册
 → 确认加入该门店
-→ 系统建立 Staff 与 Merchant / Store 的绑定关系
+→ 系统以 `staff.merchant_id` 建立 Staff 的唯一租户归属，并以 `staff_store_assignment.store_id` 表达可工作的门店范围；V1.0 虽为一商户一门店，也不得用 `Merchant / Store` 单一模糊字段代替二者
 → 老板配置该店员权限
 → 店员开始使用店员端
 

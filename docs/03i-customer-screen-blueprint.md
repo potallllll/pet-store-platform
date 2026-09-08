@@ -1,8 +1,12 @@
 # 03I 客户端「页面蓝图与关键交互验收场景」
 
-> 状态：已确认子模块
-> 所属阶段：03 客户端微信小程序
-> 版本：V1.0
+> status: confirmed
+> status_scope: full_document
+> change_policy: record_required
+> development_readiness: partial
+> blocked_by: DEC-APPT-01, DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01
+> parent_stage: 03 客户端微信小程序
+> version: V1.0
 
 ## 1. 文档职责
 
@@ -15,7 +19,7 @@
 - 关键交互路径
 - H5 / UI 原型最小验收范围
 
-`03n` 继续作为上门喂养、积分、养宠顾问、寄养动态等新增功能的详细页面补充；`03o` / `03p` 分别负责首页底部 Banner 广告与启动封面广告。详细业务子模块不得与本文件当前总蓝图冲突。
+原 `03n` 已归档；其现行内容由本文件与 `03e`、`03j`、`03k`、`03l`、`03m` 承接。`03o` / `03p` 分别负责首页底部 Banner 广告与启动封面广告。归档文件不得作为实现依据，详细业务子模块不得与本文件当前总蓝图冲突。
 
 本文件**不冻结最终视觉参数**，包括：品牌色、背景色、字体、字号、圆角、阴影、图标、渐变、精确动效曲线、精确轮播秒数、栅格 / 间距 Token。已确认视觉与首页规格见阶段 10 的 `10a` / `10b` / `10c`。
 
@@ -129,7 +133,7 @@ UI 层可在顶部门店栏下使用品牌 / 生活方式 Banner；精选商品�
 
 ### 3.3 洗护 / 美容刚完成
 
-- 客户打开小程序并完成启动广告流程后进入首页。
+- 普通启动且无分享、通知、扫码或后台恢复目标时，客户完成启动广告流程后进入最近有效门店首页；存在明确目标时按 `03p` 恢复该目标，不因本场景改写为首页。
 - 显示服务完成提示。
 - 提供“查看本次服务结果”和“稍后查看”。
 - “稍后查看”后完成卡继续保留。
@@ -493,7 +497,7 @@ H5 原型可以使用 1 / 2 / 4 / 6 组模拟控制验证动态能力，但该�
 
 客户端显示 / 允许使用顾问至少同时满足：
 
-- 当前 Merchant / Store 有有效 `pet_advisor` 付费权益；
+- 当前 Store 有有效 `pet_advisor` 付费权益；资格唯一归属 `owner_type=store`、`owner_id=store_id`，Merchant 仅作为购买、管理和审计主体；
 - 门店已向本店客户开启；
 - 当前 Platform User 已与当前门店建立有效 Customer 关系；
 - 服务端资格校验通过。
@@ -610,7 +614,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 
 ### C-HOME-02：洗护刚完成
 
-- 仍进入首页。
+- 在无分享、通知、扫码或后台恢复目标的普通启动场景中进入最近有效门店首页；存在明确目标时本场景不改写启动去向。
 - 显示完成提示。
 - 查看 / 稍后。
 - 查看结果后完成卡退出当前服务。
@@ -769,7 +773,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 | C-HOME-AD-04 | 底部广告关闭 | [03o-customer-home-banner-ad.md](03o-customer-home-banner-ad.md) |
 | C-HOME-AD-05 | 悬浮顾问避让广告 | [03o-customer-home-banner-ad.md](03o-customer-home-banner-ad.md) |
 | C-HOME-AD-06 | 底部广告各状态组合场景 | [03o-customer-home-banner-ad.md](03o-customer-home-banner-ad.md) |
-| C-BOARDING-01 | 寄养动态时间轴与补录排序 | [03n-customer-screen-blueprint-extension.md](03n-customer-screen-blueprint-extension.md) |
+| C-BOARDING-01 | 寄养动态时间轴与补录排序 | [03i-customer-screen-blueprint.md](03i-customer-screen-blueprint.md) |
 | C-BOARDING-02 | 寄养加餐提交至实际执行 | [03e-customer-products.md](03e-customer-products.md) |
 | C-BOARDING-03 | 已收款未投喂仍为处理中 | [03e-customer-products.md](03e-customer-products.md) |
 | C-BOARDING-04 | 重复执行确认仅写一次动态 | [03e-customer-products.md](03e-customer-products.md) |
@@ -839,7 +843,9 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 - 03a 第11节提案推演只证明方案可讨论，不计入当前正式预约验收；DEC-APPT-01 确认后才补正式容量用例。
 - 原型允许有标注的模拟成功 / 失败状态；正式上线必须验证服务端真实权限、并发结果和恢复。文档检查、token计算或原型演示均不等于实际客户端验收通过。
 
-## 15. H5 / UI 原型验收矩阵
+## 15. 仅用于 H5 沟通原型的最低页面演示范围
+
+> 本节只定义沟通原型必须演示的代表性页面，不是正式开发完成清单，也不得用于声明正式测试通过。正式开发与测试必须从 §14.1 全量验收 ID 索引生成范围，并执行 §14.2 的恢复与异常要求。
 
 | ID | 页面 / 场景 | 必须展示 | 必须可交互 |
 |---|---|---|---|
@@ -851,7 +857,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 | C-BOARDING-02 | 寄养加餐 | 可投喂商品、处理中 | 选择 / 提交 |
 | C-SOCIAL-01 | 宠物交友 | 3只/屏、最多12只、热度 | 自动轮播 + 手动滑动 |
 | C-APPT-01 | 预约 | 宠物、服务、日期、时段 | 提交预约 |
-| C-RESULT-01 | 服务结果 | N组前后对比 | 切组 + 拖动 |
+| C-RESULT-01 / C-RESULT-02 | 服务结果 | N组前后对比、当前组和前后标签 | 切组 + 拖动 + 可点选的“护理前 / 护理后”或“并排查看” |
 | C-AI-01 | AI未解锁 | 查看报告、广告说明 | 广告模拟 |
 | C-AI-02 | AI生成中 | 5阶段状态 | 等待 / 离开 |
 | C-AI-03 | AI超时 | 仍在生成 | 返回继续查询 |
@@ -866,7 +872,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 | C-ORDER-01 | 我的订单 | 全部/服务/商品 | 服务订单进同一结果页 |
 | C-PRODUCT-01 | 商品 | 列表、详情、SKU、购物车 | 提交购买需求 |
 | C-MSG-01 | 消息 | 关键业务消息 | 深链 / 邀请操作 |
-| C-ADVISOR-01 | 养宠顾问入口 | 有资格显示/无资格隐藏 | 门店切换 + 拖动吸附 |
+| C-ADVISOR-01 | 养宠顾问入口 | 有资格显示/无资格隐藏 | 门店切换 + 拖动吸附 + “调整位置 → 左侧 / 右侧 / 重置” |
 | C-ADVISOR-08 | AI聊天 | 免费 / 广告额度 | 提问 / 广告解锁 |
 | C-SETTING-01 | 账号设置 | 手机号、隐私、注销、退出 | 对应入口 |
 
@@ -882,7 +888,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 2. `docs/README.md`
 3. `docs/REQUIREMENTS-STATUS.md`
 4. `docs/03-customer-miniapp.md`
-5. `docs/03a`～`03p`
+5. `docs/03a`～`03m`、`docs/03o`～`03p`（原 `03n` 已归档，不读取）
 6. 涉及 UI 时读取 `docs/10a-customer-ui-design-system.md`
 7. 涉及首页时读取 `docs/10b-customer-homepage-ui-spec.md`
 8. 涉及启动封面广告时读取 `docs/10c-customer-launch-cover-ad-ui-spec.md`
@@ -925,58 +931,4 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 
 ## 18. 需求变更记录
 
-### 2026-09-06：主产品蓝图合并新增功能
-
-【需求变更】
-
-- `03i` 升级为当前统一主产品蓝图，合并上门喂养、平台积分、积分商城、养宠顾问、广告权益等入口与验收。
-
-### 2026-09-06：首页宠物交友 / 上门喂养顺序调整
-
-- 首页最终调整为“当前服务 → 宠物交友 → 上门喂养 → 推荐商品”。
-
-### 2026-09-06：寄养动态时间轴
-
-- 点击“查看寄养动态”进入当前宠物寄养详情，以真实发生时间倒序展示最新动作，按日期分组；图片 / 视频与对应动作挂在同一时间点。
-
-### 2026-09-06：首页商业曝光位
-
-- 精选商品后、底部导航前新增 `home_bottom_banner` 微信 Banner 广告，失败 / 无填充时收起，不影响业务。
-
-### 2026-09-06：启动封面广告
-
-- 在进入首页前新增 `launch_cover_ad`，支持平台自定义图片、自定义视频或微信官方广告；配置可独立替换、启停和调试；失败 / 无填充不得阻塞首页；内部页面导航不重复展示。
-
-### 2026-09-06：养宠顾问改为付费门店权益
-
-- 原规则：养宠顾问作为客户端默认全局悬浮入口。
-- 新规则：只有当前门店有有效付费权益、门店已开启、用户已建立本店 Customer 关系时才显示 / 可用；跨门店必须重新校验。
-- 用户额度继续按 Platform User 累计，切换到另一付费门店不重新赠送前三次。
-
-
-### 2026-09-08：客户端交互与验收收口
-
-- 原规则：启动结束统一进入首页，少量交友数据、跨流程恢复和验收编号衔接不完整。
-- 新规则：按 03p / 03g 恢复入口目标和有效门店；按 03h 处理少量数据与轮播控制；投喂执行与付款分别展示；03i 统一验收索引，10a / 10b 统一视觉变量及首屏目标。
-- 影响范围：启动、身份、首页、消息、寄养加餐、积分、上门喂养、原型与后续正式开发验收。
-
-### 2026-09-08：验收编号迁移
-
-- 原规则：同编号在主蓝图与子模块间指代不同场景。
-- 新规则：保留详细模块现有编号，调整主 / 扩展蓝图冲突引用，并增加唯一索引和恢复场景。
-- 影响范围：03i、03n、所有客户端验收引用；既有测试报告解释时必须同时使用旧文件和旧编号。
-
-| 旧文件 | 旧编号 | 当前编号 / 含义 |
-|---|---|---|
-| 03i-customer-screen-blueprint.md | C-LAUNCH-AD-01 | C-LAUNCH-AD-07：启动三模式及降级组合场景 |
-| 03i-customer-screen-blueprint.md | C-HOME-AD-01 | C-HOME-AD-06：底部广告各状态组合场景 |
-| 03i-customer-screen-blueprint.md | C-FEED-03 | C-FEED-06：本地无需求时真实异地推荐 |
-| 03i-customer-screen-blueprint.md | C-POINTS-03 | C-POINTS-05：实物兑换、总仓到店与自提 |
-| 03i-customer-screen-blueprint.md | C-ADVISOR-03 | C-ADVISOR-08：免费额度及广告解锁组合场景 |
-| 03i-customer-screen-blueprint.md | C-ADVISOR-04 | C-ADVISOR-06：AI失败不扣额度 |
-| 03n-customer-screen-blueprint-extension.md | C-FEED-04 | C-FEED-06：本地无需求时真实异地推荐 |
-| 03n-customer-screen-blueprint-extension.md | C-POINTS-03 | C-POINTS-05：实物兑换、总仓到店与自提 |
-| 03n-customer-screen-blueprint-extension.md | C-ADVISOR-03 | C-ADVISOR-08：免费额度及广告解锁组合场景 |
-| 03n-customer-screen-blueprint-extension.md | C-ADVISOR-04 | C-ADVISOR-06：AI失败不扣额度 |
-
-主蓝图原 C-FEED-02 中的接单验收单独引用 C-FEED-03；C-FEED-02 在所有文档中仅表示公开隐私。未列入迁移的编号保留原含义。
+历史变更已移至 [`docs/history/2026-client-requirements-changes.md`](history/2026-client-requirements-changes.md)。本文件正文仅保留当前有效规则。

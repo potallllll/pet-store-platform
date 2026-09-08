@@ -1,8 +1,13 @@
 # 03P 客户端「启动封面广告」模块
 
-> 状态：已确认子模块
-> 所属阶段：03 客户端微信小程序
-> 版本：V1.0
+> status: mixed
+> confirmed_scope: all_current_rules_except_section_6_1_DEC_LAUNCH_01_values
+> pending_scope: section_6_1_DEC_LAUNCH_01_values
+> change_policy: record_required
+> development_readiness: partial
+> blocked_by: DEC-LAUNCH-01
+> parent_stage: 03 客户端微信小程序
+> version: V1.0
 
 ## 1. 产品定位
 
@@ -38,7 +43,7 @@ V1.0 客户端新增「启动封面广告」能力，用于用户打开 / 重新
 建议配置至少支持：
 
 - `every_launch`：每次符合条件的启动 / 重新进入尝试展示；
-- `once_per_day`：同一用户自然日最多一次；
+- `once_per_day`：同一用户按服务端权威时间和 `Asia/Shanghai` 自然日最多一次；客户端本地日期不得决定是否展示；
 - `interval`：按配置间隔控制；
 - `disabled`：关闭。
 
@@ -310,19 +315,4 @@ Platform Super Admin 可配置：
 
 ## 12. 需求变更记录
 
-### 2026-09-08：目标恢复与有限兜底
-
-【需求变更】
-
-- 原规则：广告结束 / 失败等场景统一进入首页，与消息和分享详情深链冲突；无填充直接首页与可配置 fallback 并列，缺少执行优先级。
-- 新规则：广告结束恢复本次业务 / 后台页面，登录后继续目标，明确门店目标优先与无有效门店选店；fallback 最多一次且共用总加载等待上限，用户关闭和迟到回调不得重开广告。运营数值由 `DEC-LAUNCH-01` 待决项确认。
-- 影响范围：启动 / 回前台流程、分享和微信通知、身份与门店选择、广告配置、`10c` UI 流程与验收。下方 2026-09-06 记录保留当时历史口径，现行执行以本次变更为准。
-
-### 2026-09-06：新增启动封面广告
-
-【需求变更】
-
-- 原规则：客户端进入小程序后直接进入业务首页，只存在首页顶部品牌 Banner、首页底部微信 Banner 和若干激励广告。
-- 新规则：新增独立 `launch_cover_ad`，在小程序启动 / 重新进入时按配置展示；平台超级管理员可独立选择自定义图片、自定义视频或微信官方广告，并可替换素材、控制频次、时效、跳过与测试 / 正式环境。
-- 降级规则：广告关闭、无填充、过期或加载失败均不得阻塞进入首页。
-- 影响范围：小程序启动流程、广告配置、Web 平台后台、媒体素材、微信广告 SDK、H5 / 测试调试、监控和收益统计。
+历史变更已移至 [`docs/history/2026-client-requirements-changes.md`](history/2026-client-requirements-changes.md)。本文件正文仅保留当前有效规则。
