@@ -4,7 +4,7 @@
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: DEC-APPT-01, DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01
+> blocked_by: [DEC-APPT-01, DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01]
 > version: V1.0
 
 ## 1. 客户端定位

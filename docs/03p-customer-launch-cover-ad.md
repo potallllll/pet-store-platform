@@ -5,8 +5,8 @@
 > pending_scope: section_6_1_DEC_LAUNCH_01_values
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: DEC-LAUNCH-01
-> parent_stage: 03 客户端微信小程序
+> blocked_by: [DEC-LAUNCH-01]
+> parent_stage: 03_customer_miniapp
 > version: V1.0
 
 ## 1. 产品定位

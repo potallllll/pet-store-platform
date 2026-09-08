@@ -3,6 +3,8 @@
 > status: confirmed
 > status_scope: full_document
 > change_policy: record_required
+> development_readiness: ready
+> blocked_by: []
 > version: V1.0
 
 ## 总原则
@@ -22,6 +24,13 @@
 - `status: confirmed`：已确认
 - `status: mixed`：同一文件同时包含已确认和待确认范围，必须同时提供 `confirmed_scope`、`pending_scope` 和 `blocked_by`
 - `status: future`：以后版本
+- `status: archived`：仅允许用于 `docs/history/`；必须同时提供 `implementation_policy: forbidden`，不得作为当前实现依据
+
+正式需求文档还必须提供以下机器字段：
+
+- `development_readiness: ready | partial | blocked`：是否可以进入开发；不得仅凭 `status` 推断
+- `blocked_by: [] | [DEC-...]`：阻塞决策 ID 列表；没有阻塞也必须显式写 `[]`
+- `parent_stage: 03_customer_miniapp | 10_ui_design_system`：有父阶段时使用稳定代码，不在字段值中附加说明文字
 
 已确认需求若发生修改，必须把正式正文直接更新为当前规则，并将原规则、修改后规则和受影响模块移入 `docs/history/`。历史文件仅用于追溯，不属于当前有效需求。
 

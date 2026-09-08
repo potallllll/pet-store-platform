@@ -3,7 +3,9 @@
 > status: confirmed
 > status_scope: full_document
 > change_policy: record_required
-> parent_stage: 10 UI / Design System（提前与阶段 04 并行）
+> development_readiness: ready
+> blocked_by: []
+> parent_stage: 10_ui_design_system
 > version: V1.0
 
 ## 1. 文档职责

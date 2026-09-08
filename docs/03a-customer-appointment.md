@@ -3,9 +3,10 @@
 > status: mixed
 > confirmed_scope: sections_1_to_10
 > pending_scope: section_11
-> blocked_by: DEC-APPT-01
 > change_policy: record_required
-> parent_stage: 03 客户端微信小程序
+> development_readiness: partial
+> blocked_by: [DEC-APPT-01]
+> parent_stage: 03_customer_miniapp
 > version: V1.0
 
 ## 1. 设计原则

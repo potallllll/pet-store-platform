@@ -54,6 +54,11 @@
 - `status: confirmed`：已确认；仅 `status_scope` 指定范围生效，后续修改必须记录变更。
 - `status: mixed`：同一文件同时含已确认与待确认范围；必须读取 `confirmed_scope`、`pending_scope` 和 `blocked_by`。
 - `status: future`：以后版本，V1.0 不实现。
+- `status: archived`：仅用于 `docs/history/`，并要求 `implementation_policy: forbidden`；不得作为当前实现依据。
+- `development_readiness: ready | partial | blocked`：开发准备状态；所有正式需求文档都必须显式填写。
+- `blocked_by: [] | [DEC-...]`：阻塞决策列表；空列表表示没有已知阻塞，不允许通过字段缺失推断。
+- `parent_stage`：父阶段稳定代码；当前使用 `03_customer_miniapp` 或 `10_ui_design_system`，说明文字不得写入字段值。
+- `client_baseline_status: discussing | confirmed | confirmed_with_blocked_decisions | frozen`：客户端总体基线状态；当前值表示已有确认基线，但部分能力仍受待决项阻塞。
 - `change_policy: record_required`：修改现行规则时必须同步正式正文，并把原规则、新规则和影响范围写入 `docs/history/`；历史内容本身不具有现行效力。
 
 

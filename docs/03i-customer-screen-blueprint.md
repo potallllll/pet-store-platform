@@ -4,8 +4,8 @@
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: DEC-APPT-01, DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01
-> parent_stage: 03 客户端微信小程序
+> blocked_by: [DEC-APPT-01, DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01]
+> parent_stage: 03_customer_miniapp
 > version: V1.0
 
 ## 1. 文档职责
@@ -882,16 +882,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 
 ## 16. 新人 / AI 强制读取规则
 
-生成客户端 H5 / Demo / UI 骨架 / 原型 / 正式页面前，必须至少读取：
-
-1. `AGENTS.md`
-2. `docs/README.md`
-3. `docs/REQUIREMENTS-STATUS.md`
-4. `docs/03-customer-miniapp.md`
-5. `docs/03a`～`03m`、`docs/03o`～`03p`（原 `03n` 已归档，不读取）
-6. 涉及 UI 时读取 `docs/10a-customer-ui-design-system.md`
-7. 涉及首页时读取 `docs/10b-customer-homepage-ui-spec.md`
-8. 涉及启动封面广告时读取 `docs/10c-customer-launch-cover-ad-ui-spec.md`
+生成客户端 H5 / Demo / UI 骨架 / 原型 / 正式页面前，必须使用 `docs/README.md` 第 3 节的唯一读取矩阵：完整客户端或跨模块任务读取全量清单；明确的单模块任务读取基础文件、`03i`、相关子模块及适用 UI 规格。存在跨模块依赖或无法判断范围时使用全量清单；原 `03n` 已归档，不读取。
 
 本文件负责当前统一页面 / 启动蓝图；详细子模块负责对应业务细节。若出现无法同时满足的明确冲突，必须停止并提出冲突，不得自行选择。
 

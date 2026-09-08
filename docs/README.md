@@ -35,7 +35,9 @@
 
 ## 3. 客户端预览 / 原型读取顺序
 
-生成客户端 H5、页面 Demo、UI 骨架、交互原型或正式客户端页面前，至少读取：
+### 3.1 完整客户端或跨模块原型
+
+生成完整客户端 H5、跨模块 Demo、整套 UI 骨架或全量交互原型前，至少读取：
 
 1. 根目录 `AGENTS.md`
 2. 本文件
@@ -45,6 +47,22 @@
 6. `10a-customer-ui-design-system.md`
 7. 任务涉及首页时读取 `10b-customer-homepage-ui-spec.md`
 8. 任务涉及小程序启动 / 封面广告时读取 `10c-customer-launch-cover-ad-ui-spec.md`
+
+### 3.2 单模块或单页面任务
+
+只处理一个明确模块或页面时，至少读取：
+
+1. 根目录 `AGENTS.md`
+2. 本文件
+3. `REQUIREMENTS-STATUS.md`
+4. `03-customer-miniapp.md`
+5. `03i-customer-screen-blueprint.md`
+6. 与任务直接相关的详细子模块文档
+7. 涉及 UI 时读取 `10a-customer-ui-design-system.md`
+8. 涉及首页时读取 `10b-customer-homepage-ui-spec.md`
+9. 涉及启动 / 封面广告时读取 `10c-customer-launch-cover-ad-ui-spec.md`
+
+若单页面行为跨越身份、消息、订单、钱包、广告或其他业务域，必须追加读取对应子模块；不得因采用单模块清单而忽略实际依赖。无法判断依赖范围时，使用完整客户端清单。
 
 其中：
 

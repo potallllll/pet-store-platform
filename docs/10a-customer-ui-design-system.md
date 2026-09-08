@@ -3,7 +3,9 @@
 > status: confirmed
 > status_scope: full_document
 > change_policy: record_required
-> parent_stage: 10 UI / Design System（经产品方确认允许提前与阶段 04 并行推进）
+> development_readiness: ready
+> blocked_by: []
+> parent_stage: 10_ui_design_system
 > scope: 客户端通用视觉方向 + 首页 UI 已确认规则
 > version: V1.0
 

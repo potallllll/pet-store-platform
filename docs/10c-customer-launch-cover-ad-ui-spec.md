@@ -4,8 +4,8 @@
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: DEC-LAUNCH-01
-> parent_stage: 10 UI / Design System（提前与阶段 04 并行）
+> blocked_by: [DEC-LAUNCH-01]
+> parent_stage: 10_ui_design_system
 > version: V1.0
 
 ## 1. 文档职责

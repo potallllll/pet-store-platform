@@ -3,7 +3,9 @@
 > status: confirmed
 > status_scope: full_document
 > change_policy: record_required
-> parent_stage: 03 客户端微信小程序
+> development_readiness: ready
+> blocked_by: []
+> parent_stage: 03_customer_miniapp
 > version: V1.0
 
 ## 1. 模块定位

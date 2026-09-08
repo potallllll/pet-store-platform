@@ -3,7 +3,7 @@
 > status: archived
 > superseded_by: docs/03i-customer-screen-blueprint.md, docs/03e-customer-products.md, docs/03j-customer-home-feeding-marketplace.md, docs/03k-customer-loyalty-points.md, docs/03l-customer-pet-advisor.md, docs/03m-customer-rewarded-ads.md
 > implementation_policy: forbidden
-> parent_stage: 03 客户端微信小程序
+> parent_stage: 03_customer_miniapp
 > version: V1.0
 
 > 本文件仅保留历史证据，不属于当前正式需求。新人、AI、原型和正式开发均不得以本文件作为实现或验收依据。

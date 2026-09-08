@@ -3,6 +3,8 @@
 > status: confirmed
 > status_scope: full_document
 > change_policy: record_required
+> development_readiness: ready
+> blocked_by: []
 > version: V1.0
 
 ## 1. 产品定位

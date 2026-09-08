@@ -3,6 +3,8 @@
 > status: confirmed
 > status_scope: full_document
 > change_policy: record_required
+> development_readiness: ready
+> blocked_by: []
 > version: V1.0
 
 ## 1. 总体原则
@@ -35,9 +37,12 @@ V1.0 不设计复杂的多级职位体系。
 - 处理异常数据
 - 管理系统级配置
 - 管理平台资源限制
+- 使用 `reward_fulfillment.manage` 权限管理平台积分实物奖励的总仓发货任务
 - 必要时协助商户进行数据处理
 
 平台超级管理员不受单商户数据隔离限制。
+
+V1.0 不新增“总仓人员”系统角色。`reward_fulfillment.manage` 只能授予 Platform Super Admin，用于创建 / 更新总仓发货任务和确认发货；该权限本身不授予取消兑换、取消发货或积分返还能力，这些动作仍受 `DEC-POINTS-01` 约束。后续规则允许的每次操作都必须记录操作者、时间、原状态、新状态及关联兑换单。Merchant Owner 与 Staff 不得取得该权限。
 
 ## 3. 商户老板
 
