@@ -1,0 +1,51 @@
+name: Requirements audit
+on:
+  push:
+    branches:
+      - docs/20260908-requirements-governance
+      - main
+  pull_request:
+    paths:
+      - 'docs/**'
+      - 'AGENTS.md'
+      - 'README.md'
+      - 'scripts/audit_requirements.py'
+      - '.github/workflows/requirements-audit.yml'
+permissions:
+  contents: read
+jobs:
+  requirements:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.11'
+      - name: Compile audit script
+        run: python -m py_compile scripts/audit_requirements.py
+      - name: Check requirements
+        run: python scripts/audit_requirements.py --root . --output requirements-audit.json
+      - name: Upload audit evidence
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: requirements-audit
+          path: requirements-audit.json
+          if-no-files-found: warn
+      - name: Export exact source snapshots
+        if: always()
+        run: |
+          mkdir -p audit-sources/current audit-sources/baseline
+          git archive HEAD docs AGENTS.md README.md scripts/audit_requirements.py | tar -x -C audit-sources/current
+          git archive 83aeacb6cf1ebe597fc9670f9d5c357a27da334f docs AGENTS.md README.md | tar -x -C audit-sources/baseline
+          git rev-parse HEAD > audit-sources/checked-head.txt
+      - name: Upload source snapshots
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: requirements-source-snapshots
+          path: audit-sources/
+          if-no-files-found: error
