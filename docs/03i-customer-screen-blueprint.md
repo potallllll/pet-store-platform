@@ -25,12 +25,14 @@
 
 ```text
 启动 / 重新进入
+├─ 解析分享 / 消息目标、原页面及关联门店
 └─ 启动封面广告（按配置 / 频控）
    ├─ 自定义图片
    ├─ 自定义视频
    └─ 微信官方广告
         ↓
-      进入首页
+      恢复入口目标；无目标进入首页
+      无有效门店 → 选择门店 / 扫码引导
 
 底部导航
 ├─ 预约
@@ -116,7 +118,7 @@ UI 层可在顶部门店栏下使用品牌 / 生活方式 Banner；精选商品�
 
 ### 3.2 当前服务
 
-当前服务为首页最高优先级区域。
+当前服务为首页最高优先级区域。有进行中服务时，按 10b 紧凑品牌 Banner 变体，在 10b 约定的最小支持屏幕、100% 系统字号下首屏露出第一条服务状态及主操作；150% / 200% 字号允许自然纵向滚动且内容与操作完整可达，不为凑首屏截断。不得仅以参考卡片高度判定通过。
 
 - 首页最多直接显示 3 条进行中 / 刚完成服务。
 - 更多服务进入完整列表。
@@ -165,10 +167,10 @@ UI 层可在顶部门店栏下使用品牌 / 生活方式 Banner；精选商品�
 
 首页宠物交友区域：
 
-- 自动横向轮播，同时支持手动滑动。
-- 用户操作时自动轮播让位，短暂空闲后恢复。
+- 多屏数据默认自动横向轮播，同时支持手动滑动与明确的暂停 / 继续控制。
+- 用户操作时自动轮播让位；显式暂停后仅由用户继续恢复。单屏、减少动态效果及离开可视区域时不自动播放，按 03h / 10a 执行。
 - 每屏 3 只，一轮最多 12 只不同宠物。
-- 自己的主展示宠物固定第 4 位，即第二屏第 1 位。
+- 本轮真实宠物至少 4 只且包含本人主宠物时自己的主展示宠物固定第 4 位；不足 4 只按实际数量展示，不重复、不补空位。
 - 自己未开启交友时可仅本人可见。
 - 对真正可邀请的其他宠物显示卡片底部浅色“可发送邀请”。
 - 自己、私有、未开启或其他不可邀请状态不得错误显示该标签。
@@ -273,7 +275,7 @@ AI 不得放在普通结果 / 前后对比之前。
 
 - 后端返回 N 组完整 before / after，客户端动态生成 N 组。
 - 不写死数量。
-- 各组独立拖动。
+- 各组独立拖动，同时提供可点击的“查看护理前 / 查看护理后”替代操作；缺失素材如实提示。
 - 可用组标签 / 角度标签切换。
 - 缺一侧素材不得伪造成完整对比。
 
@@ -338,8 +340,8 @@ H5 原型可以使用 1 / 2 / 4 / 6 组模拟控制验证动态能力，但该�
 提交后：
 
 - 生成统一商品购买需求，不另建投喂订单。
-- 未处理完成时显示“投喂请求处理中”。
-- 店员完成实际投喂后，寄养时间轴自动新增对应动态。
+- 付款与投喂执行分别展示；已收款但未投喂时继续显示“待投喂 / 投喂请求处理中”，不开放重复请求。
+- 店员实际投喂确认成功后，寄养时间轴只新增一次对应动态；取消 / 寄养结束 / 执行失败处理按 03e 执行。
 
 ---
 
@@ -479,7 +481,7 @@ H5 原型可以使用 1 / 2 / 4 / 6 组模拟控制验证动态能力，但该�
 
 ### 10.5 消息
 
-单一时间流，代表性消息至少包括：服务完成、预约变化、寄养异常 / 新动态、商品确认 / 取消、钱包 / 优惠券、宠物好友邀请、上门喂养状态、积分实物到店自提等。
+单一时间流，作用域为“当前用户的平台个人消息 + 当前门店个人消息”；切店保留平台消息，私有业务跳转按 03f / 03g 重新校验。代表性消息至少包括：服务完成、预约变化、寄养异常 / 新动态、商品确认 / 取消、钱包 / 优惠券、宠物好友邀请、上门喂养状态、积分实物到店自提等。
 
 ---
 
@@ -509,7 +511,7 @@ H5 原型可以使用 1 / 2 / 4 / 6 组模拟控制验证动态能力，但该�
 - 可自由拖动。
 - 松手后自动吸附最近的左 / 右边缘。
 - 不遮挡微信系统胶囊、底部导航、首页底部 Banner 广告和固定主要按钮。
-- 可记录上次纵向位置。
+- 可记录上次纵向位置；重新进入时按安全区重新限制位置。提供可见的“调整位置 → 移到左侧 / 右侧 / 重置位置”替代操作，不要求必须拖动。
 - 启动封面广告 / 全屏广告 / 沉浸媒体等特殊场景隐藏。
 
 ### 11.3 首次进入
@@ -540,9 +542,9 @@ H5 原型可以使用 1 / 2 / 4 / 6 组模拟控制验证动态能力，但该�
 
 小程序启动 / 符合频控的重新进入：
 
-读取 `launch_cover_ad` 配置 → 有效则展示 → 结束 / 跳过 / 官方广告关闭 → 进入首页。
+解析并保存入口目标与门店 → 读取 `launch_cover_ad` 配置 → 有效则展示 → 结束 / 跳过 / 官方广告关闭 → 恢复入口目标；无明确目标才进首页。
 
-关闭、过期、无填充、素材失败或 SDK 失败 → 直接进入首页。
+关闭、过期、无填充、素材失败或 SDK 失败 → 恢复原入口目标（无明确目标时进入首页）。
 
 ### 12.2 模式
 
@@ -572,19 +574,32 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 - 当前已验证手机号
 - 更换手机号
 - 隐私相关入口
+- 减少动态效果（按 10a；影响自动轮播与非必要动画）
 - 账号注销
 - 退出登录
 
-公开浏览不强制打开即登录；进入需要个人身份的操作时再触发微信身份 / 手机号验证。
+公开浏览不强制打开即登录；进入需要个人身份的操作时再触发微信身份 / 手机号验证。无有效门店时显示选择门店 / 扫码引导，平台公开内容仍可浏览；门店业务需先明确门店。禁止把未加载或无门店误显示成余额为零。
 
 ---
 
+
+### 13.1 通用恢复与提交交互
+
+- 登录 / 手机号验证前保存原目标和当前步骤；成功返回原步骤，保留非敏感输入并重新校验资格、时段、SKU 和价格；取消验证不自动提交。敏感值及平台不允许留存的信息不写持久草稿。
+- 购物车、门店表单和列表状态按用户与门店隔离。A → B → A 切店后恢复 A 自己的状态，不能把 A 的商品 / 金额送给 B。过期响应不能覆盖新门店页面。
+- 一次预约、购买需求、投喂、接单或兑换操作具有稳定的请求标识及用户 / 业务作用域；响应丢失时查询或重试同次操作，不能因重新点击生成第二笔。业务内容修改后才视为新的提交，并重新校验。
+- 提交期间按钮尺寸稳定、可感知忙碌状态并阻止重复；已受理但结果不确定时显示“处理中，可稍后查看”，保留关联记录和查询入口，不用“失败”暗示可以无限新建。
+- 列表明确采用分页或加载更多；从详情返回保留已提交搜索、筛选和滚动位置。空列表、搜索无结果和加载失败必须区分；失败保留安全的已加载内容与重试入口，不把失败显示成无数据。
+- 各场景的视觉 / 文案 / 可读性统一按 10a 执行，业务动作与权限分别引用 03a、03e、03f、03g、03j、03k。不得用前端状态替代服务端权限和业务结果。
+
+第 03a 文档第 11 节预约占位提案为待确认，不纳入本节或当前正式验收的容量决策；确认后再绑定具体用例。
+
 ## 14. 必须覆盖的关键场景
 
-### C-LAUNCH-AD-01：启动封面广告
+### C-LAUNCH-AD-07：启动封面广告
 
 - 图片 / 视频 / 微信官方广告三种模式可切换。
-- 关闭 / 无填充 / 失败时直接进入首页。
+- 关闭 / 无填充 / 失败时恢复原入口目标（无明确目标时进入首页）。
 - 内部页面跳转不重复弹出。
 
 ### C-HOME-01：首页普通状态
@@ -600,7 +615,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 - 查看 / 稍后。
 - 查看结果后完成卡退出当前服务。
 
-### C-HOME-AD-01：首页底部广告
+### C-HOME-AD-06：首页底部广告
 
 - loaded 时在精选商品后、底部导航前展示。
 - no_fill / failed / disabled 时自然收起。
@@ -630,7 +645,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 
 ### C-SOCIAL-02：自己的宠物第 4 位
 
-- 第二屏第 1 位为自己的主宠物。
+- 本轮真实宠物至少 4 只且包含本人主宠物时，第二屏第 1 位为自己的主宠物；不足时按 C-SOCIAL-03。
 - 私有状态不显示“可发送邀请”。
 
 ### C-FEED-01：上门喂养发布 / 分享
@@ -639,13 +654,16 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 - 发布。
 - 分享深链。
 
-### C-FEED-02：公开隐私 / 接单
+### C-FEED-02：公开隐私
 
 - 不展示精确住宅地址和联系方式。
-- 第一位接单者成功锁定。
-- 之后显示已接单待门店对接。
 
-### C-FEED-03：本地无需求
+### C-FEED-03：接单与绑定门店待办
+
+- 第一位接单者成功锁定；其他并发请求不能重复成功。
+- 只向发布时绑定门店生成待办，之后显示已接单待门店对接。
+
+### C-FEED-06：本地无需求
 
 - 本地为空时展示其他城市真实需求。
 - 城市 / 区县必须如实显示。
@@ -690,7 +708,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 - 周一至周日 7 次都在 1～10。
 - 总计严格 50。
 
-### C-POINTS-03：积分实物自提
+### C-POINTS-05：积分实物自提
 
 - 选择领取门店。
 - 待总仓发货 → 已发往门店 → 待自提 → 已领取。
@@ -705,14 +723,14 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 - 从付费门店切到未付费门店后入口消失。
 - 切回有资格门店后恢复。
 
-### C-ADVISOR-03：前三次免费 / 广告解锁
+### C-ADVISOR-08：前三次免费 / 广告解锁
 
 - 前 3 次有效回答免费。
 - 第 4 次前看广告。
 - 成功后增加 3 次额度。
 - 切换另一付费门店不重新赠送前三次。
 
-### C-ADVISOR-04：AI 失败不扣额度
+### C-ADVISOR-06：AI 失败不扣额度
 
 - 模拟失败后剩余额度不变。
 
@@ -729,14 +747,106 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 
 ---
 
+### 14.1 唯一验收 ID 索引
+
+本表是客户端验收编号的唯一语义定义。各详细文档的标题和表格均为本表的引用 / 场景补充，不得自行给既有编号改含义；新增场景先更新本表。组合场景须记录其各子场景结果，不能用一次总通过掩盖子场景未执行。业务规则仍由来源文档负责，本索引不另定权限或金额政策。
+
+| ID | 唯一场景含义 | 业务 / 交互来源 |
+|---|---|---|
+| C-LAUNCH-AD-01 | 自定义图片模式 | [03p-customer-launch-cover-ad.md](03p-customer-launch-cover-ad.md) |
+| C-LAUNCH-AD-02 | 自定义视频模式 | [03p-customer-launch-cover-ad.md](03p-customer-launch-cover-ad.md) |
+| C-LAUNCH-AD-03 | 微信官方广告模式 | [03p-customer-launch-cover-ad.md](03p-customer-launch-cover-ad.md) |
+| C-LAUNCH-AD-04 | 独立开关与目标恢复 | [03p-customer-launch-cover-ad.md](03p-customer-launch-cover-ad.md) |
+| C-LAUNCH-AD-05 | 内部导航不重复展示 | [03p-customer-launch-cover-ad.md](03p-customer-launch-cover-ad.md) |
+| C-LAUNCH-AD-06 | 测试与生产广告隔离 | [03p-customer-launch-cover-ad.md](03p-customer-launch-cover-ad.md) |
+| C-LAUNCH-AD-07 | 启动三模式及降级组合场景 | [03p-customer-launch-cover-ad.md](03p-customer-launch-cover-ad.md) |
+| C-HOME-01 | 首页普通状态与业务顺序 | [10b-customer-homepage-ui-spec.md](10b-customer-homepage-ui-spec.md) |
+| C-HOME-02 | 服务完成提示与已查看退出 | [03-customer-miniapp.md](03-customer-miniapp.md) |
+| C-HOME-03 | 有服务首屏与紧凑品牌 Banner | [10b-customer-homepage-ui-spec.md](10b-customer-homepage-ui-spec.md) |
+| C-HOME-AD-01 | 底部广告加载成功 | [03o-customer-home-banner-ad.md](03o-customer-home-banner-ad.md) |
+| C-HOME-AD-02 | 底部广告无填充 | [03o-customer-home-banner-ad.md](03o-customer-home-banner-ad.md) |
+| C-HOME-AD-03 | 底部广告加载失败 | [03o-customer-home-banner-ad.md](03o-customer-home-banner-ad.md) |
+| C-HOME-AD-04 | 底部广告关闭 | [03o-customer-home-banner-ad.md](03o-customer-home-banner-ad.md) |
+| C-HOME-AD-05 | 悬浮顾问避让广告 | [03o-customer-home-banner-ad.md](03o-customer-home-banner-ad.md) |
+| C-HOME-AD-06 | 底部广告各状态组合场景 | [03o-customer-home-banner-ad.md](03o-customer-home-banner-ad.md) |
+| C-BOARDING-01 | 寄养动态时间轴与补录排序 | [03n-customer-screen-blueprint-extension.md](03n-customer-screen-blueprint-extension.md) |
+| C-BOARDING-02 | 寄养加餐提交至实际执行 | [03e-customer-products.md](03e-customer-products.md) |
+| C-BOARDING-03 | 已收款未投喂仍为处理中 | [03e-customer-products.md](03e-customer-products.md) |
+| C-BOARDING-04 | 重复执行确认仅写一次动态 | [03e-customer-products.md](03e-customer-products.md) |
+| C-BOARDING-05 | 提前离店 / 撤回允许 / 无法投喂收口 | [03e-customer-products.md](03e-customer-products.md) |
+| C-SOCIAL-01 | 多屏自动与手动轮播、热度和邀请标签 | [03h-customer-pet-social.md](03h-customer-pet-social.md) |
+| C-SOCIAL-02 | 至少四张时本人第4位与公开授权 | [03h-customer-pet-social.md](03h-customer-pet-social.md) |
+| C-SOCIAL-03 | 0～3张数据及单屏降级 | [03h-customer-pet-social.md](03h-customer-pet-social.md) |
+| C-SOCIAL-04 | 暂停继续、减少动态效果与离屏暂停 | [03h-customer-pet-social.md](03h-customer-pet-social.md) |
+| C-APPT-01 | 已确认预约表单及按需身份验证 | [03a-customer-appointment.md](03a-customer-appointment.md) |
+| C-FEED-01 | 发布需求及成功后分享入口 | [03j-customer-home-feeding-marketplace.md](03j-customer-home-feeding-marketplace.md) |
+| C-FEED-02 | 公开内容隐私边界 | [03j-customer-home-feeding-marketplace.md](03j-customer-home-feeding-marketplace.md) |
+| C-FEED-03 | 接单原子锁定与绑定门店待办 | [03j-customer-home-feeding-marketplace.md](03j-customer-home-feeding-marketplace.md) |
+| C-FEED-04 | 绑定门店对接与状态推进 | [03j-customer-home-feeding-marketplace.md](03j-customer-home-feeding-marketplace.md) |
+| C-FEED-05 | 分享卡与业务详情深链 | [03j-customer-home-feeding-marketplace.md](03j-customer-home-feeding-marketplace.md) |
+| C-FEED-06 | 本地无需求时真实异地推荐 | [03j-customer-home-feeding-marketplace.md](03j-customer-home-feeding-marketplace.md) |
+| C-FEED-07 | 取消 / 过期 / 门店异常的动作与恢复 | [03j-customer-home-feeding-marketplace.md](03j-customer-home-feeding-marketplace.md) |
+| C-RESULT-01 | 动态 N 组前后独立对比 | [03-customer-miniapp.md](03-customer-miniapp.md) |
+| C-RESULT-02 | 无需拖动查看护理前后 | [10a-customer-ui-design-system.md](10a-customer-ui-design-system.md) |
+| C-AI-01 | 未解锁时普通结果仍可看 | [03-customer-miniapp.md](03-customer-miniapp.md) |
+| C-AI-02 | 有效权益后真实生成阶段 | [03-customer-miniapp.md](03-customer-miniapp.md) |
+| C-AI-03 | 约60秒未完成、离开与返回恢复 | [03-customer-miniapp.md](03-customer-miniapp.md) |
+| C-PET-01 | 宠物列表 / 档案 / 添加入口 | [03b-customer-pet-profile.md](03b-customer-pet-profile.md) |
+| C-WALLET-01 | 四项资产摘要与余额明细 | [03c-customer-wallet.md](03c-customer-wallet.md) |
+| C-POINTS-01 | 每天有效广告签到一次 | [03k-customer-loyalty-points.md](03k-customer-loyalty-points.md) |
+| C-POINTS-02 | 全签自然周严格50分 | [03k-customer-loyalty-points.md](03k-customer-loyalty-points.md) |
+| C-POINTS-03 | 漏签不补足且不可补签 | [03k-customer-loyalty-points.md](03k-customer-loyalty-points.md) |
+| C-POINTS-04 | 积分兑换商户券与幂等补偿 | [03k-customer-loyalty-points.md](03k-customer-loyalty-points.md) |
+| C-POINTS-05 | 实物兑换、总仓到店与自提 | [03k-customer-loyalty-points.md](03k-customer-loyalty-points.md) |
+| C-POINTS-06 | 库存并发、取消与核销互斥及结果恢复 | [03k-customer-loyalty-points.md](03k-customer-loyalty-points.md) |
+| C-ORDER-01 | 订单分类与同一服务结果页 | [03d-customer-orders.md](03d-customer-orders.md) |
+| C-PRODUCT-01 | 商品购买需求及线下收款边界 | [03e-customer-products.md](03e-customer-products.md) |
+| C-MSG-01 | 单一时间流与业务详情跳转 | [03f-customer-messages.md](03f-customer-messages.md) |
+| C-MSG-02 | 平台消息、门店隔离和未读范围 | [03f-customer-messages.md](03f-customer-messages.md) |
+| C-ADVISOR-01 | 付费门店资格决定入口 | [03l-customer-pet-advisor.md](03l-customer-pet-advisor.md) |
+| C-ADVISOR-02 | 跨店资格重新校验 | [03l-customer-pet-advisor.md](03l-customer-pet-advisor.md) |
+| C-ADVISOR-03 | 首次顾问介绍 | [03l-customer-pet-advisor.md](03l-customer-pet-advisor.md) |
+| C-ADVISOR-04 | 终身前三次有效提问免费 | [03l-customer-pet-advisor.md](03l-customer-pet-advisor.md) |
+| C-ADVISOR-05 | 广告解锁3次额度 | [03l-customer-pet-advisor.md](03l-customer-pet-advisor.md) |
+| C-ADVISOR-06 | AI失败不扣额度 | [03l-customer-pet-advisor.md](03l-customer-pet-advisor.md) |
+| C-ADVISOR-07 | 门店不因付费而可查看聊天 | [03l-customer-pet-advisor.md](03l-customer-pet-advisor.md) |
+| C-ADVISOR-08 | 免费额度及广告解锁组合场景 | [03l-customer-pet-advisor.md](03l-customer-pet-advisor.md) |
+| C-IDENTITY-01 | 公开浏览与按需身份验证 | [03g-customer-identity-security.md](03g-customer-identity-security.md) |
+| C-SETTING-01 | 手机号、隐私、注销、退出入口 | [03g-customer-identity-security.md](03g-customer-identity-security.md) |
+| C-AD-01 | 有效完整广告发对应权益 | [03m-customer-rewarded-ads.md](03m-customer-rewarded-ads.md) |
+| C-AD-02 | 中途退出不发权益 | [03m-customer-rewarded-ads.md](03m-customer-rewarded-ads.md) |
+| C-AD-03 | 重复广告回调不重复发权益 | [03m-customer-rewarded-ads.md](03m-customer-rewarded-ads.md) |
+| C-AD-04 | 下游失败保留已获权益 | [03m-customer-rewarded-ads.md](03m-customer-rewarded-ads.md) |
+| C-AD-05 | 顾问广告不能绕过门店资格 | [03m-customer-rewarded-ads.md](03m-customer-rewarded-ads.md) |
+| C-AD-06 | 曝光广告不发激励权益 | [03m-customer-rewarded-ads.md](03m-customer-rewarded-ads.md) |
+| C-ENTRY-01 | 冷 / 热启动深链与广告失败恢复 | [03p-customer-launch-cover-ad.md](03p-customer-launch-cover-ad.md) |
+| C-ENTRY-02 | 无历史门店、失效门店和选店 | [03g-customer-identity-security.md](03g-customer-identity-security.md) |
+| C-ENTRY-03 | 验证成功返回原步骤、拒绝不丢安全输入 | [03g-customer-identity-security.md](03g-customer-identity-security.md) |
+| C-ENTRY-04 | 后台恢复原页面及安全草稿 | [03p-customer-launch-cover-ad.md](03p-customer-launch-cover-ad.md) |
+| C-RECOVERY-01 | 提交响应丢失后查询 / 同次重试 | [03i-customer-screen-blueprint.md](03i-customer-screen-blueprint.md) |
+| C-RECOVERY-02 | 切店草稿隔离与过期响应丢弃 | [03i-customer-screen-blueprint.md](03i-customer-screen-blueprint.md) |
+| C-RECOVERY-03 | 列表返回与空 / 无结果 / 失败区分 | [03i-customer-screen-blueprint.md](03i-customer-screen-blueprint.md) |
+| C-UI-01 | 统一设计变量与配色可读性 | [10a-customer-ui-design-system.md](10a-customer-ui-design-system.md) |
+| C-UI-02 | 窄屏、长内容、字号放大与安全区 | [10b-customer-homepage-ui-spec.md](10b-customer-homepage-ui-spec.md) |
+| C-UI-03 | 加载 / 空 / 错 / 忙碌等控件状态 | [10a-customer-ui-design-system.md](10a-customer-ui-design-system.md) |
+
+### 14.2 恢复与异常验收要求
+
+- 关键提交至少覆盖成功、失败、重复动作、响应丢失、离开后返回、身份验证后继续；记录是否产生了第二笔业务，不能仅截图按钮置灰。
+- 启动覆盖分享 / 通知冷启动、后台恢复、广告无填充 / 失败、登录返回、目标无效及跨门店权限。
+- 加餐覆盖已收款未投喂、重复确认、寄养提前结束及取消后入口资格；积分覆盖最后一份库存并发、取消与核销竞态及补偿处理中。
+- 新的上门喂养 / 积分异常流程先验证已确认不变量；涉及 DEC-FEED / DEC-POINTS 的截止和权限参数，待对应决策确认后补实际用例值，不把待决视为已通过。
+- 03a 第11节提案推演只证明方案可讨论，不计入当前正式预约验收；DEC-APPT-01 确认后才补正式容量用例。
+- 原型允许有标注的模拟成功 / 失败状态；正式上线必须验证服务端真实权限、并发结果和恢复。文档检查、token计算或原型演示均不等于实际客户端验收通过。
+
 ## 15. H5 / UI 原型验收矩阵
 
 | ID | 页面 / 场景 | 必须展示 | 必须可交互 |
 |---|---|---|---|
-| C-LAUNCH-AD-01 | 启动封面 | 图片/视频/微信广告模式 | 模式切换/跳过/失败降级 |
+| C-LAUNCH-AD-07 | 启动封面 | 图片/视频/微信广告模式 | 模式切换/跳过/失败降级 |
 | C-HOME-01 | 首页 | 门店、当前服务、交友、上门喂养、商品 | 主要入口 |
 | C-HOME-02 | 服务完成 | 完成提示、完成卡 | 查看 / 稍后 |
-| C-HOME-AD-01 | 首页底部广告 | Banner 广告位置 / 状态 | loaded/no_fill/failed/disabled 模拟 |
+| C-HOME-AD-06 | 首页底部广告 | Banner 广告位置 / 状态 | loaded/no_fill/failed/disabled 模拟 |
 | C-BOARDING-01 | 寄养动态 | 日期分组、时间轴、媒体 | 查看历史 |
 | C-BOARDING-02 | 寄养加餐 | 可投喂商品、处理中 | 选择 / 提交 |
 | C-SOCIAL-01 | 宠物交友 | 3只/屏、最多12只、热度 | 自动轮播 + 手动滑动 |
@@ -745,19 +855,19 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 | C-AI-01 | AI未解锁 | 查看报告、广告说明 | 广告模拟 |
 | C-AI-02 | AI生成中 | 5阶段状态 | 等待 / 离开 |
 | C-AI-03 | AI超时 | 仍在生成 | 返回继续查询 |
-| C-FEED-01 | 上门喂养发布 | 时间、地点、预算、要求 | 发布 / 分享 |
-| C-FEED-02 | 上门喂养详情 | 模糊地址、状态 | 接单 |
-| C-FEED-03 | 异地推荐 | 其他城市真实需求 | 查看详情 |
+| C-FEED-01 / C-FEED-05 | 上门喂养发布 | 时间、地点、预算、要求 | 发布 / 分享 |
+| C-FEED-02 / C-FEED-03 | 上门喂养详情 | 模糊地址、状态 | 接单 |
+| C-FEED-06 | 异地推荐 | 其他城市真实需求 | 查看详情 |
 | C-PET-01 | 我的宠物 | 列表、档案 | 进入 / 添加 |
 | C-WALLET-01 | 我的 / 钱包 | 四项资产、余额明细 | 整卡进入明细 |
 | C-POINTS-01 | 积分签到 | 当前积分、签到 | 广告完成 / 失败模拟 |
 | C-POINTS-02 | 周积分 | 每日积分、本周累计 | 7天总计50验收 |
-| C-POINTS-03 | 积分商城 | 奖励、领取门店、自提状态 | 兑换 / 门店选择 |
+| C-POINTS-05 | 积分商城 | 奖励、领取门店、自提状态 | 兑换 / 门店选择 |
 | C-ORDER-01 | 我的订单 | 全部/服务/商品 | 服务订单进同一结果页 |
 | C-PRODUCT-01 | 商品 | 列表、详情、SKU、购物车 | 提交购买需求 |
 | C-MSG-01 | 消息 | 关键业务消息 | 深链 / 邀请操作 |
 | C-ADVISOR-01 | 养宠顾问入口 | 有资格显示/无资格隐藏 | 门店切换 + 拖动吸附 |
-| C-ADVISOR-03 | AI聊天 | 免费 / 广告额度 | 提问 / 广告解锁 |
+| C-ADVISOR-08 | AI聊天 | 免费 / 广告额度 | 提问 / 广告解锁 |
 | C-SETTING-01 | 账号设置 | 手机号、隐私、注销、退出 | 对应入口 |
 
 原型可使用假数据与模拟状态帮助验收，但正式开发不得用 Mock / 静态假状态冒充真实后端实现。
@@ -842,3 +952,31 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 - 原规则：养宠顾问作为客户端默认全局悬浮入口。
 - 新规则：只有当前门店有有效付费权益、门店已开启、用户已建立本店 Customer 关系时才显示 / 可用；跨门店必须重新校验。
 - 用户额度继续按 Platform User 累计，切换到另一付费门店不重新赠送前三次。
+
+
+### 2026-09-08：客户端交互与验收收口
+
+- 原规则：启动结束统一进入首页，少量交友数据、跨流程恢复和验收编号衔接不完整。
+- 新规则：按 03p / 03g 恢复入口目标和有效门店；按 03h 处理少量数据与轮播控制；投喂执行与付款分别展示；03i 统一验收索引，10a / 10b 统一视觉变量及首屏目标。
+- 影响范围：启动、身份、首页、消息、寄养加餐、积分、上门喂养、原型与后续正式开发验收。
+
+### 2026-09-08：验收编号迁移
+
+- 原规则：同编号在主蓝图与子模块间指代不同场景。
+- 新规则：保留详细模块现有编号，调整主 / 扩展蓝图冲突引用，并增加唯一索引和恢复场景。
+- 影响范围：03i、03n、所有客户端验收引用；既有测试报告解释时必须同时使用旧文件和旧编号。
+
+| 旧文件 | 旧编号 | 当前编号 / 含义 |
+|---|---|---|
+| 03i-customer-screen-blueprint.md | C-LAUNCH-AD-01 | C-LAUNCH-AD-07：启动三模式及降级组合场景 |
+| 03i-customer-screen-blueprint.md | C-HOME-AD-01 | C-HOME-AD-06：底部广告各状态组合场景 |
+| 03i-customer-screen-blueprint.md | C-FEED-03 | C-FEED-06：本地无需求时真实异地推荐 |
+| 03i-customer-screen-blueprint.md | C-POINTS-03 | C-POINTS-05：实物兑换、总仓到店与自提 |
+| 03i-customer-screen-blueprint.md | C-ADVISOR-03 | C-ADVISOR-08：免费额度及广告解锁组合场景 |
+| 03i-customer-screen-blueprint.md | C-ADVISOR-04 | C-ADVISOR-06：AI失败不扣额度 |
+| 03n-customer-screen-blueprint-extension.md | C-FEED-04 | C-FEED-06：本地无需求时真实异地推荐 |
+| 03n-customer-screen-blueprint-extension.md | C-POINTS-03 | C-POINTS-05：实物兑换、总仓到店与自提 |
+| 03n-customer-screen-blueprint-extension.md | C-ADVISOR-03 | C-ADVISOR-08：免费额度及广告解锁组合场景 |
+| 03n-customer-screen-blueprint-extension.md | C-ADVISOR-04 | C-ADVISOR-06：AI失败不扣额度 |
+
+主蓝图原 C-FEED-02 中的接单验收单独引用 C-FEED-03；C-FEED-02 在所有文档中仅表示公开隐私。未列入迁移的编号保留原含义。
