@@ -1,0 +1,36 @@
+name: Requirements audit
+on:
+  push:
+    branches:
+      - docs/20260908-requirements-governance
+      - main
+  pull_request:
+    paths:
+      - 'docs/**'
+      - 'AGENTS.md'
+      - 'README.md'
+      - 'scripts/audit_requirements.py'
+      - '.github/workflows/requirements-audit.yml'
+permissions:
+  contents: read
+jobs:
+  requirements:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile audit script
+        run: python -m py_compile scripts/audit_requirements.py
+      - name: Check requirements
+        run: python scripts/audit_requirements.py --root . --output requirements-audit.json
+      - name: Upload audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: requirements-audit
+          path: requirements-audit.json
+          if-no-files-found: warn
