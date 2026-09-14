@@ -28,6 +28,10 @@
 - `10a-customer-ui-design-system.md`：客户端通用视觉基线。
 - `10b-customer-homepage-ui-spec.md`：首页 UI 详细规格。
 - `10c-customer-launch-cover-ad-ui-spec.md`：启动封面广告 UI / 调试规格。
+- `04-staff-miniapp.md`：店员端需求分析入口；按文件头状态区分讨论提案与正式依据，不能因列入地图就视为已确认。
+- `execution/deepseek-execution-standard.md`：AI执行、分批交付和独立验收约束；不新增业务规则，不替代阶段14最终开发总提示词。
+- `execution/deepseek-start-prompt.md`：上述标准的可复制启动/整改提示词。
+- `execution/customer-delivery-tracker.md`：引用03i唯一验收ID的交付证据记录，不定义业务或验收ID含义。
 
 同一业务范围内，详细子模块解释总纲；页面结构以当前 `03i` 为统一收口，新增详细场景按对应子模块和 UI 规格执行。若出现无法同时满足的冲突，必须停止实现并提出冲突。
 
@@ -93,10 +97,12 @@
 ## 6. 需求变更记录位置
 
 - 当前有效规则只写在正式模块文档中，不在正文保留已废弃的“原规则”。
-- 历史变更证据统一移至 [`history/2026-client-requirements-changes.md`](history/2026-client-requirements-changes.md)。
+- 历史变更证据统一放在 `history/`，档案地图见 [history/README.md](history/README.md)；客户端业务历史继续使用原客户端变更文件，执行治理与店员分析使用各自列明的历史文件。
 - 页面地图 / 关键原型交互变更同步 `03i`；业务细节同步对应子模块；阶段和待决状态同步 `REQUIREMENTS-STATUS.md`。
 - 历史文件只用于追溯，不属于正式需求来源，不得从历史文件恢复已废弃行为。
 
 ## 7. 变更历史
+
+执行治理与店员分析历史见 [history/2026-execution-and-staff-changes.md](history/2026-execution-and-staff-changes.md)。
 
 历史同步记录见 [`history/2026-client-requirements-changes.md`](history/2026-client-requirements-changes.md)；历史表述不得作为当前实现依据。

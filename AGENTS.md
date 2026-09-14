@@ -59,6 +59,10 @@
 
 完整文件索引、文档优先级和当前基线见 `docs/README.md`。
 
+AI实现或交付审查另须读取 `docs/execution/deepseek-execution-standard.md`；它只约束执行和证据，不代替业务模块或项目阶段。店员端讨论稿的菜单不能被推导为已确认权限。执行标准的 `status: confirmed` 仅限 `execution_controls_only`，不表示整套小程序可直接正式开发。
+
 ## 7. 变更历史
+
+执行治理与店员分析历史见 [docs/history/2026-execution-and-staff-changes.md](docs/history/2026-execution-and-staff-changes.md)。
 
 历史同步记录见 [`docs/history/2026-client-requirements-changes.md`](docs/history/2026-client-requirements-changes.md)；历史表述不得作为当前实现依据。

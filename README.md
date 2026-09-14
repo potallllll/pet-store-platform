@@ -9,6 +9,8 @@
 - AI / Codex 执行约束：[AGENTS.md](AGENTS.md)
 - 文档地图与阅读顺序：[docs/README.md](docs/README.md)
 - 当前阶段、状态例外与待决项：[docs/REQUIREMENTS-STATUS.md](docs/REQUIREMENTS-STATUS.md)
+- DeepSeek执行标准与提示词：[执行标准](docs/execution/deepseek-execution-standard.md) · [可复制提示词](docs/execution/deepseek-start-prompt.md)
+- 店员端需求分析：[讨论稿](docs/04-staff-miniapp.md)
 
 具体业务规则只以 `docs/README.md` 指向的正式模块文档为准。本文件不复制当前阶段、业务结论或冲突处理规则，避免入口摘要与正式文档发生漂移。
 
