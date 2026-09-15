@@ -9,12 +9,14 @@
 3. 状态字段使用稳定英文枚举：`discussing`、`pending`、`confirmed`、`mixed`、`future`；中文解释见 `REQUIREMENTS-STATUS.md`。
 4. 若已确认文档之间出现明确冲突，不得自行推断，必须提出并通过需求变更解决。
 5. 需求修改必须记录原规则、新规则和影响范围。
+6. 涉及字段命名、API、DTO、事件、缓存 Key、数据映射、数据库字段或跨模块取数时，必须读取 `FIELD-REGISTRY.md`；已经存在同义字段时不得自行创造第二个字段名。
 
 机器读取时还必须检查：`status_scope`、`confirmed_scope`、`pending_scope`、`development_readiness` 和 `blocked_by`。`development_readiness: partial` 表示只允许实现不依赖待决项的范围，不能用页面隐藏、临时默认值或 Mock 绕过阻塞决策。
 
 ## 2. 文档职责与优先级
 
 - `REQUIREMENTS-STATUS.md`：当前阶段、完成状态和基线摘要。
+- `FIELD-REGISTRY.md`：全项目字段唯一注册表；固定永久注册号、统一逻辑字段名、字段解释、别名映射与禁止混用规则。业务规则仍以所属正式模块为准。
 - `00-project-workflow.md`：需求治理、开发流程和全局交互原则。
 - `01-project-positioning.md`：产品边界、多租户和跨模块原则。
 - `02-roles-and-accounts.md`：角色、账号归属和员工生命周期。
@@ -51,6 +53,7 @@
 6. `10a-customer-ui-design-system.md`
 7. 任务涉及首页时读取 `10b-customer-homepage-ui-spec.md`
 8. 任务涉及小程序启动 / 封面广告时读取 `10c-customer-launch-cover-ad-ui-spec.md`
+9. 原型涉及字段命名、接口假数据结构或跨模块数据映射时读取 `FIELD-REGISTRY.md`
 
 ### 3.2 单模块或单页面任务
 
@@ -65,6 +68,7 @@
 7. 涉及 UI 时读取 `10a-customer-ui-design-system.md`
 8. 涉及首页时读取 `10b-customer-homepage-ui-spec.md`
 9. 涉及启动 / 封面广告时读取 `10c-customer-launch-cover-ad-ui-spec.md`
+10. 涉及字段、接口或数据调取时读取 `FIELD-REGISTRY.md`
 
 若单页面行为跨越身份、消息、订单、钱包、广告或其他业务域，必须追加读取对应子模块；不得因采用单模块清单而忽略实际依赖。无法判断依赖范围时，使用完整客户端清单。
 
@@ -73,15 +77,28 @@
 - `03i` 是当前统一页面地图和核心验收矩阵。
 - `03o` 是首页底部 Banner 广告，不是顶部品牌 Banner，也不是激励广告。
 - `03p` 是启动 / 符合频控的重新进入时、恢复本次业务目标前的封面广告层；不得在普通页面内部导航时反复弹出。
+- `FIELD-REGISTRY.md` 只统一字段标识和含义，不可用字段表覆盖原模块的权限、状态迁移或待决规则。
 - 临时 H5 只是沟通 / 验收工具，不是正式需求源。
 
 具体业务结论只读取对应正式模块文档，不在本阅读指南复制。
+
+### 3.3 API / 数据 / 数据库 / Codex 字段任务
+
+凡任务涉及 API、DTO、数据库、事件消息、缓存、日志、数据导入导出、跨端字段映射或 Codex 生成数据结构，至少读取：
+
+1. `FIELD-REGISTRY.md`
+2. 字段所属的正式业务模块文档
+3. `01-project-positioning.md` 与 `02-roles-and-accounts.md`（涉及身份、多租户、权限时）
+4. `REQUIREMENTS-STATUS.md`（确认字段所属业务是否仍被 DEC 阻塞）
+
+若注册表已有同义字段，必须复用原永久注册号和统一逻辑字段名。需要新增字段时，应先更新注册表，再进入实现；禁止直接新增长期使用的 `xxx2`、`new_xxx`、`temp_xxx`、`extra_data` 等临时命名。
 
 ## 4. 文件命名约定
 
 - 数字前缀表示阶段，例如 `03` 为客户端阶段。
 - 字母子编号表示阶段子模块，例如 `03a`、`03b`。
 - 文件名使用当前正式产品术语，不继续沿用已废弃旧称。
+- 跨阶段公共注册表可使用大写语义名，例如 `FIELD-REGISTRY.md`，不占用阶段编号。
 
 ## 5. 暂不放入正式需求目录的内容
 
@@ -99,6 +116,7 @@
 - 当前有效规则只写在正式模块文档中，不在正文保留已废弃的“原规则”。
 - 历史变更证据统一放在 `history/`，档案地图见 [history/README.md](history/README.md)；客户端业务历史继续使用原客户端变更文件，执行治理与店员分析使用各自列明的历史文件。
 - 页面地图 / 关键原型交互变更同步 `03i`；业务细节同步对应子模块；阶段和待决状态同步 `REQUIREMENTS-STATUS.md`。
+- 字段新增、重命名、废弃或别名收口同步 `FIELD-REGISTRY.md`；已使用注册号不得复用。
 - 历史文件只用于追溯，不属于正式需求来源，不得从历史文件恢复已废弃行为。
 
 ## 7. 变更历史
