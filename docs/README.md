@@ -22,7 +22,7 @@
 - `02-roles-and-accounts.md`：角色、账号归属和员工生命周期。
 - `03-customer-miniapp.md`：当前客户端总纲。
 - `03a`～`03g`：预约、宠物、钱包、订单、商品、消息、身份详细规则。
-- `03h-customer-risk-feedback.md`：消费避雷、门店 / 宠物食品投诉、平台裁决、食品集中反馈、批量审核与跨店风险信息边界。
+- `03h-customer-risk-feedback.md`：消费争议、门店 / 宠物食品投诉、平台裁决、食品集中反馈、批量审核与跨店风险信息边界。
 - `03i-customer-screen-blueprint.md`：当前客户端主产品页面蓝图。
 - `03j`～`03m`：上门喂养、平台积分、养宠顾问、激励广告权益详细业务规则。
 - 原 `03n-customer-screen-blueprint-extension.md` 已归档；现行内容由 `03i` 与对应业务子模块承接。

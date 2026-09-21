@@ -1,10 +1,12 @@
 # 03F 客户端「消息中心 + 微信通知」模块
 
-> status: confirmed
+> status: mixed
+> confirmed_scope: existing_message_rules_and_sections_13_2_13_3_confirmed_directions
+> pending_scope: sms_delivery_configuration_and_staff_risk_todo_routing_permissions_and_lifecycle
 > status_scope: full_document
 > change_policy: record_required
-> development_readiness: ready
-> blocked_by: []
+> development_readiness: partial
+> blocked_by: [DEC-STAFF-03, DEC-STAFF-07]
 > parent_stage: 03_customer_miniapp
 > version: V1.0
 
@@ -276,7 +278,7 @@ V1.0 按三档处理：
 
 ## 13. 投诉与风险反馈消息
 
-消费避雷模块继续复用统一消息中心，不建设用户与门店的即时聊天。
+消费争议模块继续复用统一消息中心，不建设用户与门店的即时聊天。
 
 投诉相关至少支持以下消息：
 
@@ -315,6 +317,18 @@ V1.0 按三档处理：
 商家回应、第三方佐证与平台裁决都发生在正式投诉对象中，不通过私聊消息修改事实状态。
 
 详细状态与 7 天 / 3 天规则见 `03h-customer-risk-feedback.md`.
+
+### 13.2 投诉短信：新增渠道
+
+投诉提醒与逾期处理增加短信渠道，不替代站内消息及已授权且可用的微信通知；本次不把短信扩展为全部业务通知或营销群发。
+
+短信接收人、手机号使用依据、模板、发送时间与频率、失败重试和费用控制仍须在后续通知 / 权限设计中确认，不自行配置默认值。发送成功、失败或已读都不等于正式回应、已解决或投诉成立；失败不回滚业务状态，也不自行重置7天回应 / 3天补证期限。短信对外发送结果须留痕；具体字段在技术设计前按字段注册表登记，不复用微信专用字段冒充短信。
+
+### 13.3 食品风险独立店员待办
+
+§13.1给宠物主人的食品品牌风险提醒还必须另行形成店员待办，不能以主人收到消息代替店员承接。
+
+主人消息继续按 `Platform User + complaint_id` 去重；这不是店员待办去重键的确认。待办归属门店、责任人、可见字段、重复事件处理、领取 / 转交、完成条件须在 `DEC-STAFF-03 / DEC-STAFF-07` 收口。确认前不默认向该主人关联的所有门店广播，不自动停卖、退款或认定食品质量责任。
 
 ## 14. V1.0 不实现
 

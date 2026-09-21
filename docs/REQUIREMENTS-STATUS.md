@@ -51,13 +51,14 @@
 |---|---|---|---|
 | `03a-customer-appointment.md` | §1～§10 | §11 | `DEC-APPT-01` |
 | `03b-customer-pet-profile.md` | 宠物档案及本店行为记录 | 跨店行为安全可见范围 / 授权 / 保留 | `DEC-PETSAFETY-01` |
+| `03f-customer-messages.md` | 原消息规则、投诉短信为新增渠道、主人食品风险另行形成店员待办 | 短信接收人与发送配置；待办归属、权限和生命周期 | `DEC-STAFF-03`、`DEC-STAFF-07`（04索引） |
 | `03h-customer-risk-feedback.md` | 已确认投诉状态机、7天回应、3天补证、单审核员、长期公开、食品2天/3条风险规则、宠物当前品牌风险提醒、问题热度必须展示、批量审核基线 | 集中反馈续期、重复投诉、跨店顾客风险、宠物安全共享、证据权重、未入驻门店、食品多主体回应、最终UI、问题热度算法 | `DEC-COMPLAINT-07`、`08`、`DEC-RISK-01`、`DEC-PETSAFETY-01`、`DEC-EVIDENCE-01`、`DEC-STORE-CLAIM-01`、`DEC-FOOD-RESP-01`、`DEC-RISK-UI-01`、`DEC-FOOD-HEAT-01` |
 | `03i-customer-screen-blueprint.md` | 当前页面地图与已确认投诉交互 | 风险模块最终视觉 / 未决边界 | 同 03h 风险相关 DEC |
 | `03j-customer-home-feeding-marketplace.md` | 除 §8.3 外的当前规则 | §8.3 | `DEC-FEED-01`～`03` |
 | `03k-customer-loyalty-points.md` | 除 §8.4 外的当前规则 | §8.4 | `DEC-POINTS-01`～`02` |
 | `03p-customer-launch-cover-ad.md` | 除 §6.1 待决运营数值外的当前规则 | §6.1 待决运营数值 | `DEC-LAUNCH-01` |
-| `10a-customer-ui-design-system.md` | 通用 Token 与其他已确认 UI | 消费避雷模块最终视觉 | `DEC-RISK-UI-01` |
-| `10b-customer-homepage-ui-spec.md` | 首页已确认结构与其他模块 | §7 消费避雷精确布局 | `DEC-RISK-UI-01` |
+| `10a-customer-ui-design-system.md` | 通用 Token 与其他已确认 UI | 消费争议模块最终视觉 | `DEC-RISK-UI-01` |
+| `10b-customer-homepage-ui-spec.md` | 首页已确认结构与其他模块 | §7 消费争议精确布局 | `DEC-RISK-UI-01` |
 
 ## 状态字段定义
 
@@ -93,8 +94,8 @@
 | DEC-PETSAFETY-01 | 宠物行为与服务安全档案跨店可见范围、主人授权、保留与重新评估 | 03h §10.2；03b；阶段08/合规 |
 | DEC-EVIDENCE-01 | 第三方证据等级 / 权重最终模型 | 03h §7 |
 | DEC-STORE-CLAIM-01 | 未入驻门店被投诉后的认领、通知、回应与申诉 | 03h §11 |
-| DEC-FOOD-RESP-01 | 食品投诉由销售门店、品牌 / 厂家等多主体如何回应 | 03h §11 |
-| DEC-RISK-UI-01 | 首页消费避雷卡片、距离、筛选与详情精确视觉 | 03h §11；10a/10b |
+| DEC-FOOD-RESP-01 | 已确认客服邮件联系厂家；厂家回信入系统、正式回应判定、多主体责任及期限映射待决 | 03h §11 |
+| DEC-RISK-UI-01 | 首页消费争议卡片、距离、筛选与详情精确视觉 | 03h §11；10a/10b |
 | DEC-FOOD-HEAT-01 | 食品问题热度的数值范围、公式、权重、更新频率与最终显示形态 | 03h §8.6；阶段06/11 |
 
 待决不代表允许前端自行设默认权限、截止或财务政策；进入对应能力的正式开发 / 验收前必须闭合。已确认的不变量、界面状态和恢复路径可先用于设计与开发准备。
