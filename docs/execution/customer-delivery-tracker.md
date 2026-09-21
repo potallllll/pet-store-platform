@@ -6,7 +6,7 @@
 > change_policy: record_required
 > development_readiness: blocked
 > blocked_by: [DEC-EXEC-01, DEC-EXEC-02]
-> requirements_baseline_sha: 8ab6c7f1208a642fcf351dd0769ab2a6129bc54b
+> requirements_baseline_sha: 809ca75818ded158c5790a3e11e25efd3b611fd4
 > code_baseline_sha: not_created
 > batch_id: not_assigned
 > review_result: not_reviewed
