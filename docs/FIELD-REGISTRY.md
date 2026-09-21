@@ -127,7 +127,7 @@
 | F-AUTH-013 | `entry_target_type` | S | Enum | 外部进入目标类型，例如消息、分享、扫码门店、服务结果、公开需求。 |
 | F-AUTH-014 | `entry_target_id` | S | ID/Text | 原始业务目标标识；验证 / 广告结束后必须恢复，不得一律跳首页。 |
 | F-AUTH-015 | `entry_target_store_id` | S | ID | 原目标真实所属门店；本次有效目标优先于历史门店。 |
-| F-AUTH-016 | `reduce_motion_enabled` | C | Bool | “减少动态效果”用户设置，影响交友自动轮播和非必要位移动画。 |
+| F-AUTH-016 | `reduce_motion_enabled` | C | Bool | “减少动态效果”用户设置，控制现行模块的非必要位移动画；品牌Banner等已确认轮播遵循10a/10b，不据此恢复已退役社交轮播或确认风险模块轮播。 |
 | F-AUTH-017 | `account_status` | S | Enum | User 账号当前状态；注销与退出会话分开。 |
 | F-AUTH-018 | `session_status` | S | Enum | 当前登录 Session 有效性；退出登录只结束 Session，不删除业务数据。 |
 
@@ -135,7 +135,7 @@
 
 ## 5. 店员归属、邀请与当前已确认导航（STAFF）
 
-> `04-staff-miniapp.md` 当前只有 §3.0 导航与洗美/寄养归属已确认，其余店员流程字段仍为 pending。本节只冻结已有正式事实，不把讨论稿提前变成实现要求。
+> `04-staff-miniapp.md` 已确认范围为§3.0导航与洗美/寄养归属，以及§6.1投诉回应基线。具体菜单、员工权限与跨店共享细节仍待确认；本注册表不授予业务权限。
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
@@ -1011,7 +1011,7 @@ Pending 字段确认后：
 - `02-roles-and-accounts.md`
 - `03-customer-miniapp.md`
 - `03a`～`03m`、`03o`～`03p`
-- `04-staff-miniapp.md` 当前已确认 §3.0 与来自 01/02/03 的已确认跨端约束
+- `04-staff-miniapp.md` 当前已确认§3.0、§6.1与来自01/02/03的已确认跨端约束
 
 `03n` 已归档，不作为字段来源。UI 颜色、字号、间距等 Design Token 不属于本业务字段注册表。
 

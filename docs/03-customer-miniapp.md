@@ -451,7 +451,7 @@ placement：`launch_cover_ad`
 - `03e-customer-products.md`：商品 / 购买需求 / 寄养加餐
 - `03f-customer-messages.md`：消息与微信通知
 - `03g-customer-identity-security.md`：身份、安全与历史客户识别
-- `03h-customer-pet-social.md`：宠物交友
+- `03h-customer-risk-feedback.md`：消费避雷、投诉与跨店风险信息
 - `03i-customer-screen-blueprint.md`：当前客户端产品蓝图与验收矩阵
 - `03j-customer-home-feeding-marketplace.md`：上门喂养
 - `03k-customer-loyalty-points.md`：平台积分 / 签到 / 积分商城
