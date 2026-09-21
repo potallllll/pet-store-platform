@@ -4,7 +4,7 @@
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: [DEC-APPT-01, DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01]
+> blocked_by: [DEC-APPT-01, DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01, DEC-FOOD-HEAT-01]
 > version: V1.0
 
 ## 1. 客户端定位
@@ -90,11 +90,11 @@ Platform Super Admin 可单独配置：
 
 首页业务顺序固定：
 
-> 当前门店 → 当前服务 → 宠物交友 → 上门喂养 → 推荐商品
+> 当前门店 → 当前服务 → 消费避雷 / 风险反馈 → 上门喂养 → 推荐商品
 
 UI 层当前完整顺序：
 
-> 顶部门店栏 → 顶部品牌 / 生活方式 Banner → 当前服务 → 宠物交友 → 上门喂养 → 精选商品 → 首页底部微信 Banner 广告 → 底部导航
+> 顶部门店栏 → 顶部品牌 / 生活方式 Banner → 当前服务 → 消费避雷 / 风险反馈 → 上门喂养 → 精选商品 → 首页底部微信 Banner 广告 → 底部导航
 
 首页顶部右侧只保留消息入口。
 
