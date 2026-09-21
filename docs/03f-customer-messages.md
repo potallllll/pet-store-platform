@@ -2,7 +2,7 @@
 
 > status: mixed
 > confirmed_scope: existing_message_rules_and_sections_13_2_13_3_confirmed_directions
-> pending_scope: sms_phone_and_delivery_configuration_and_food_store_mapping_and_staff_todo_lifecycle
+> pending_scope: sms_delivery_configuration_and_food_store_mapping_and_staff_todo_lifecycle
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -322,7 +322,7 @@ V1.0 按三档处理：
 
 投诉提醒与逾期处理增加短信渠道，不替代站内消息及已授权且可用的微信通知；本次不把短信扩展为全部业务通知或营销群发。
 
-短信接收对象为争议门店，不是默认发送给全部员工或宠物主人。门店实际接收手机号及其维护 / 验证方式、手机号使用依据、模板、发送时间与频率、失败重试和费用控制仍须在后续通知 / 权限设计中确认，不自行配置默认值。发送成功、失败或已读都不等于正式回应、已解决或投诉成立；失败不回滚业务状态，也不自行重置7天回应 / 3天补证期限。短信对外发送结果须留痕；具体字段在技术设计前按字段注册表登记，不复用微信专用字段冒充短信。
+短信接收对象为争议门店，不是默认发送给全部员工或宠物主人。接收号码固定使用争议门店的注册号码，不另设可独立配置的“争议通知手机号”，不自动替换成门店公开联系电话或任一员工个人号码。注册号码变更 / 验证规则按后续账号管理设计收口；号码缺失或不可用时不得猜测替代号码，也不改变投诉状态与期限。短信模板、发送时间与频率、失败重试和费用控制仍须在后续通知 / 权限设计中确认，不自行配置默认值。发送成功、失败或已读都不等于正式回应、已解决或投诉成立；失败不回滚业务状态，也不自行重置7天回应 / 3天补证期限。短信对外发送结果须留痕；具体字段在技术设计前按字段注册表登记，不复用微信专用字段冒充短信。
 
 ### 13.3 食品风险独立店员待办
 
