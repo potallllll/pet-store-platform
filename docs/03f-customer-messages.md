@@ -2,7 +2,7 @@
 
 > status: mixed
 > confirmed_scope: existing_message_rules_and_sections_13_2_13_3_confirmed_directions
-> pending_scope: sms_delivery_configuration_and_staff_risk_todo_routing_permissions_and_lifecycle
+> pending_scope: sms_phone_and_delivery_configuration_and_food_store_mapping_and_staff_todo_lifecycle
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -322,13 +322,13 @@ V1.0 按三档处理：
 
 投诉提醒与逾期处理增加短信渠道，不替代站内消息及已授权且可用的微信通知；本次不把短信扩展为全部业务通知或营销群发。
 
-短信接收人、手机号使用依据、模板、发送时间与频率、失败重试和费用控制仍须在后续通知 / 权限设计中确认，不自行配置默认值。发送成功、失败或已读都不等于正式回应、已解决或投诉成立；失败不回滚业务状态，也不自行重置7天回应 / 3天补证期限。短信对外发送结果须留痕；具体字段在技术设计前按字段注册表登记，不复用微信专用字段冒充短信。
+短信接收对象为争议门店，不是默认发送给全部员工或宠物主人。门店实际接收手机号及其维护 / 验证方式、手机号使用依据、模板、发送时间与频率、失败重试和费用控制仍须在后续通知 / 权限设计中确认，不自行配置默认值。发送成功、失败或已读都不等于正式回应、已解决或投诉成立；失败不回滚业务状态，也不自行重置7天回应 / 3天补证期限。短信对外发送结果须留痕；具体字段在技术设计前按字段注册表登记，不复用微信专用字段冒充短信。
 
 ### 13.3 食品风险独立店员待办
 
 §13.1给宠物主人的食品品牌风险提醒还必须另行形成店员待办，不能以主人收到消息代替店员承接。
 
-主人消息继续按 `Platform User + complaint_id` 去重；这不是店员待办去重键的确认。待办归属门店、责任人、可见字段、重复事件处理、领取 / 转交、完成条件须在 `DEC-STAFF-03 / DEC-STAFF-07` 收口。确认前不默认向该主人关联的所有门店广播，不自动停卖、退款或认定食品质量责任。
+主人消息继续按 `Platform User + complaint_id` 去重；这不是店员待办去重键的确认。待办归属争议门店，不按主人当前选择门店或所有关联门店分发。食品投诉尚未明确争议门店时，门店映射仍待确认，不得猜测或全量广播。门店内部责任人、可见字段、重复事件处理、领取 / 转交、完成条件须在 `DEC-STAFF-03 / DEC-STAFF-07` 收口。确认前不默认向该主人关联的所有门店广播，不自动停卖、退款或认定食品质量责任。
 
 ## 14. V1.0 不实现
 

@@ -51,7 +51,7 @@
 |---|---|---|---|
 | `03a-customer-appointment.md` | §1～§10 | §11 | `DEC-APPT-01` |
 | `03b-customer-pet-profile.md` | 宠物档案及本店行为记录 | 跨店行为安全可见范围 / 授权 / 保留 | `DEC-PETSAFETY-01` |
-| `03f-customer-messages.md` | 原消息规则、投诉短信为新增渠道、主人食品风险另行形成店员待办 | 短信接收人与发送配置；待办归属、权限和生命周期 | `DEC-STAFF-03`、`DEC-STAFF-07`（04索引） |
+| `03f-customer-messages.md` | 原消息规则、投诉短信为新增渠道、主人食品风险另行形成店员待办 | 接收争议门店的实际手机号与发送配置；食品投诉未明确争议门店时的映射、待办生命周期 | `DEC-STAFF-03`、`DEC-STAFF-07`（04索引） |
 | `03h-customer-risk-feedback.md` | 已确认投诉状态机、7天回应、3天补证、单审核员、长期公开、食品2天/3条风险规则、宠物当前品牌风险提醒、问题热度必须展示、批量审核基线 | 集中反馈续期、重复投诉、跨店顾客风险、宠物安全共享、证据权重、未入驻门店、食品多主体回应、最终UI、问题热度算法 | `DEC-COMPLAINT-07`、`08`、`DEC-RISK-01`、`DEC-PETSAFETY-01`、`DEC-EVIDENCE-01`、`DEC-STORE-CLAIM-01`、`DEC-FOOD-RESP-01`、`DEC-RISK-UI-01`、`DEC-FOOD-HEAT-01` |
 | `03i-customer-screen-blueprint.md` | 当前页面地图与已确认投诉交互 | 风险模块最终视觉 / 未决边界 | 同 03h 风险相关 DEC |
 | `03j-customer-home-feeding-marketplace.md` | 除 §8.3 外的当前规则 | §8.3 | `DEC-FEED-01`～`03` |
@@ -94,7 +94,7 @@
 | DEC-PETSAFETY-01 | 宠物行为与服务安全档案跨店可见范围、主人授权、保留与重新评估 | 03h §10.2；03b；阶段08/合规 |
 | DEC-EVIDENCE-01 | 第三方证据等级 / 权重最终模型 | 03h §7 |
 | DEC-STORE-CLAIM-01 | 未入驻门店被投诉后的认领、通知、回应与申诉 | 03h §11 |
-| DEC-FOOD-RESP-01 | 已确认客服邮件联系厂家；厂家回信入系统、正式回应判定、多主体责任及期限映射待决 | 03h §11 |
+| DEC-FOOD-RESP-01 | 已确认客服邮件联系厂家、管理员在平台Web后台录入回信；正式回应判定、多主体责任及期限映射待决 | 03h §11 |
 | DEC-RISK-UI-01 | 首页消费争议卡片、距离、筛选与详情精确视觉 | 03h §11；10a/10b |
 | DEC-FOOD-HEAT-01 | 食品问题热度的数值范围、公式、权重、更新频率与最终显示形态 | 03h §8.6；阶段06/11 |
 
