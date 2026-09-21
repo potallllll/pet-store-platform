@@ -1,10 +1,12 @@
 # 03I 客户端「页面蓝图与关键交互验收场景」
 
-> status: confirmed
+> status: mixed
+> confirmed_scope: current_page_map_and_confirmed_interactions_except_pending_risk_ui_details
+> pending_scope: risk_module_visual_and_unresolved_03h_edges
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: [DEC-APPT-01, DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01]
+> blocked_by: [DEC-APPT-01, DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01]
 > parent_stage: 03_customer_miniapp
 > version: V1.0
 
@@ -48,9 +50,12 @@
 │  │  ├─ 洗护 / 美容服务结果
 │  │  └─ 寄养详情 / 寄养动态时间轴
 │  │     └─ 投喂零食 / 寄养加餐
-│  ├─ 宠物交友
-│  │  ├─ 宠物交友更多列表
-│  │  └─ 宠物交友详情 / 邀请
+│  ├─ 消费避雷 / 风险反馈
+│  │  ├─ 附近门店
+│  │  │  └─ 门店反馈详情 / 提交投诉
+│  │  ├─ 宠物食品
+│  │  │  └─ 食品 / 批次反馈详情 / 提交投诉
+│  │  └─ 我的投诉 / 补证 / 申诉
 │  ├─ 上门喂养
 │  │  ├─ 公开需求列表
 │  │  ├─ 需求详情
@@ -77,7 +82,7 @@
 │  │     ├─ 寄养资料
 │  │     ├─ 服务记录
 │  │     ├─ 服务相册
-│  │     └─ 宠物交友设置
+│  │     └─ 宠物行为与服务安全档案
 │  ├─ 我的钱包
 │  │  ├─ 余额明细
 │  │  ├─ 我的优惠券
@@ -104,7 +109,7 @@
 
 1. 当前门店
 2. 当前服务
-3. 宠物交友
+3. 消费避雷 / 风险反馈
 4. 上门喂养
 5. 推荐商品
 
@@ -167,25 +172,37 @@ UI 层可在顶部门店栏下使用品牌 / 生活方式 Banner；精选商品�
 
 寄养详情下方在符合条件时提供“投喂零食”。
 
-### 3.5 宠物交友
+### 3.5 消费避雷 / 风险反馈
 
-首页宠物交友区域：
+原“消费避雷 / 风险反馈”首页模块已移除。
 
-- 多屏数据默认自动横向轮播，同时支持手动滑动与明确的暂停 / 继续控制。
-- 用户操作时自动轮播让位；显式暂停后仅由用户继续恢复。单屏、减少动态效果及离开可视区域时不自动播放，按 03h / 10a 执行。
-- 每屏 3 只，一轮最多 12 只不同宠物。
-- 本轮真实宠物至少 4 只且包含本人主宠物时自己的主展示宠物固定第 4 位；不足 4 只按实际数量展示，不重复、不补空位。
-- 自己未开启交友时可仅本人可见。
-- 对真正可邀请的其他宠物显示卡片底部浅色“可发送邀请”。
-- 自己、私有、未开启或其他不可邀请状态不得错误显示该标签。
-- 卡片互动指标使用“热度”，不使用点赞 / 爱心语义；热度由最近 7 天有效点击与当前门店 7 日排名计算，前端只展示服务端结果。
-- “更多”进入当前门店完整交友列表。
+首页该位置改为消费避雷入口，至少可进入：
 
-自动轮播精确秒数留到阶段 10。
+- 附近门店；
+- 宠物食品。
+
+首页只承担风险摘要与入口，不在卡片层直接把未经平台裁决的投诉写成成立事实。
+
+门店 / 食品详情至少区分：
+
+- 用户反馈；
+- 商家回应状态；
+- 平台核验状态；
+- 是否已解决。
+
+投诉基础内容审核通过后立即公开为“用户反馈 · 待商家回应 / 尚未核验”。
+
+商家回应期限 7 天；逾期显示“商家逾期未回应”，但不自动成立。商家正式回应后双方进入 3 天补证期，随后由 1 名有 `complaint_review.decide` 权限的平台审核员裁决。
+
+所有公开投诉长期保留；未解决整体靠前，已解决整体靠后，各组内部按时间倒序。
+
+同一食品同一批次在最近 2 天内达到至少 3 条独立投诉时显示“出现集中反馈”。3 条为硬门槛；跨不同门店来源只提高风险优先级 / 排序，不得把 2 条折算为 3 条。提示保留 2 个月。
+
+最终卡片布局、附近距离表达、筛选与详情视觉仍受 `DEC-RISK-UI-01` 阻塞。
 
 ### 3.6 上门喂养
 
-首页上门喂养区域位于宠物交友之后。
+首页上门喂养区域位于消费避雷 / 风险反馈之后。
 
 至少展示：
 
@@ -463,7 +480,7 @@ H5 原型可以使用 1 / 2 / 4 / 6 组模拟控制验证动态能力，但该�
 
 宠物列表至少展示头像、名称、类型 / 品种、性别、年龄、当前体重，并可进入档案 / 添加宠物。
 
-宠物档案承载基本资料、护理档案、寄养资料、服务记录、服务相册和宠物交友设置。
+宠物档案承载基本资料、护理档案、寄养资料、服务记录、服务相册和消费避雷 / 风险反馈设置。
 
 ### 10.2 我的钱包
 
@@ -609,7 +626,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 ### C-HOME-01：首页普通状态
 
 - 默认首页。
-- 当前门店 → 当前服务 → 宠物交友 → 上门喂养 → 推荐商品。
+- 当前门店 → 当前服务 → 消费避雷 / 风险反馈 → 上门喂养 → 推荐商品。
 - 精选商品后展示底部 Banner 广告（有填充时）。
 
 ### C-HOME-02：洗护刚完成
@@ -640,17 +657,62 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 - 提交后显示已通知店员 / 请求处理中。
 - 实际完成后时间轴出现投喂动态。
 
-### C-SOCIAL-01：首页宠物交友
+### C-RISK-01：首页消费避雷入口
 
-- 每屏 3 只，最多 12 只。
-- 自动轮播 + 手动滑动。
-- 可邀请卡显示“可发送邀请”。
-- 卡片显示服务端热度，不显示点赞数。
+- 首页原消费避雷 / 风险反馈位置改为消费避雷。
+- 可进入附近门店与宠物食品两类公开风险反馈。
+- 未核验用户反馈不得显示为平台已认定事实。
 
-### C-SOCIAL-02：自己的宠物第 4 位
+### C-COMPLAINT-01：文字投诉与审核后公开
 
-- 本轮真实宠物至少 4 只且包含本人主宠物时，第二屏第 1 位为自己的主宠物；不足时按 C-SOCIAL-03。
-- 私有状态不显示“可发送邀请”。
+- 用户可以只提交文字，不强制附件。
+- 基础内容审核通过后立即公开。
+- 页面明确显示“平台尚未核验”。
+
+### C-COMPLAINT-02：7 天回应
+
+- 正式回应期限为 7 天。
+- 到期未回应显示“商家逾期未回应”。
+- 逾期不得自动转为 established。
+
+### C-COMPLAINT-03：回应后 3 天补证
+
+- 商家首个正式回应后，双方进入 3 天补证期。
+- 门店可上传材料并邀请第三方顾客佐证。
+- 第三方人数不得作为投票结果直接决定成立。
+
+### C-COMPLAINT-04：单审核员逐事实点裁决
+
+- 1 名有权限的平台审核员可以裁决所有案件。
+- 支持 established / partially_established / insufficient_evidence / not_supported。
+- 组合投诉按事实点分别核验。
+
+### C-COMPLAINT-05：长期公开与排序
+
+- 公开投诉长期保留。
+- 未解决整体优先并按时间倒序。
+- 已解决整体后置并按时间倒序。
+- “已解决”与事实裁决分开。
+
+### C-FOOD-RISK-01：2 天 / 3 条硬门槛
+
+- 同一食品同一批次最近 2 天至少 3 条独立投诉才显示“出现集中反馈”。
+- 2 条投诉不得依赖权重折算成 3 条。
+
+### C-FOOD-RISK-02：同一用户去重
+
+- 同一用户同一食品批次已有未处理投诉时提示“已有投诉未处理”。
+- 用户回原投诉补充内容，不新建第二条。
+
+### C-FOOD-RISK-03：跨门店只影响优先级
+
+- 达到 3 条硬门槛后，不同门店来源提高风险优先级 / 排序。
+- 门店来源加权不得改变触发门槛。
+
+### C-FOOD-RISK-04：反馈口径与 2 个月提示
+
+- not_supported 仍计入“反馈数量”，不得表述为成立数量。
+- “出现集中反馈”提示保留 2 个月，到期解除；历史投诉不删除。
 
 ### C-FEED-01：上门喂养发布 / 分享
 
@@ -778,10 +840,16 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 | C-BOARDING-03 | 已收款未投喂仍为处理中 | [03e-customer-products.md](03e-customer-products.md) |
 | C-BOARDING-04 | 重复执行确认仅写一次动态 | [03e-customer-products.md](03e-customer-products.md) |
 | C-BOARDING-05 | 提前离店 / 撤回允许 / 无法投喂收口 | [03e-customer-products.md](03e-customer-products.md) |
-| C-SOCIAL-01 | 多屏自动与手动轮播、热度和邀请标签 | [03h-customer-pet-social.md](03h-customer-pet-social.md) |
-| C-SOCIAL-02 | 至少四张时本人第4位与公开授权 | [03h-customer-pet-social.md](03h-customer-pet-social.md) |
-| C-SOCIAL-03 | 0～3张数据及单屏降级 | [03h-customer-pet-social.md](03h-customer-pet-social.md) |
-| C-SOCIAL-04 | 暂停继续、减少动态效果与离屏暂停 | [03h-customer-pet-social.md](03h-customer-pet-social.md) |
+| C-RISK-01 | 首页消费避雷入口与未核验展示边界 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
+| C-COMPLAINT-01 | 文字投诉、基础审核通过后立即公开 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
+| C-COMPLAINT-02 | 7天商家回应与逾期不自动成立 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
+| C-COMPLAINT-03 | 商家回应后双方3天补证及第三方佐证 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
+| C-COMPLAINT-04 | 单审核员逐事实点裁决 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
+| C-COMPLAINT-05 | 投诉长期公开、未解决优先排序 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
+| C-FOOD-RISK-01 | 同食品同批次2天内3条独立投诉硬门槛 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
+| C-FOOD-RISK-02 | 同一用户未处理投诉去重 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
+| C-FOOD-RISK-03 | 跨门店来源仅提高风险优先级/排序 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
+| C-FOOD-RISK-04 | not_supported计入反馈与2个月风险提示 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
 | C-APPT-01 | 已确认预约表单及按需身份验证 | [03a-customer-appointment.md](03a-customer-appointment.md) |
 | C-FEED-01 | 发布需求及成功后分享入口 | [03j-customer-home-feeding-marketplace.md](03j-customer-home-feeding-marketplace.md) |
 | C-FEED-02 | 公开内容隐私边界 | [03j-customer-home-feeding-marketplace.md](03j-customer-home-feeding-marketplace.md) |
@@ -850,12 +918,12 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 | ID | 页面 / 场景 | 必须展示 | 必须可交互 |
 |---|---|---|---|
 | C-LAUNCH-AD-07 | 启动封面 | 图片/视频/微信广告模式 | 模式切换/跳过/失败降级 |
-| C-HOME-01 | 首页 | 门店、当前服务、交友、上门喂养、商品 | 主要入口 |
+| C-HOME-01 | 首页 | 门店、当前服务、消费避雷、上门喂养、商品 | 主要入口 |
 | C-HOME-02 | 服务完成 | 完成提示、完成卡 | 查看 / 稍后 |
 | C-HOME-AD-06 | 首页底部广告 | Banner 广告位置 / 状态 | loaded/no_fill/failed/disabled 模拟 |
 | C-BOARDING-01 | 寄养动态 | 日期分组、时间轴、媒体 | 查看历史 |
 | C-BOARDING-02 | 寄养加餐 | 可投喂商品、处理中 | 选择 / 提交 |
-| C-SOCIAL-01 | 宠物交友 | 3只/屏、最多12只、热度 | 自动轮播 + 手动滑动 |
+| C-RISK-01 | 消费避雷 / 风险反馈 | 附近门店、宠物食品、未核验状态 | 进入列表 / 详情 |
 | C-APPT-01 | 预约 | 宠物、服务、日期、时段 | 提交预约 |
 | C-RESULT-01 / C-RESULT-02 | 服务结果 | N组前后对比、当前组和前后标签 | 切组 + 拖动 + 可点选的“护理前 / 护理后”或“并排查看” |
 | C-AI-01 | AI未解锁 | 查看报告、广告说明 | 广告模拟 |
@@ -909,7 +977,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 - 启动封面广告存在及其三种来源模式
 - 首页底部 Banner 广告存在与曝光属性
 - 寄养动态时间轴能力
-- 宠物交友自动 + 手动轮播、热度语义
+- 消费避雷 / 风险反馈自动 + 手动轮播、热度语义
 - 上门喂养入口、状态与隐私边界
 - “我的”资产卡信息组成
 - 平台积分独立入口

@@ -6,7 +6,7 @@
 > change_policy: record_required
 > development_readiness: blocked
 > blocked_by: [DEC-EXEC-01, DEC-EXEC-02]
-> requirements_baseline_sha: d8cbe9fc38b5b5fdc73985e0faa9165aa1fadef3
+> requirements_baseline_sha: pending_sync_commit
 > code_baseline_sha: not_created
 > batch_id: not_assigned
 > review_result: not_reviewed
@@ -14,7 +14,7 @@
 
 ## 1. 职责
 
-本表是交付状态，不是产品业务确认状态。建立于2026-09-15，初始76个ID来自[03i§14.1唯一索引](../03i-customer-screen-blueprint.md#141-唯一验收-id-索引)，不复制其场景含义，也不表示DeepSeek已经生成或交付代码。
+本表是交付状态，不是产品业务确认状态。建立于2026-09-15，当前基线82个ID来自[03i§14.1唯一索引](../03i-customer-screen-blueprint.md#141-唯一验收-id-索引)，不复制其场景含义，也不表示DeepSeek已经生成或交付代码。
 
 后续按实际需求SHA重新对齐ID集合，新增ID不能遗漏，既有ID不能静默删除。全量初始状态统一为尚未实现/未测试/未审查；先前H5演示不计生产实现证据。代码仓库未确定前，不填写虚构路径或通过记录。
 
@@ -57,10 +57,16 @@ G0必须分析每个ID涉及的已确认/待决子场景。一个组合ID内任�
 | C-BOARDING-03 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
 | C-BOARDING-04 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
 | C-BOARDING-05 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
-| C-SOCIAL-01 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
-| C-SOCIAL-02 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
-| C-SOCIAL-03 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
-| C-SOCIAL-04 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-RISK-01 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-COMPLAINT-01 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-COMPLAINT-02 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-COMPLAINT-03 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-COMPLAINT-04 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-COMPLAINT-05 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-FOOD-RISK-01 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-FOOD-RISK-02 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-FOOD-RISK-03 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-FOOD-RISK-04 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
 | C-APPT-01 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
 | C-FEED-01 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
 | C-FEED-02 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |

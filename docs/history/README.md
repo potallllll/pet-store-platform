@@ -18,3 +18,4 @@
 
 - [`2026-client-requirements-changes.md`](2026-client-requirements-changes.md)：2026 年客户端需求变更记录。
 - [`03n-customer-screen-blueprint-extension.archived.md`](03n-customer-screen-blueprint-extension.archived.md)：已由 `03i` 和对应业务子模块取代的页面蓝图扩展。
+- [`03h-customer-pet-social.archived.md`](03h-customer-pet-social.archived.md)：已于 2026-09-21 被消费避雷 / 投诉与风险反馈模块取代的旧宠物交友正式规则。

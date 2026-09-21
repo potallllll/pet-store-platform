@@ -21,10 +21,12 @@
 - `01-project-positioning.md`：产品边界、多租户和跨模块原则。
 - `02-roles-and-accounts.md`：角色、账号归属和员工生命周期。
 - `03-customer-miniapp.md`：当前客户端总纲。
-- `03a`～`03h`：预约、宠物、钱包、订单、商品、消息、身份、宠物交友详细规则。
+- `03a`～`03g`：预约、宠物、钱包、订单、商品、消息、身份详细规则。
+- `03h-customer-risk-feedback.md`：消费避雷、门店 / 宠物食品投诉、平台裁决、食品集中反馈、批量审核与跨店风险信息边界。
 - `03i-customer-screen-blueprint.md`：当前客户端主产品页面蓝图。
 - `03j`～`03m`：上门喂养、平台积分、养宠顾问、激励广告权益详细业务规则。
 - 原 `03n-customer-screen-blueprint-extension.md` 已归档；现行内容由 `03i` 与对应业务子模块承接。
+- 原 `03h-customer-pet-social.md` 已归档为历史证据；当前 03h 由 `03h-customer-risk-feedback.md` 承接，禁止继续从旧宠物交友文档实现。
 - `03o-customer-home-banner-ad.md`：首页底部微信 Banner 曝光广告。
 - `03p-customer-launch-cover-ad.md`：小程序启动封面广告，支持自定义图片 / 视频 / 微信官方广告。
 - `10a-customer-ui-design-system.md`：客户端通用视觉基线。

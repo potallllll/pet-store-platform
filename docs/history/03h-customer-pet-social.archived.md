@@ -1,12 +1,16 @@
-# 03H 客户端「宠物交友」模块
+# 已归档：03H 客户端「宠物交友」模块
 
-> status: confirmed
+> status: archived
+> implementation_policy: forbidden
+> superseded_by: docs/03h-customer-risk-feedback.md
 > status_scope: full_document
 > change_policy: record_required
-> development_readiness: ready
+> development_readiness: blocked
 > blocked_by: []
 > parent_stage: 03_customer_miniapp
 > version: V1.0
+
+> 本文件仅保留历史证据。宠物交友已被“宠物食品避雷 / 附近门店避雷 + 投诉与风险反馈”替代，不得作为当前实现依据。
 
 ## 1. 产品定位
 

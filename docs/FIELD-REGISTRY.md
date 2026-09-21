@@ -60,6 +60,7 @@
 | `C` | 正式需求已明确字段或明确语义 | 是 |
 | `S` | 本注册表为已确认业务概念统一出的固定逻辑字段名，不新增业务规则 | 是 |
 | `P` | 对应业务仍被 DEC / mixed 文档阻塞，仅预留注册号 | 否；确认前不得实现成正式规则 |
+| `D` | 已退役字段，仅为永久注册号与历史迁移保留 | 否；新代码禁止继续写入 |
 
 ### 2.4 类型说明
 
@@ -197,7 +198,7 @@
 | F-PET-002 | `pet_name` | C | Text | 宠物名称；首次建档必填。 |
 | F-PET-003 | `pet_type` | C | Enum/Text | 猫 / 狗 / 其他；首次建档必填。 |
 | F-PET-004 | `pet_avatar` | C | Ref | 宠物头像，选填。 |
-| F-PET-005 | `pet_breed` | C | Text | 品种，选填；不因存在而自动成为交友公开字段。 |
+| F-PET-005 | `pet_breed` | C | Text | 品种，选填；是否在其他业务公开必须由对应公开视图明确允许。 |
 | F-PET-006 | `pet_sex` | C | Enum | 性别，选填。 |
 | F-PET-007 | `pet_birth_date` | C | Date | 出生日期，选填。 |
 | F-PET-008 | `pet_age` | C | Number/Text | 由出生日期派生的展示年龄，不要求每年人工覆盖。 |
@@ -214,7 +215,7 @@
 | F-PET-019 | `meals_per_day` | C | Int | 每日餐数。 |
 | F-PET-020 | `food_source` | S | Enum | 自带粮 / 门店粮等长期偏好。 |
 | F-PET-021 | `walk_habit` | C | Text/Struct | 遛宠习惯。 |
-| F-PET-022 | `allergy_notes` | C | Text | 已明确记录的过敏情况；属于敏感宠物资料，交友公开接口禁止返回。 |
+| F-PET-022 | `allergy_notes` | C | Text | 已明确记录的过敏情况；属于敏感宠物资料，仅在实际照护必要且有权限的场景使用。 |
 | F-PET-023 | `diet_restrictions` | C | Text | 禁食 / 忌口信息。 |
 | F-PET-024 | `long_term_medication` | C | Text | 长期用药信息；敏感资料。 |
 | F-PET-025 | `special_care` | C | Text | 特殊照护要求。 |
@@ -234,7 +235,15 @@
 | F-PET-039 | `media_stage` | S | Enum | `before / after`，表达服务前 / 服务后。 |
 | F-PET-040 | `media_sort_order` | S | Int | 同一服务 / 对比组中的稳定排序。 |
 | F-PET-041 | `media_asset_ref` | S | Ref | 图片 / 视频资源引用。 |
-| F-PET-042 | `social_public_allowed` | C | Bool | 该服务后照片是否被主人授权用于宠物交友公开。 |
+| F-PET-042 | `social_public_allowed` | D | Bool | 已退役宠物交友照片公开字段；仅用于旧数据迁移，不得在新业务继续写入。 |
+| F-PET-043 | `pet_safety_profile_id` | S | ID | 宠物行为与服务安全档案标识。 |
+| F-PET-044 | `pet_behavior_tag_keys` | S | Text[]/Struct | 标准化服务行为标签，如怕吹风、抗拒剪指甲、护食、挣脱倾向等。 |
+| F-PET-045 | `pet_behavior_source_type` | S | Enum | `owner_reported / staff_observed / incident_recorded / verified_by_multiple_services`。 |
+| F-PET-046 | `pet_behavior_last_observed_at` | S | Datetime | 最近观察 / 确认该行为的时间。 |
+| F-PET-047 | `pet_behavior_source_store_id` | S | ID | 行为记录来源门店；不因此授予该门店读取其他商户资料权限。 |
+| F-PET-048 | `pet_behavior_source_service_record_id` | S | ID | 关联真实服务事件时使用。 |
+| F-PET-049 | `cross_store_safety_share_status` | P | Enum | 跨门店安全档案共享状态；可见范围和主人授权受 DEC-PETSAFETY-01 阻塞。 |
+| F-PET-050 | `pet_safety_review_status` | P | Enum | 平台跨店共享审核状态；审核规则未完全冻结。 |
 
 ---
 
@@ -459,7 +468,7 @@
 | F-MSG-004 | `merchant_id` | C | ID | 门店消息必填的租户。 |
 | F-MSG-005 | `customer_id` | C | ID | 门店消息对应 Customer；未安全绑定 User 前可先关联 Customer。 |
 | F-MSG-006 | `related_store_id` | C | ID | 平台业务关联的绑定 / 领取门店，仅表达业务关联，不自动授予门店私有权限。 |
-| F-MSG-007 | `message_type` | C | Enum | 预约、服务、寄养、商品、钱包、交友、上门喂养、积分等。 |
+| F-MSG-007 | `message_type` | C | Enum | 预约、服务、寄养、商品、钱包、投诉 / 风险反馈、上门喂养、积分等。 |
 | F-MSG-008 | `message_title` | C | Text | 消息标题。 |
 | F-MSG-009 | `message_summary` | C | Text | 消息摘要 / 内容。 |
 | F-MSG-010 | `related_business_type` | C | Enum/Text | 关联业务对象类型。 |
@@ -479,32 +488,132 @@
 
 ---
 
-## 14. 宠物交友（SOCIAL）
+## 14. 已退役宠物交友 + 投诉 / 风险反馈 / 审核（SOCIAL_DEPRECATED / COMPLAINT / EVIDENCE / RISK / REVIEW）
+
+### 14.1 已退役宠物交友字段
+
+F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但状态统一视为 `D`。原字段不得用于新“消费避雷 / 投诉”业务，也不得重新解释为投诉字段。
+
+旧字段族包括 social_enabled、social_nickname、pet_friend_invitation_id、invitation_status 等；完整旧定义见归档文件 `docs/history/03h-customer-pet-social.archived.md` 和 Git 历史。
+
+### 14.2 投诉（COMPLAINT）
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
-| F-SOC-001 | `social_enabled` | C | Bool | 宠物主人是否在当前 Merchant 主动开启宠物交友公开。必须客户主动授权，店员不能代开。 |
-| F-SOC-002 | `social_nickname` | C | Text | 宠物社交昵称；可沿用宠物名称。 |
-| F-SOC-003 | `social_public_photo_ids` | S | Ref[] | 主人授权用于交友公开的服务后照片。 |
-| F-SOC-004 | `social_visibility_state` | S | Enum | 公开 / 仅本人可见 / 未开启 / 不可展示等客户端展示语义。 |
-| F-SOC-005 | `clicks_7d` | C | Int | 最近 7 天有效点击数，由服务端计算。 |
-| F-SOC-006 | `store_click_rank_7d` | C | Int | 当前门店最近 7 天点击排名。 |
-| F-SOC-007 | `can_send_invite` | S | Bool | 当前 User 是否可向目标宠物发起邀请；服务端根据双方状态计算。 |
-| F-SOC-008 | `is_current_user_pet` | S | Bool | 当前卡片是否属于当前 User。 |
-| F-SOC-009 | `pet_friend_invitation_id` | S | ID | 同一 Merchant 下同一对宠物唯一邀请关系。 |
-| F-SOC-010 | `requester_user_id` | C | ID | 发起方 Platform User。为保持领域语义保留角色前缀，不等同新 User 类型。 |
-| F-SOC-011 | `requester_customer_id` | C | ID | 发起方在当前 Merchant 的 Customer。 |
-| F-SOC-012 | `requester_pet_id` | C | ID | 发起邀请的宠物。 |
-| F-SOC-013 | `target_user_id` | C | ID | 被邀请方 Platform User。 |
-| F-SOC-014 | `target_customer_id` | C | ID | 被邀请方当前 Merchant Customer。 |
-| F-SOC-015 | `target_pet_id` | C | ID | 被邀请宠物。 |
-| F-SOC-016 | `invitation_status` | C | Enum | `pending / accepted_waiting_staff / declined / handled`。 |
-| F-SOC-017 | `invitation_created_at` | C | Datetime | 邀请创建时间。 |
-| F-SOC-018 | `responded_at` | C | Datetime | 被邀请方响应时间，可空。 |
-| F-SOC-019 | `handled_at` | C | Datetime | 店员完成处理时间，可空。 |
-| F-SOC-020 | `handled_by_staff_id` | C | ID | 实际处理店员，可空。 |
+| F-CMP-001 | `complaint_id` | S | ID | 单条门店 / 宠物食品投诉唯一标识。 |
+| F-CMP-002 | `complaint_target_type` | C | Enum | `store / pet_food`。 |
+| F-CMP-003 | `complainant_user_id` | S | ID | 投诉人 Platform User。 |
+| F-CMP-004 | `target_store_id` | S | ID | 门店投诉对象；食品投诉可空。 |
+| F-CMP-005 | `target_product_id` | S | ID | 食品商品主体；门店投诉可空。 |
+| F-CMP-006 | `target_sku_id` | S | ID | 食品具体 SKU / 规格，可空。 |
+| F-CMP-007 | `product_batch_code` | S | Text | 食品批次 / 生产批次标识，用户能提供时记录。 |
+| F-CMP-008 | `complaint_text` | C | Text | 用户原始投诉正文；允许无附件提交。 |
+| F-CMP-009 | `complaint_submitted_at` | S | Datetime | 正式提交时间。 |
+| F-CMP-010 | `content_review_status` | S | Enum | pending / approved / rejected / needs_revision 等基础内容审核状态。 |
+| F-CMP-011 | `complaint_published_at` | S | Datetime | 基础审核通过后公开时间。 |
+| F-CMP-012 | `complaint_workflow_status` | S | Enum | 提交、等待回应、补证、待裁决等流程状态；不得替代平台结论。 |
+| F-CMP-013 | `business_response_status` | S | Enum | pending / responded / overdue。 |
+| F-CMP-014 | `response_due_at` | C | Datetime | 基础审核通过且完成有效通知后计算的 7 天正式回应截止。 |
+| F-CMP-015 | `response_position` | C | Enum | 认可 / 部分认可 / 不认可 / 无法确认。 |
+| F-CMP-016 | `business_response_text` | C | Text | 商家正式回应正文。 |
+| F-CMP-017 | `business_responded_at` | S | Datetime | 首个正式回应时间。 |
+| F-CMP-018 | `business_response_overdue_at` | S | Datetime | 商家逾期未回应成立时间；不等于投诉成立。 |
+| F-CMP-019 | `evidence_window_ends_at` | C | Datetime | 商家首个正式回应后双方 3 天补证截止。 |
+| F-CMP-020 | `complaint_decision_status` | C | Enum | `established / partially_established / insufficient_evidence / not_supported`。 |
+| F-CMP-021 | `complaint_resolution_status` | S | Enum | unresolved / resolved；与事实结论分离。 |
+| F-CMP-022 | `complaint_resolved_at` | S | Datetime | 实际解决时间。 |
+| F-CMP-023 | `complaint_appeal_status` | S | Enum | none / pending / decided 等申诉状态。 |
+| F-CMP-024 | `platform_reviewer_user_id` | S | ID | 作出平台事实裁决的审核员。 |
+| F-CMP-025 | `platform_decided_at` | S | Datetime | 平台裁决时间。 |
+| F-CMP-026 | `decision_reason` | C | Text | 裁决理由与关键依据。 |
+| F-CMP-027 | `complaint_claim_id` | S | ID | 投诉中一个可独立判断的事实点。 |
+| F-CMP-028 | `complaint_claim_text` | S | Text | 事实点内容。 |
+| F-CMP-029 | `complaint_claim_decision_status` | C | Enum | 单事实点成立 / 证据不足 / 不支持等结论。 |
+| F-CMP-030 | `complaint_is_public` | S | Bool | 当前是否允许公开展示；不得由商家自行关闭。 |
+| F-CMP-031 | `complaint_withdrawn_at` | S | Datetime | 投诉人撤回时间（如适用），历史审计仍保留。 |
+| F-CMP-032 | `removed_for_violation_at` | S | Datetime | 因内容违规等下架时间，不等于事实结论。 |
 
-交友公开接口只允许返回交友白名单字段；`pet_id` 不构成读取 PetProfile、主人联系方式、余额、订单、过敏/用药等数据的授权。
+### 14.3 投诉证据（EVIDENCE）
+
+| 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
+|---|---|---:|---|---|
+| F-EVD-001 | `complaint_evidence_id` | S | ID | 单条投诉证据。 |
+| F-EVD-002 | `evidence_complaint_id` | C | ID | 所属投诉。 |
+| F-EVD-003 | `evidence_type` | S | Enum | text / image / video / chat / order / receipt / platform_record / regulatory / test_report 等。 |
+| F-EVD-004 | `evidence_submitter_type` | S | Enum | complainant / business / third_party / platform。 |
+| F-EVD-005 | `evidence_submitter_id` | S | ID | 提交者稳定标识。 |
+| F-EVD-006 | `evidence_asset_ref` | S | Ref | 图片 / 视频 / 文件资源。 |
+| F-EVD-007 | `evidence_text` | S | Text | 文本证言 / 说明。 |
+| F-EVD-008 | `is_business_invited_witness` | C | Bool | 第三方是否由被投诉商家邀请，审核端必须可见。 |
+| F-EVD-009 | `evidence_relationship_type` | S | Enum/Text | 亲历、交易关系、旁观者、一般体验等与事件关系。 |
+| F-EVD-010 | `evidence_submitted_at` | S | Datetime | 证据提交时间。 |
+| F-EVD-011 | `evidence_weight_level` | P | Enum | 证据等级 / 权重模型受 DEC-EVIDENCE-01 阻塞，不得自行做投票分数。 |
+
+### 14.4 食品集中反馈信号（RISK）
+
+| 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
+|---|---|---:|---|---|
+| F-RISK-001 | `batch_risk_signal_id` | S | ID | 同一食品同一批次的集中反馈信号。 |
+| F-RISK-002 | `risk_product_id` | C | ID | 对应商品主体。 |
+| F-RISK-003 | `risk_sku_id` | S | ID | 对应 SKU（如适用）。 |
+| F-RISK-004 | `risk_product_batch_code` | C | Text | 对应批次。 |
+| F-RISK-005 | `independent_complaint_count_2d` | C | Int | 最近 2 天去重后的独立投诉数；至少 3 才可触发。 |
+| F-RISK-006 | `distinct_source_store_count_2d` | S | Int | 最近 2 天不同来源门店数量，只影响优先级 / 排序。 |
+| F-RISK-007 | `source_dispersion_weight` | P | Number | 跨门店来源加权具体系数尚未冻结；不得用于绕过 3 条硬门槛。 |
+| F-RISK-008 | `risk_priority` | S | Number/Enum | 达到硬门槛后用于平台队列 / 列表优先级。 |
+| F-RISK-009 | `risk_signal_status` | S | Enum | active / expired 等。 |
+| F-RISK-010 | `risk_signal_started_at` | C | Datetime | “出现集中反馈”提示开始时间。 |
+| F-RISK-011 | `risk_signal_expires_at` | C | Datetime | 当前确认提示开始后 2 个月到期；再次触发是否续期受 DEC-COMPLAINT-07。 |
+| F-RISK-012 | `total_feedback_count` | S | Int | 聚合反馈总数；包括最终 not_supported。 |
+| F-RISK-013 | `established_count` | S | Int | 成立数量。 |
+| F-RISK-014 | `partially_established_count` | S | Int | 部分成立数量。 |
+| F-RISK-015 | `insufficient_evidence_count` | S | Int | 证据不足数量。 |
+| F-RISK-016 | `not_supported_count` | S | Int | 现有证据不支持数量；仍属于历史反馈。 |
+| F-RISK-017 | `public_risk_signal_text` | C | Text/Enum | 当前固定对外语义“出现集中反馈”。 |
+
+### 14.5 平台批量审核（REVIEW）
+
+| 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
+|---|---|---:|---|---|
+| F-REV-001 | `review_item_id` | S | ID | 单条待审核对象；Excel 行号不得替代。 |
+| F-REV-002 | `review_batch_id` | S | ID | 一次导出 / 上传审核批次。 |
+| F-REV-003 | `row_version` | C | Int | 乐观并发版本；导出后原记录变化则拒绝旧行覆盖。 |
+| F-REV-004 | `review_target_type` | S | Enum | complaint / pet_safety / customer_risk 等审核对象类型。 |
+| F-REV-005 | `review_target_id` | S | ID | 被审核真实业务对象。 |
+| F-REV-006 | `review_content_type` | S | Enum/Text | 提交内容类型。 |
+| F-REV-007 | `submitted_value` | S | Struct/Text | 原始提交内容快照；审核上传不得覆盖。 |
+| F-REV-008 | `review_source_type` | S | Enum/Text | 来源类型。 |
+| F-REV-009 | `review_source_business_id` | S | ID | 关联业务（如有）。 |
+| F-REV-010 | `review_evidence_count` | S | Int | 导出时证据数量。 |
+| F-REV-011 | `current_review_status` | S | Enum | pending_review / approved / rejected / needs_revision / escalated / withdrawn / superseded。 |
+| F-REV-012 | `reviewer_decision` | S | Enum | 审核员填写结果。 |
+| F-REV-013 | `approved_value` | S | Struct/Text | 审核后标准化内容（如行为标签）。 |
+| F-REV-014 | `reviewer_reason_code` | S | Enum/Text | 标准化原因码。 |
+| F-REV-015 | `reviewer_comment` | S | Text | 审核批注。 |
+| F-REV-016 | `visibility_scope` | P | Enum/Struct | 跨店可见范围；具体权限仍由对应业务 DEC 确认。 |
+| F-REV-017 | `effective_until` | P | Datetime | 对需要过期的共享信息生效截止。 |
+| F-REV-018 | `severity_level` | S | Enum | 受控风险等级（如启用）。 |
+| F-REV-019 | `require_followup` | S | Bool | 是否需后续人工处理。 |
+| F-REV-020 | `followup_note` | S | Text | 后续处理说明。 |
+| F-REV-021 | `reviewed_by_user_id` | S | ID | 平台审核员。 |
+| F-REV-022 | `reviewed_at` | S | Datetime | 审核完成时间。 |
+| F-REV-023 | `review_upload_idempotency_key` | S | Text | 重复上传同一审核文件 / 结果的幂等键。 |
+
+### 14.6 跨门店顾客客观风险事件（CUSTOMER_RISK）
+
+> 产品原则已确认“共享客观风险事件，不共享主观人格评价”；具体授权、可见范围、保存与业务影响受 DEC-RISK-01 阻塞，因此本组字段均为 P。
+
+| 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
+|---|---|---:|---|---|
+| F-CRISK-001 | `customer_risk_event_id` | P | ID | 平台级客观风险事件。 |
+| F-CRISK-002 | `risk_subject_user_id` | P | ID | 被记录的 Platform User。 |
+| F-CRISK-003 | `risk_event_type` | P | Enum | 爽约、拒付、威胁、已核验恶意退款等客观事件类型。 |
+| F-CRISK-004 | `risk_event_source_merchant_id` | P | ID | 来源 Merchant。 |
+| F-CRISK-005 | `risk_event_source_store_id` | P | ID | 来源 Store。 |
+| F-CRISK-006 | `risk_event_business_id` | P | ID | 关联预约 / 订单 / 服务等事实对象。 |
+| F-CRISK-007 | `risk_event_review_status` | P | Enum | 平台审核结果。 |
+| F-CRISK-008 | `risk_event_effective_until` | P | Datetime | 有效 / 降权截止，规则未确认。 |
+| F-CRISK-009 | `risk_event_appeal_status` | P | Enum | 顾客异议 / 申诉状态。 |
 
 ---
 
@@ -766,7 +875,7 @@
 | `ad_status` | `reward_status / load_status / launch_ad_load_status` | 激励权益、首页曝光广告、启动广告状态机不同。 |
 | `ad_type` | `placement` + 对应模块的 `mode` | placement 表示业务广告位；launch `mode` 表示图片/视频/微信来源。 |
 | `owner_store_id`（顾问权益） | `owner_type=store` + `owner_id=store_id` | Feature Entitlement 使用通用 owner 结构，Merchant 只作购买关联。 |
-| `pet_public_data` 直接返回 Pet | 宠物交友公开白名单视图 | `pet_id` 不授予读取完整 PetProfile 权限。 |
+| 仅凭 `pet_id` 直接返回完整 Pet | 按业务最小视图返回 | `pet_id` 只是对象标识；投诉、宠物安全档案或其他模块均不得据此读取完整 PetProfile。 |
 | `occurred_at = recorded_at` | 分别保存 | 寄养补录必须按真实发生时间排序。 |
 | `paid = fed` | `payment_status` + `boarding_feed_execution_status` | 已收款不等于已投喂。 |
 | `canceled = points_refunded` | `fulfillment_status` + `points_processing_status` | 积分兑换取消不等于积分补偿已到账。 |
@@ -809,9 +918,11 @@
 - `staff_nav.customers` → 客户
 - `staff_nav.me` → 我的
 
-### 24.5 宠物好友邀请状态
+### 24.5 投诉平台结论
 
-`pending / accepted_waiting_staff / declined / handled`
+`established / partially_established / insufficient_evidence / not_supported`
+
+投诉是否解决使用独立 `complaint_resolution_status`，不得把 resolved 当作事实结论。
 
 ### 24.6 启动广告模式
 
@@ -832,6 +943,11 @@
 以下字段族当前不得被“字段注册表存在”误认为需求已确认：
 
 - `F-APPT-019`～`021`：预约容量/改期模型，受 `DEC-APPT-01` 阻塞；
+- `F-PET-049`～`050`：宠物行为安全档案跨店共享与审核，受 `DEC-PETSAFETY-01` 阻塞；
+- `F-EVD-011`：第三方证据权重模型，受 `DEC-EVIDENCE-01` 阻塞；
+- `F-RISK-007`：不同门店来源具体加权系数尚未冻结；3条独立投诉硬门槛不受该字段影响；
+- `F-REV-016`～`017`：跨店审核结果可见范围 / 有效期按对应风险业务 DEC 确认；
+- `F-CRISK-001`～`009`：跨门店顾客客观风险事件完整字段族受 `DEC-RISK-01` 阻塞；
 - `F-FEED-024`～`027`：上门喂养修改/取消/响应/失效时限，受 `DEC-FEED-01`～`03` 阻塞；
 - `F-RWD-027`～`028`：积分自提期限 / 改领取门店，受 `DEC-POINTS-02` 阻塞；
 - 启动广告具体秒数默认值/范围受 `DEC-LAUNCH-01` 阻塞；字段存在但不能写死运营常数；
@@ -901,3 +1017,12 @@ Pending 字段确认后：
 - 将当前确认业务字段纳入统一查询表。
 - 对仍被 DEC 阻塞的字段仅保留 `P` 注册号，不提前确认业务规则。
 - 明确阶段 09 可设计物理数据库，但不得无记录改变本文逻辑字段含义。
+
+
+### 2026-09-21：宠物交友退役并建立投诉 / 风险字段族
+
+- 原 F-SOC 字段保留永久注册号但退役，禁止新业务复用。
+- 新增 F-CMP / F-EVD / F-RISK / F-REV / F-CRISK 字段族。
+- 新增 F-PET-043～050 宠物行为与服务安全档案字段。
+- 固定 7 天回应、3 天补证、单审核员裁决、2天/3条集中反馈和2个月风险提示所需逻辑字段。
+- 未确认的跨店共享可见性、证据权重和来源加权系数继续标 P。
