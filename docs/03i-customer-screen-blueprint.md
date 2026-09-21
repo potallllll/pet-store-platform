@@ -6,7 +6,7 @@
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: [DEC-APPT-01, DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01]
+> blocked_by: [DEC-APPT-01, DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01, DEC-FOOD-HEAT-01]
 > parent_stage: 03_customer_miniapp
 > version: V1.0
 
@@ -197,6 +197,8 @@ UI 层可在顶部门店栏下使用品牌 / 生活方式 Banner；精选商品�
 所有公开投诉长期保留；未解决整体靠前，已解决整体靠后，各组内部按时间倒序。
 
 同一食品同一批次在最近 2 天内达到至少 3 条独立投诉时显示“出现集中反馈”。3 条为硬门槛；跨不同门店来源只提高风险优先级 / 排序，不得把 2 条折算为 3 条。提示保留 2 个月。
+
+宠物档案可记录当前食用品牌；匹配该标准品牌的新食品投诉通过基础审核并公开后生成站内风险提醒。同一用户同一投诉只提醒一次。食品投诉列表 / 详情必须展示服务端返回的“问题热度”；具体算法受 `DEC-FOOD-HEAT-01` 阻塞。
 
 最终卡片布局、附近距离表达、筛选与详情视觉仍受 `DEC-RISK-UI-01` 阻塞。
 
@@ -714,6 +716,33 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 - not_supported 仍计入“反馈数量”，不得表述为成立数量。
 - “出现集中反馈”提示保留 2 个月，到期解除；历史投诉不删除。
 
+### C-PET-FOOD-01：选择当前食用标准品牌
+
+- 进入宠物档案可以选择当前正在食用的宠物食品品牌。
+- 选择标准品牌后保存稳定 brand_id。
+- 修改 / 清空后新的风险订阅按最新值生效。
+
+### C-PET-FOOD-02：其他品牌自定义输入
+
+- 标准列表没有时选择“其他”。
+- 自定义品牌名称必填并保留原始输入。
+- 未归一时明确显示“品牌待识别，暂不能保证自动提醒”。
+- 归一成功后绑定标准 brand_id。
+
+### C-FOOD-RISK-05：当前食用品牌新投诉提醒
+
+- 匹配品牌的新投诉通过基础审核并公开后立即生成站内提醒。
+- 同一用户同一 complaint_id 只提醒一次。
+- 多只宠物匹配时在一条消息中汇总受影响宠物。
+- 微信通知失败不影响站内消息和投诉状态。
+
+### C-FOOD-RISK-06：问题热度展示
+
+- 食品投诉列表和详情展示服务端返回的问题热度。
+- 原型可使用 Mock 数值，但必须标明演示数据。
+- 热度不得解释为投诉成立概率或产品危险等级。
+- 正式算法等待 DEC-FOOD-HEAT-01。
+
 ### C-FEED-01：上门喂养发布 / 分享
 
 - 填写时间、模糊地点、每日预算、要求。
@@ -851,6 +880,11 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 | C-FOOD-RISK-03 | 跨门店来源仅提高风险优先级/排序 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
 | C-FOOD-RISK-04 | not_supported计入反馈与2个月风险提示 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
 | C-APPT-01 | 已确认预约表单及按需身份验证 | [03a-customer-appointment.md](03a-customer-appointment.md) |
+| C-PET-FOOD-01 | 宠物当前食用标准品牌选择与订阅生效 | [03b-customer-pet-profile.md](03b-customer-pet-profile.md) |
+| C-PET-FOOD-02 | “其他”自定义品牌及待识别 / 归一状态 | [03b-customer-pet-profile.md](03b-customer-pet-profile.md) |
+| C-FOOD-RISK-05 | 当前食用品牌匹配新公开投诉后去重提醒 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
+| C-FOOD-RISK-06 | 食品投诉问题热度展示与语义边界 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
+
 | C-FEED-01 | 发布需求及成功后分享入口 | [03j-customer-home-feeding-marketplace.md](03j-customer-home-feeding-marketplace.md) |
 | C-FEED-02 | 公开内容隐私边界 | [03j-customer-home-feeding-marketplace.md](03j-customer-home-feeding-marketplace.md) |
 | C-FEED-03 | 接单原子锁定与绑定门店待办 | [03j-customer-home-feeding-marketplace.md](03j-customer-home-feeding-marketplace.md) |
@@ -933,6 +967,8 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 | C-FEED-02 / C-FEED-03 | 上门喂养详情 | 模糊地址、状态 | 接单 |
 | C-FEED-06 | 异地推荐 | 其他城市真实需求 | 查看详情 |
 | C-PET-01 | 我的宠物 | 列表、档案 | 进入 / 添加 |
+| C-PET-FOOD-01 / C-PET-FOOD-02 | 当前食用食品 | 标准品牌 / 其他自定义 / 归一状态 | 选择 / 填写 / 保存 |
+| C-FOOD-RISK-05 / C-FOOD-RISK-06 | 食品风险 | 品牌投诉提醒 / 问题热度 | 查看消息 / 查看详情 |
 | C-WALLET-01 | 我的 / 钱包 | 四项资产、余额明细 | 整卡进入明细 |
 | C-POINTS-01 | 积分签到 | 当前积分、签到 | 广告完成 / 失败模拟 |
 | C-POINTS-02 | 周积分 | 每日积分、本周累计 | 7天总计50验收 |

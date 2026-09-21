@@ -244,6 +244,12 @@
 | F-PET-048 | `pet_behavior_source_service_record_id` | S | ID | 关联真实服务事件时使用。 |
 | F-PET-049 | `cross_store_safety_share_status` | P | Enum | 跨门店安全档案共享状态；可见范围和主人授权受 DEC-PETSAFETY-01 阻塞。 |
 | F-PET-050 | `pet_safety_review_status` | P | Enum | 平台跨店共享审核状态；审核规则未完全冻结。 |
+| F-PET-051 | `current_food_brand_id` | C | ID | 当前食用的标准宠物食品品牌；0～1 个。作为食品风险订阅主匹配键。 |
+| F-PET-052 | `current_food_brand_display_name` | S | Text | 当前客户端显示品牌名称。 |
+| F-PET-053 | `current_food_brand_input_type` | S | Enum | `catalog / custom`；标准列表或“其他”自定义输入。 |
+| F-PET-054 | `current_food_brand_custom_text` | C | Text | 选择“其他”时保存用户原始品牌输入；标准品牌时为空。 |
+| F-PET-055 | `current_food_brand_match_status` | S | Enum | `matched / pending_identification`；未可靠归一时不得强行风险匹配。 |
+| F-PET-056 | `current_food_brand_updated_at` | S | Datetime | 当前品牌最近一次更新 / 清空时间。 |
 
 ---
 
@@ -570,6 +576,9 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-RISK-015 | `insufficient_evidence_count` | S | Int | 证据不足数量。 |
 | F-RISK-016 | `not_supported_count` | S | Int | 现有证据不支持数量；仍属于历史反馈。 |
 | F-RISK-017 | `public_risk_signal_text` | C | Text/Enum | 当前固定对外语义“出现集中反馈”。 |
+| F-RISK-018 | `issue_heat_value` | P | Number | 食品问题热度数值；范围和算法受 DEC-FOOD-HEAT-01 阻塞，前端不得自行计算。 |
+| F-RISK-019 | `issue_heat_display` | S | Text/Struct | 服务端返回的热度展示结果；可承载“问题热度 86”等最终确认后的表现。 |
+| F-RISK-020 | `issue_heat_updated_at` | S | Datetime | 当前问题热度最近计算时间。 |
 
 ### 14.5 平台批量审核（REVIEW）
 
@@ -946,6 +955,7 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 - `F-PET-049`～`050`：宠物行为安全档案跨店共享与审核，受 `DEC-PETSAFETY-01` 阻塞；
 - `F-EVD-011`：第三方证据权重模型，受 `DEC-EVIDENCE-01` 阻塞；
 - `F-RISK-007`：不同门店来源具体加权系数尚未冻结；3条独立投诉硬门槛不受该字段影响；
+- `F-RISK-018`：问题热度具体数值范围 / 公式受 `DEC-FOOD-HEAT-01` 阻塞；
 - `F-REV-016`～`017`：跨店审核结果可见范围 / 有效期按对应风险业务 DEC 确认；
 - `F-CRISK-001`～`009`：跨门店顾客客观风险事件完整字段族受 `DEC-RISK-01` 阻塞；
 - `F-FEED-024`～`027`：上门喂养修改/取消/响应/失效时限，受 `DEC-FEED-01`～`03` 阻塞；
@@ -1026,3 +1036,11 @@ Pending 字段确认后：
 - 新增 F-PET-043～050 宠物行为与服务安全档案字段。
 - 固定 7 天回应、3 天补证、单审核员裁决、2天/3条集中反馈和2个月风险提示所需逻辑字段。
 - 未确认的跨店共享可见性、证据权重和来源加权系数继续标 P。
+
+
+### 2026-09-21：新增宠物当前食品品牌、品牌风险提醒与问题热度
+
+- 新增 F-PET-051～056：每只宠物当前食用标准品牌 / “其他”自定义品牌、归一状态和更新时间。
+- 食品风险订阅以标准 brand_id 匹配；未归一自定义品牌不得进行不可靠模糊推送。
+- 新增 F-RISK-018～020：服务端问题热度展示；正式热度公式继续由 DEC-FOOD-HEAT-01 阻塞。
+- 同一 User + complaint_id 的通知去重由消息 / 业务幂等规则执行。

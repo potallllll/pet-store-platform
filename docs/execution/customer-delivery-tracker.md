@@ -68,6 +68,11 @@ G0必须分析每个ID涉及的已确认/待决子场景。一个组合ID内任�
 | C-FOOD-RISK-03 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
 | C-FOOD-RISK-04 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
 | C-APPT-01 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-PET-FOOD-01 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-PET-FOOD-02 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-FOOD-RISK-05 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-FOOD-RISK-06 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+
 | C-FEED-01 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
 | C-FEED-02 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
 | C-FEED-03 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
