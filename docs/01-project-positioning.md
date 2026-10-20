@@ -62,9 +62,9 @@ V1.0 强制规则：
 系统必须区分：
 
 - 平台用户 User：用于微信登录、手机号等平台级身份识别。
-- 商户客户 Customer：用户与某个 Merchant 建立的经营关系。
+- 商户客户 Customer：某个 Merchant 为真实顾客建立的客户业务记录／关系；可由门店在线下先建，在安全绑定前可以没有关联的Platform User。
 
-同一个平台 User 可以同时成为多个不同商户的 Customer，但每个商户只能查看自己与该客户之间的业务数据。
+一个Platform User可以在多个Merchant下分别关联经安全确认的Customer记录；同一Customer至多绑定一个当前有效Platform User。Customer不等于登录账号，未绑定User的线下Customer仍可承载该门店的宠物、服务、充值和消费记录。每个商户只能查看自己Customer关系下的私有业务数据；依法授权的跨店服务信息另按03h的独立共享规则校验。
 
 不同商户之间不得共享或查看以下信息：
 

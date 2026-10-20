@@ -6,7 +6,7 @@
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: [DEC-APPT-01, DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01, DEC-FOOD-HEAT-01]
+> blocked_by: [DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01, DEC-FOOD-HEAT-01]
 > parent_stage: 03_customer_miniapp
 > version: V1.0
 
@@ -623,7 +623,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 - 列表明确采用分页或加载更多；从详情返回保留已提交搜索、筛选和滚动位置。空列表、搜索无结果和加载失败必须区分；失败保留安全的已加载内容与重试入口，不把失败显示成无数据。
 - 各场景的视觉 / 文案 / 可读性统一按 10a 执行，业务动作与权限分别引用 03a、03e、03f、03g、03j、03k。不得用前端状态替代服务端权限和业务结果。
 
-第 03a 文档第 11 节预约占位提案为待确认，不纳入本节或当前正式验收的容量决策；确认后再绑定具体用例。
+第03a文档第11节预约占位与改期模型已经确认，纳入 `C-APPT-01` 组合验收。申请不占位、确认原子占位、改期保留原预约、多宠全成全败、确认超时、关店不静默取消以及并发竞态子场景必须分别执行并留证。
 
 ## 14. 必须覆盖的关键场景
 
@@ -887,7 +887,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 | C-FOOD-RISK-02 | 同一用户未处理投诉去重 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
 | C-FOOD-RISK-03 | 跨门店来源仅提高风险优先级/排序 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
 | C-FOOD-RISK-04 | not_supported计入反馈与2个月风险提示 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
-| C-APPT-01 | 已确认预约表单及按需身份验证 | [03a-customer-appointment.md](03a-customer-appointment.md) |
+| C-APPT-01 | 预约表单、按需身份验证及容量／改期原子模型组合场景 | [03a-customer-appointment.md](03a-customer-appointment.md) |
 | C-PET-FOOD-01 | 宠物当前食用标准品牌选择与订阅生效 | [03b-customer-pet-profile.md](03b-customer-pet-profile.md) |
 | C-PET-FOOD-02 | “其他”自定义品牌及待识别 / 归一状态 | [03b-customer-pet-profile.md](03b-customer-pet-profile.md) |
 | C-FOOD-RISK-05 | 当前食用品牌匹配新公开投诉后去重提醒 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
@@ -950,7 +950,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 - 启动覆盖分享 / 通知冷启动、后台恢复、广告无填充 / 失败、登录返回、目标无效及跨门店权限。
 - 加餐覆盖已收款未投喂、重复确认、寄养提前结束及取消后入口资格；积分覆盖最后一份库存并发、取消与核销竞态及补偿处理中。
 - 新的上门喂养 / 积分异常流程先验证已确认不变量；涉及 DEC-FEED / DEC-POINTS 的截止和权限参数，待对应决策确认后补实际用例值，不把待决视为已通过。
-- 03a 第11节提案推演只证明方案可讨论，不计入当前正式预约验收；DEC-APPT-01 确认后才补正式容量用例。
+- 03a第11节的每个典型推演均属于 `C-APPT-01` 的正式子场景；执行记录必须逐项说明容量、原预约、提议版本和最终状态，不能只截图预约表单或只记录一次总通过。
 - 原型允许有标注的模拟成功 / 失败状态；正式上线必须验证服务端真实权限、并发结果和恢复。文档检查、token计算或原型演示均不等于实际客户端验收通过。
 
 ## 15. 仅用于 H5 沟通原型的最低页面演示范围

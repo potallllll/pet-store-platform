@@ -119,6 +119,7 @@
 - 历史变更证据统一放在 `history/`，档案地图见 [history/README.md](history/README.md)；客户端业务历史继续使用原客户端变更文件，执行治理与店员分析使用各自列明的历史文件。
 - 页面地图 / 关键原型交互变更同步 `03i`；业务细节同步对应子模块；阶段和待决状态同步 `REQUIREMENTS-STATUS.md`。
 - 字段新增、重命名、废弃或别名收口同步 `FIELD-REGISTRY.md`；已使用注册号不得复用。
+- 提交需求变更前运行 `python scripts/audit_requirements.py --root . --output requirements-audit.json`；该脚本检查当前文件元数据、相对链接、验收ID与追踪表一致性、关闭决策残留和退役模块残留。审计通过只代表文档结构一致，不代表业务实现或测试已经完成。
 - 历史文件只用于追溯，不属于正式需求来源，不得从历史文件恢复已废弃行为。
 
 ## 7. 变更历史

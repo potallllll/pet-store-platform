@@ -296,4 +296,4 @@ V1.0 好友邀请至少包含：
 
 ## 14. 需求变更记录
 
-历史变更已移至 [`docs/history/2026-client-requirements-changes.md`](history/2026-client-requirements-changes.md)。本文件正文仅保留当前有效规则。
+历史变更已移至 [`docs/history/2026-client-requirements-changes.md`](2026-client-requirements-changes.md)。本文件正文仅保留当前有效规则。

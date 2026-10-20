@@ -5,6 +5,7 @@
 > pending_scope: entries_marked_P
 > change_policy: record_required
 > development_readiness: partial
+> blocked_by: [DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01, DEC-FOOD-HEAT-01, DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-STAFF-01, DEC-STAFF-02, DEC-STAFF-03, DEC-STAFF-04, DEC-STAFF-05, DEC-STAFF-06, DEC-STAFF-07, DEC-STAFF-08]
 > version: V1.0
 > registry_owner: project_requirements
 > canonical_logical_field_source: true
@@ -87,7 +88,7 @@
 | F-CORE-001 | `platform_user_id` | S | ID | 平台自然人 User 唯一标识。03m 中旧写法 `user_id` 统一映射到此字段。不得用 Customer 代替。 |
 | F-CORE-002 | `merchant_id` | C | ID | Merchant / Tenant 唯一标识，是商户私有数据的核心租户隔离字段。V1 一商户一门店，但仍不得与 `store_id` 混用。 |
 | F-CORE-003 | `store_id` | C | ID | Store 唯一标识。表达实际门店上下文、权益归属和可工作门店，不等于 Merchant。 |
-| F-CORE-004 | `customer_id` | C | ID | 某 Platform User 与某 Merchant 的客户关系标识。余额、优惠券、门店订单等归属该关系。 |
+| F-CORE-004 | `customer_id` | C | ID | 某Merchant的客户业务记录／关系标识，可在线下先建且关联Platform User可以为空；完成安全绑定后仍使用同一customer_id。余额、优惠券、门店订单等归属该关系。 |
 | F-CORE-005 | `staff_id` | C | ID | 店员业务身份标识；员工停用不删除，历史记录继续稳定引用。 |
 | F-CORE-006 | `merchant_owner_user_id` | S | ID | 商户老板所对应的平台/经营账号稳定引用；不新增“店长”角色。 |
 | F-CORE-007 | `role_key` | S | Enum | 经营角色固定语义：`platform_super_admin / merchant_owner / staff`。Customer/User 不计入这三个经营角色。 |
@@ -104,7 +105,7 @@
 
 - `platform_user_id ≠ customer_id`。
 - `merchant_id ≠ store_id`。
-- 同一 Platform User 在不同 Merchant 下拥有不同 Customer 关系。
+- 同一Platform User可在不同Merchant下关联不同Customer；同一Customer至多绑定一个当前有效Platform User，未绑定User的线下Customer仍是合法业务记录。
 - 商户钱包、优惠券、订单、内部备注按 Merchant/Customer 隔离；平台积分、平台个人消息、养宠顾问个人额度归 Platform User。
 - 任何“当前门店”都用 `store_id`；任何“租户归属”都用 `merchant_id`。
 
@@ -186,9 +187,15 @@
 | F-APPT-016 | `appointment_cancel_reason` | S | Text | 预约取消原因。 |
 | F-APPT-017 | `appointment_canceled_at` | S | Datetime | 预约取消时间。 |
 | F-APPT-018 | `appointment_created_at` | S | Datetime | 预约申请创建时间。 |
-| F-APPT-019 | `slot_capacity` | P | Int | DEC-APPT-01 容量模型待确认；确认前不得按 §11 提案实现为正式字段。 |
-| F-APPT-020 | `slot_reserved_count` | P | Int | 同上；仅保留注册号，不作为当前正式接口字段。 |
-| F-APPT-021 | `reschedule_proposal_id` | P | ID | 改期提议版本模型属于 DEC-APPT-01，确认前不冻结。 |
+| F-APPT-019 | `slot_capacity` | C | Int | 洗护／美容按Store+到店时段配置的宠物容量；寄养不使用该硬名额。 |
+| F-APPT-020 | `slot_reserved_count` | S | Int | 当前已确认预约占用的宠物名额数；待确认申请不计入，确认／改期必须原子更新。 |
+| F-APPT-021 | `reschedule_proposal_id` | S | ID | 单次有效改期提议稳定标识；旧提议不得覆盖新版本。 |
+| F-APPT-022 | `appointment_version` | S | Int | 预约乐观并发版本；确认、改期、开始服务使用同一版本校验。 |
+| F-APPT-023 | `reschedule_proposal_status` | C | Enum | active / accepted / rejected / withdrawn / expired / superseded；任一时刻最多一个active提议。 |
+| F-APPT-024 | `reschedule_proposed_by_actor_type` | S | Enum | customer / staff；用于判断由哪一方提出以及下一步确认方。 |
+| F-APPT-025 | `reschedule_proposed_by_actor_id` | S | ID | 发起改期提议的稳定操作者标识。 |
+| F-APPT-026 | `reschedule_proposal_expires_at` | S | Datetime | 改期提议有效截止；不得晚于03a§11.5规定的最早截止。 |
+| F-APPT-027 | `slot_reservation_status` | S | Enum | none / reserved / used / released；预约主状态、服务状态与名额状态分开表达。 |
 
 ---
 
@@ -352,14 +359,16 @@
 | F-CPN-008 | `max_discount_amount` | C | Money | 折扣券最高优惠金额（如适用）。 |
 | F-CPN-009 | `applicable_scope` | C | Enum/Struct | 全部消费 / 洗护 / 美容 / 寄养 / 商品等。 |
 | F-CPN-010 | `valid_from` | S | Datetime | 优惠券有效开始。 |
-| F-CPN-011 | `valid_until` | C | Datetime | 优惠券有效截止。 |
+| F-CPN-011 | `valid_until` | C | Datetime | 优惠券当前有效截止；锁定开始时有效的券解除锁定后，按03c§11补回实际锁定时长更新该值。 |
 | F-CPN-012 | `coupon_enabled` | C | Bool | 模板启用 / 停用。 |
 | F-CPN-013 | `coupon_status` | S | Enum | 可用、已锁定、已使用、已过期等业务状态。 |
 | F-CPN-014 | `coupon_source_type` | S | Enum | 充值赠送、人工赠送、邀请码兑换、平台积分兑换。 |
 | F-CPN-015 | `points_redemption_id` | C | ID | 平台积分兑换发券时关联的兑换记录。 |
-| F-CPN-016 | `coupon_locked_order_id` | S | ID | 收银选择后临时锁定的订单；未完成收款则恢复可用。 |
+| F-CPN-016 | `coupon_locked_order_id` | S | ID | 收银选择后临时锁定的订单；未完成收款则解除锁定并按规则恢复。 |
 | F-CPN-017 | `coupon_redeemed_at` | S | Datetime | 确认订单收款后的正式核销时间。 |
 | F-CPN-018 | `coupon_note` | C | Text | 可选备注。 |
+| F-CPN-019 | `coupon_locked_at` | S | Datetime | 当前一次有效锁定开始时间；用于计算锁定前剩余有效时长并防止重复延期。 |
+| F-CPN-020 | `coupon_unlocked_at` | S | Datetime | 当前一次锁定实际解除时间；与锁定时间、原／新valid_until及关联订单共同留痕。 |
 
 ### 10.2 邀请码
 
@@ -853,14 +862,14 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-AUD-001 | `audit_log_id` | S | ID | 单条审计记录。 |
 | F-AUD-002 | `actor_type` | S | Enum | platform_admin / merchant_owner / staff / customer / system 等操作者类型。 |
 | F-AUD-003 | `actor_id` | S | ID | 操作者稳定标识。 |
-| F-AUD-004 | `action_key` | S | Text | 本次动作，例如调价、绑定、收款确认、核销等。 |
+| F-AUD-004 | `action_key` | S | Text | 本次动作，例如调价、绑定、收款确认、核销、跨店服务履约记录查询等。 |
 | F-AUD-005 | `object_type` | S | Text/Enum | 被操作业务对象类型。 |
 | F-AUD-006 | `object_id` | S | ID | 被操作对象标识。 |
 | F-AUD-007 | `old_state` | C | Struct/Text | 原状态 / 原关系 / 原值快照（按业务需要）。 |
 | F-AUD-008 | `new_state` | C | Struct/Text | 新状态 / 新关系 / 新值快照。 |
 | F-AUD-009 | `audit_reason` | C | Text | 人工高风险操作、换绑、调价、调整等原因。 |
 | F-AUD-010 | `audit_created_at` | S | Datetime | 审计事件时间。 |
-| F-AUD-011 | `related_request_id` | S | Text/ID | 对应幂等请求 / 操作请求，便于重复动作追踪。 |
+| F-AUD-011 | `related_request_id` | S | Text/ID | 对应幂等请求／操作请求，便于重复动作追踪。跨店查询还必须通过object_type／object_id关联新增顾客或预约等真实业务对象。 |
 
 余额、积分、订单、库存、员工离职、Customer 换绑、调价、收款、退款 / 冲正、寄养执行、兑换核销等历史不得通过普通更新无痕覆盖。
 
@@ -953,7 +962,6 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 
 以下字段族当前不得被“字段注册表存在”误认为需求已确认：
 
-- `F-APPT-019`～`021`：预约容量/改期模型，受 `DEC-APPT-01` 阻塞；
 - `F-PET-049`～`050`：宠物行为安全档案跨店共享与审核，受 `DEC-PETSAFETY-01` 阻塞；
 - `F-EVD-011`：第三方证据权重模型，受 `DEC-EVIDENCE-01` 阻塞；
 - `F-RISK-007`：不同门店来源具体加权系数尚未冻结；3条独立投诉硬门槛不受该字段影响；
