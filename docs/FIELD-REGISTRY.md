@@ -196,6 +196,7 @@
 | F-APPT-025 | `reschedule_proposed_by_actor_id` | S | ID | 发起改期提议的稳定操作者标识。 |
 | F-APPT-026 | `reschedule_proposal_expires_at` | S | Datetime | 改期提议有效截止；不得晚于03a§11.5规定的最早截止。 |
 | F-APPT-027 | `slot_reservation_status` | S | Enum | none / reserved / used / released；预约主状态、服务状态与名额状态分开表达。 |
+| F-APPT-028 | `customer_change_cutoff_at` | S | Datetime | 客户可修改／接受改期的服务端截止；等于或晚于该时间禁止修改。已确认预约按当前有效开始时间与建议新开始时间对应截止的较早者计算，未确认申请按当前申请的预约开始时间与建议新开始时间对应截止的较早者计算。取消规则不复用本字段。 |
 
 ---
 
@@ -621,7 +622,7 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 
 ### 14.6 跨门店顾客客观风险事件（CUSTOMER_RISK）
 
-> 产品原则已确认“共享客观风险事件，不共享主观人格评价”；具体授权、可见范围、保存与业务影响受 DEC-RISK-01 阻塞，因此本组字段均为 P。
+> 产品原则已确认“共享客观风险事件，不共享主观人格评价”，并已确认查询额度、授权撤回、身份冲突阻断和无条件申诉。风险事件的完整提交／审核模型、保存期限与业务自动影响仍受 DEC-RISK-01 阻塞；仅标记为 P 的字段不得实现成正式规则。
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
@@ -633,7 +634,34 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-CRISK-006 | `risk_event_business_id` | P | ID | 关联预约 / 订单 / 服务等事实对象。 |
 | F-CRISK-007 | `risk_event_review_status` | P | Enum | 平台审核结果。 |
 | F-CRISK-008 | `risk_event_effective_until` | P | Datetime | 有效 / 降权截止，规则未确认。 |
-| F-CRISK-009 | `risk_event_appeal_status` | P | Enum | 顾客异议 / 申诉状态。 |
+| F-CRISK-009 | `risk_event_appeal_status` | C | Enum | submitted / under_review / original_decision_maintained / record_corrected / sharing_revoked；顾客可无条件提交，状态不等于申诉自动成立。 |
+| F-CRISK-010 | `cross_store_risk_query_id` | S | ID | 单次跨店查询稳定标识。 |
+| F-CRISK-011 | `query_viewing_store_id` | S | ID | 发起查询并持有月度额度的查看Store。 |
+| F-CRISK-012 | `query_actor_staff_id` | S | ID | 实际查询员工；额度由查看Store内员工共享。 |
+| F-CRISK-013 | `query_business_object_type` | S | Enum | customer_create / appointment_confirmation等已批准真实业务触发类型。 |
+| F-CRISK-014 | `query_business_object_id` | S | ID | 当前Customer创建／预约处理对象等稳定关联；禁止为空对象绕过。 |
+| F-CRISK-015 | `query_identity_fingerprint` | S | Text | 标准化身份的不可逆指纹，用于同顾客额度与审计。能唯一匹配Platform User时，同一主体的手机号与稳定微信身份必须归入同一指纹；未匹配时按本次规范化输入生成隔离指纹。不得保存原始手机号或以微信昵称充当该字段。 |
+| F-CRISK-016 | `query_month_key` | S | Text | 按Asia/Shanghai计算的自然月，格式YYYY-MM。 |
+| F-CRISK-017 | `query_count_in_month` | S | Int | 同一查看Store + 同一标准化身份 + query_month_key已计数次数，最大为3。 |
+| F-CRISK-018 | `query_result_category` | S | Enum | success / no_match / identity_conflict / rate_limited / authorization_denied / error；仅供鉴权、审计和告警，对门店端仍最小披露。 |
+| F-CRISK-019 | `related_request_id` | S | ID | 查询幂等请求标识；相同请求的网络重试不重复计数。 |
+| F-CRISK-020 | `risk_share_store_authorization_status` | C | Enum | active / revoked；来源门店与查看门店分别记录自身授权，不能互相代替。 |
+| F-CRISK-021 | `risk_share_store_authorized_at` | S | Datetime | 当前一轮门店授权生效时间。 |
+| F-CRISK-022 | `risk_share_store_revoked_at` | S | Datetime | 当前一轮门店授权撤回时间；服务端确认后立即停止对应方向的新共享。 |
+| F-CRISK-023 | `service_fulfillment_share_consent_status` | C | Enum | granted / revoked；顾客服务履约记录分项同意，不与宠物护理分项复用。 |
+| F-CRISK-024 | `service_fulfillment_share_consented_at` | S | Datetime | 当前一轮顾客分项同意生效时间。 |
+| F-CRISK-025 | `service_fulfillment_share_revoked_at` | S | Datetime | 当前一轮顾客分项同意撤回时间；撤回不删除不可变审计与真实业务事实。 |
+| F-CRISK-026 | `identity_conflict_status` | C | Enum | none / pending_review / resolved / unresolved；冲突期间不得返回跨店风险结果。 |
+| F-CRISK-027 | `identity_conflict_review_item_id` | S | ID | 冲突对应平台审核项，唯一归属F-REV-001；门店员工不得自行解除。 |
+| F-CRISK-028 | `risk_event_appeal_id` | S | ID | 每轮申诉稳定标识；重复内容可关联审核案，但不得拒绝生成申诉记录。 |
+| F-CRISK-029 | `risk_event_appeal_submitted_at` | S | Datetime | 申诉提交时间；不设时间、次数、费用或先决处理门槛。 |
+| F-CRISK-030 | `risk_event_appeal_content` | C | Text/Struct | 顾客本轮申诉陈述及材料引用；身份核验仅用于防冒名。 |
+| F-CRISK-031 | `risk_share_store_authorization_id` | S | ID | 每轮门店参与授权稳定标识；重新授权新建一轮，不覆盖撤回历史。 |
+| F-CRISK-032 | `risk_share_authorizing_store_id` | S | ID | `F-CRISK-020`～`022`授权记录的唯一Store归属。 |
+| F-CRISK-033 | `service_fulfillment_share_consent_id` | S | ID | 每轮顾客服务履约记录分项同意稳定标识。 |
+| F-CRISK-034 | `service_fulfillment_share_consent_user_id` | S | ID | `F-CRISK-023`～`025`同意记录的唯一Platform User归属。 |
+| F-CRISK-035 | `identity_conflict_id` | S | ID | 单次身份冲突稳定标识，关联查询与平台审核项，不复用Customer ID。 |
+| F-CRISK-036 | `risk_event_appeal_subject_user_id` | S | ID | `F-CRISK-028`～`030`申诉记录的唯一Platform User主体；与风险事件主体关系须校验以防冒名。 |
 
 ---
 
@@ -956,6 +984,22 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 
 `disabled / loading / loaded / no_fill / failed / expired`
 
+### 24.9 跨店顾客风险查询额度
+
+- 计数键：`query_viewing_store_id + query_identity_fingerprint + query_month_key`；
+- 时区：`Asia/Shanghai`；
+- 上限：每个自然月3次；
+- 手机号与稳定微信身份唯一指向同一Platform User时使用同一主体指纹，不得换标识重置；
+- 成功、无匹配、身份冲突计数；相同`related_request_id`网络重试不重复计数；
+- 店内员工共享额度，换员工、重复建空Customer或更换入口不得重置。
+
+### 24.10 客户预约修改截止
+
+- 固定提前量：预约开始前6小时；
+- 等于或晚于截止时间禁止客户修改／接受改期；
+- 已确认预约按当前有效开始时间与建议新开始时间中的较早者计算，未确认申请按当前申请时间与建议新时间中的较早者计算；
+- 使用服务端时间与`Asia/Shanghai`业务时区复核；本常量不自动限制服务开始前取消。
+
 ---
 
 ## 25. Pending 字段处理规则
@@ -967,7 +1011,7 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 - `F-RISK-007`：不同门店来源具体加权系数尚未冻结；3条独立投诉硬门槛不受该字段影响；
 - `F-RISK-018`：问题热度具体数值范围 / 公式受 `DEC-FOOD-HEAT-01` 阻塞；
 - `F-REV-016`～`017`：跨店审核结果可见范围 / 有效期按对应风险业务 DEC 确认；
-- `F-CRISK-001`～`009`：跨门店顾客客观风险事件完整字段族受 `DEC-RISK-01` 阻塞；
+- `F-CRISK-001`～`008`：跨门店顾客客观风险事件的完整提交／审核、有效期与自动业务影响受 `DEC-RISK-01` 阻塞；`F-CRISK-009`～`036`只落实已确认的申诉、查询额度、授权撤回和身份冲突控制，不代表事件保存期限已确认；
 - `F-FEED-024`～`027`：上门喂养修改/取消/响应/失效时限，受 `DEC-FEED-01`～`03` 阻塞；
 - `F-RWD-027`～`028`：积分自提期限 / 改领取门店，受 `DEC-POINTS-02` 阻塞；
 - 启动广告具体秒数默认值/范围受 `DEC-LAUNCH-01` 阻塞；字段存在但不能写死运营常数；
