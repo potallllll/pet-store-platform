@@ -622,7 +622,7 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 
 ### 14.6 跨门店顾客客观风险事件（CUSTOMER_RISK）
 
-> 产品原则已确认“共享客观风险事件，不共享主观人格评价”，并已确认查询额度、授权撤回、身份冲突阻断和无条件申诉。风险事件的完整提交／审核模型、保存期限与业务自动影响仍受 DEC-RISK-01 阻塞；仅标记为 P 的字段不得实现成正式规则。
+> 产品原则已确认“共享客观风险事件，不共享主观人格评价”，并已确认查询额度、授权撤回、身份冲突阻断、无条件申诉、12个月跨店展示、3年受限留存与到期处置。风险事件的完整提交／审核模型与业务自动影响仍受 DEC-RISK-01 阻塞；仅标记为 P 的字段不得实现成正式规则。
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
@@ -633,7 +633,7 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-CRISK-005 | `risk_event_source_store_id` | P | ID | 来源 Store。 |
 | F-CRISK-006 | `risk_event_business_id` | P | ID | 关联预约 / 订单 / 服务等事实对象。 |
 | F-CRISK-007 | `risk_event_review_status` | P | Enum | 平台审核结果。 |
-| F-CRISK-008 | `risk_event_effective_until` | P | Datetime | 有效 / 降权截止，规则未确认。 |
+| F-CRISK-008 | `risk_event_cross_store_visible_until` | C | Datetime | 跨店展示硬截止：首次可共享平台结论生效时间 + 12个月；等于或晚于该时间不得返回门店。申诉及普通更正不重置，提前撤回／撤销按更早时间停止。 |
 | F-CRISK-009 | `risk_event_appeal_status` | C | Enum | submitted / under_review / original_decision_maintained / record_corrected / sharing_revoked；顾客可无条件提交，状态不等于申诉自动成立。 |
 | F-CRISK-010 | `cross_store_risk_query_id` | S | ID | 单次跨店查询稳定标识。 |
 | F-CRISK-011 | `query_viewing_store_id` | S | ID | 发起查询并持有月度额度的查看Store。 |
@@ -662,6 +662,20 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-CRISK-034 | `service_fulfillment_share_consent_user_id` | S | ID | `F-CRISK-023`～`025`同意记录的唯一Platform User归属。 |
 | F-CRISK-035 | `identity_conflict_id` | S | ID | 单次身份冲突稳定标识，关联查询与平台审核项，不复用Customer ID。 |
 | F-CRISK-036 | `risk_event_appeal_subject_user_id` | S | ID | `F-CRISK-028`～`030`申诉记录的唯一Platform User主体；与风险事件主体关系须校验以防冒名。 |
+| F-CRISK-037 | `risk_event_cross_store_visible_from` | S | Datetime | 首次形成可跨店共享的平台结论并实际生效时间；`F-CRISK-008`唯一基准，不因申诉或普通更正覆盖。 |
+| F-CRISK-038 | `risk_evidence_retention_until` | S | Datetime | 原始事实、证据、审核过程与结论的受限保留截止；取`risk_event_cross_store_stopped_at`与最后一轮申诉办结中的较晚时间，再加3年。 |
+| F-CRISK-039 | `risk_share_store_authorization_retention_until` | S | Datetime | 门店授权撤回、替换或失效时间 + 3年；有效授权期间为空，不得据空值删除。 |
+| F-CRISK-040 | `service_fulfillment_share_consent_retention_until` | S | Datetime | 顾客分项同意撤回、替换或失效时间 + 3年；有效同意期间为空。 |
+| F-CRISK-041 | `query_audit_retention_until` | S | Datetime | 单次查询发生时间 + 3年。 |
+| F-CRISK-042 | `identity_conflict_retention_until` | S | Datetime | 身份冲突办结时间 + 3年；尚未办结时为空且不得自动删除。 |
+| F-CRISK-043 | `risk_event_appeal_retention_until` | S | Datetime | 每轮申诉办结时间 + 3年；各轮分别计算。 |
+| F-CRISK-044 | `retention_disposition_id` | S | ID | 单次到期处置审计记录稳定标识。 |
+| F-CRISK-045 | `retention_target_type` | S | Enum | risk_evidence / store_authorization / customer_consent / query_audit / identity_conflict / appeal_material。 |
+| F-CRISK-046 | `retention_target_id` | S | ID | 被处置记录的稳定标识，必须与`retention_target_type`对应，不复用业务主体ID。 |
+| F-CRISK-047 | `retention_disposition_type` | C | Enum | deleted / irreversibly_anonymized / retained_by_independent_rule；最后一项不得恢复跨店展示。 |
+| F-CRISK-048 | `retention_disposed_at` | S | Datetime | 删除、不可逆匿名化或转入独立规则留存的实际完成时间。 |
+| F-CRISK-049 | `risk_event_cross_store_stopped_at` | S | Datetime | 该事件实际停止跨店展示的时间；12个月到期、来源门店授权撤回、顾客同意撤回或平台撤销时写入最早有效时间。查看门店只撤回本店参与授权不改全局事件时间。 |
+| F-CRISK-050 | `risk_event_cross_store_stop_reason` | C | Enum | retention_expired / source_store_revoked / customer_consent_revoked / platform_sharing_revoked；与F-CRISK-049对应。 |
 
 ---
 
@@ -1000,6 +1014,16 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 - 已确认预约按当前有效开始时间与建议新开始时间中的较早者计算，未确认申请按当前申请时间与建议新时间中的较早者计算；
 - 使用服务端时间与`Asia/Shanghai`业务时区复核；本常量不自动限制服务开始前取消。
 
+### 24.11 跨店服务履约记录保存期限
+
+- 跨店展示：`P12M`，从`risk_event_cross_store_visible_from`起算；等于或晚于`risk_event_cross_store_visible_until`时不得返回门店；
+- 证据／审核：从`risk_event_cross_store_stopped_at`与最后一轮申诉办结中的较晚时间起`P3Y`；
+- 已结束的门店授权／顾客同意：从撤回、替换或失效时间起`P3Y`；有效记录不提前删除；
+- 查询审计：每次查询发生时间起`P3Y`；身份冲突：办结时间起`P3Y`；每轮申诉：本轮办结时间起`P3Y`；
+- `P12M`与`P3Y`按`Asia/Shanghai`日历月／日历年计算，不按固定天数近似；
+- 申诉不暂停或重置12个月跨店展示期；授权撤回、平台撤销共享结论可使展示更早终止；
+- 到期后删除或不可逆匿名化非必需数据并写入F-CRISK-044～048；独立规则要求继续保留的记录保持受限且不得恢复门店可见性。
+
 ---
 
 ## 25. Pending 字段处理规则
@@ -1011,7 +1035,7 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 - `F-RISK-007`：不同门店来源具体加权系数尚未冻结；3条独立投诉硬门槛不受该字段影响；
 - `F-RISK-018`：问题热度具体数值范围 / 公式受 `DEC-FOOD-HEAT-01` 阻塞；
 - `F-REV-016`～`017`：跨店审核结果可见范围 / 有效期按对应风险业务 DEC 确认；
-- `F-CRISK-001`～`008`：跨门店顾客客观风险事件的完整提交／审核、有效期与自动业务影响受 `DEC-RISK-01` 阻塞；`F-CRISK-009`～`036`只落实已确认的申诉、查询额度、授权撤回和身份冲突控制，不代表事件保存期限已确认；
+- `F-CRISK-001`～`007`：跨门店顾客客观风险事件的完整提交／审核与自动业务影响受 `DEC-RISK-01` 阻塞；`F-CRISK-008`～`050`只落实已确认的申诉、查询额度、授权撤回、身份冲突、保存期限和到期处置，不代表事件提交权限或自动影响预约已确认；
 - `F-FEED-024`～`027`：上门喂养修改/取消/响应/失效时限，受 `DEC-FEED-01`～`03` 阻塞；
 - `F-RWD-027`～`028`：积分自提期限 / 改领取门店，受 `DEC-POINTS-02` 阻塞；
 - 启动广告具体秒数默认值/范围受 `DEC-LAUNCH-01` 阻塞；字段存在但不能写死运营常数；
