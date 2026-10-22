@@ -263,14 +263,33 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "boarding_event_visibility": "independent_of_notify_customer",
         "boarding_abnormal_close": "staff_confirms_actual_handling_with_result",
         "boarding_checkout_due_policy": "remind_only_no_auto_end_renew_or_fee",
-        "boarding_billing_and_collection": "pending",
-        "boarding_actual_checkout": "pending",
+        "boarding_billing_and_collection": "confirmed_in_section_5_2",
+        "boarding_actual_checkout": "billing_endpoint_confirmed_handover_pending",
         "boarding_vaccination_admission": "pending",
         "boarding_special_care_execution": "pending",
         "boarding_shift_handover": "pending",
     }.items():
         if boarding_meta.get(key) != expected:
             add(results, "error", "boarding.confirmed_rules", staff_path, f"section 5.1 {key} must be {expected}")
+
+    boarding_billing = staff.split("### 5.2 ", 1)[-1].split("\n### 5.3 ", 1)[0]
+    billing_meta = dict(META_RE.findall(boarding_billing)) if "### 5.2 " in staff else {}
+    for key, expected in {
+        "status": "confirmed",
+        "status_scope": "boarding_overnight_count_and_collection_timing_only",
+        "boarding_billing_unit": "overnight",
+        "boarding_billing_timezone": "Asia/Shanghai",
+        "boarding_billing_cutoff": "03:00:00",
+        "boarding_billing_interval": "check_in_exclusive_actual_checkout_inclusive",
+        "boarding_billable_days": "count_daily_cutoffs_in_actual_stay",
+        "boarding_no_overnight_fee": "zero",
+        "boarding_collection_timing": "actual_departure",
+        "boarding_extension_early_departure": "recalculate_from_actual_stay",
+        "boarding_expected_time_billing_effect": "none",
+        "boarding_billing_auto_charge": "excluded",
+    }.items():
+        if billing_meta.get(key) != expected:
+            add(results, "error", "boarding.billing_rules", staff_path, f"section 5.2 {key} must be {expected}")
 
     for field_id, field_name in {
         "F-BOARD-019": "boarding_location_label",
@@ -283,6 +302,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "F-BOARD-026": "boarding_abnormal_handling_status",
         "F-BOARD-027": "boarding_abnormal_handling_result",
         "F-BOARD-028": "boarding_profile_unverified_fields",
+        "F-BOARD-029": "boarding_billable_nights",
     }.items():
         row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
         cells = [cell.strip() for cell in row.split("|")]
