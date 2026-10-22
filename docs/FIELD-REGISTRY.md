@@ -216,7 +216,7 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 | F-APPT-005 | `pet_ids` | C | Ref[] | 一次预约选择的真实宠物；内部每只宠物建立独立服务项。 |
 | F-APPT-006 | `appointment_pet_item_id` | S | ID | 多宠预约中的单宠服务项标识。 |
 | F-APPT-007 | `service_category` | S | Enum | 洗护 / 美容 / 寄养大类。 |
-| F-APPT-008 | `service_item_id` | S | ID | 商户配置的具体预约服务项目。 |
+| F-APPT-008 | `service_item_id` | S | ID | 本店服务项目主资料的稳定标识，预约与洗美开单共用，不另建同义项目ID；修改／停用沿用原ID，不覆盖历史业务事实，管理边界见04§3.0.8。 |
 | F-APPT-009 | `requested_start_at` | S | Datetime | 客户提出的期望到店日期时间，须在营业范围内且未临时关闭，不要求对应固定间隔时段。提交不等于已确认，人工确认及版本切换按03a§11。 |
 | F-APPT-010 | `boarding_checkout_at` | S | Datetime | 寄养预约预计离店日期时间。仅寄养使用。 |
 | F-APPT-011 | `reference_price` | C | Money | 预约页参考价，不代表最终结算金额。 |
@@ -239,6 +239,17 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 | F-APPT-028 | `customer_change_cutoff_at` | S | Datetime | 客户可修改／接受改期的服务端截止；等于或晚于该时间禁止修改。已确认预约按当前有效开始时间与建议新开始时间对应截止的较早者计算，未确认申请按当前申请的预约开始时间与建议新开始时间对应截止的较早者计算。取消规则不复用本字段。 |
 
 03a§11的当前模型为门店人工确认。F-APPT-019／020／027退役不删除历史、不回收注册号，也不删除预约版本、改期提议或6小时截止字段。新申请、人工确认及接受改期关联F-STORE-012～014校验目标时间，不以固定间隔网格或硬名额计数限制接待；同一预约并发转换仍校验F-APPT-022，多宠同批全成全败。寄养建议容量提醒按03a§7单独执行，不借此恢复洗美名额。
+
+### 6.1 轻量服务项目主资料（SERVICE_ITEM）
+
+04§3.0.8本轮确认洗护／美容项目入口与新增／修改／停用边界，不确认完整项目表单或价格模型。主资料以F-CORE-003／store_id为唯一Store归属、merchant_id作租户隔离；对象标识复用F-APPT-008／service_item_id，大类复用F-APPT-007，不为预约和开单复制项目或按名称匹配归属。
+
+| 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
+|---|---|---:|---|---|
+| F-SITEM-001 | `service_item_enabled` | S | Bool | 项目可供新业务选择／已停用的唯一可用状态，true表示可选、false表示停用；新预约／直接新开单由服务端复核。初始状态、停用后的恢复及停用前旧预约履约流程仍待04§3.0.8确认，不据此新增恢复按钮或自动取消旧预约。 |
+| F-SITEM-002 | `service_item_version` | S | Int | 服务项目主资料版本；用于修改／停用与新业务提交的并发校验，不能用新内容覆盖旧预约、订单或服务事实／快照，不代替F-APPT-022预约版本。 |
+
+管理变更的操作者、时间及前后内容／状态复用F-AUD。仅本店老板维护，员工只按职责使用；不物理删除项目，不新增工时、排班或复杂服务套餐字段。项目表单及价格字段下一轮确认，不能因SITEM字段已登记就直接完整实现项目管理；现有充值套餐与真实服务时长记录不受排除影响。
 
 ---
 
@@ -320,7 +331,7 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 | F-SVC-007 | `service_result_viewed_at` | S | Datetime | 客户真正查看本次结果时间；查看后完成卡可退出首页当前服务。 |
 | F-SVC-008 | `service_summary` | C | Text/Struct | 本次服务摘要 / 结构化服务记录。 |
 | F-SVC-009 | `service_staff_ids` | S | Ref[] | 实际服务员工稳定引用；员工离职不改写历史。 |
-| F-SVC-010 | `service_duration` | C | Number | 服务时长语义；计算口径后续架构可细化。 |
+| F-SVC-010 | `service_duration` | C | Number | 实际服务时长记录语义，计算口径后续架构可细化；04§3.0.8排除员工工时核算不删除本字段，也不得据此新增员工工时、工资或提成算法。 |
 | F-SVC-011 | `service_abnormal_notes` | C | Text | 服务中异常情况。 |
 | F-SVC-012 | `ai_report_task_id` | S | ID | AI 洗护报告任务标识；服务完成本身不自动创建。 |
 | F-SVC-013 | `ai_report_status` | S | Enum | 未创建 / 生成中 / 已完成 / 失败等真实任务状态。 |
@@ -1097,6 +1108,10 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 | `staff_owner.business_settings` | 老板管理／营业与预约设置，仅两项，见04§3.0.7；与其他老板管理菜单的排序未定 |
 | `staff_owner.business_hours` | 营业与预约设置／营业时间，组内第一项，仅本店老板修改 |
 | `staff_owner.temporary_closure` | 营业与预约设置／临时关闭，组内第二项，仅本店老板修改；不是平台停用门店 |
+| `staff_owner.service_item_management` | 老板管理／服务项目管理，入口及操作边界按04§3.0.8；与其他老板菜单的排序未定 |
+| `staff_owner.create_service_item` | 服务项目管理内／新增项目，仅本店老板；表单及价格待确认，不表示完整流程已冻结 |
+| `staff_owner.edit_service_item` | 服务项目管理内／修改项目，仅本店老板，不回写历史业务事实 |
+| `staff_owner.disable_service_item` | 服务项目管理内／停用项目，仅本店老板，不物理删除或自动取消旧预约 |
 | `staff_owner.employee_list` | 员工管理／员工列表 |
 | `staff_owner.invite_employee` | 员工管理／邀请员工 |
 | `staff_owner.disable_employee` | 员工列表内／停用员工 |
