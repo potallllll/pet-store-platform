@@ -2,7 +2,7 @@
 
 > status: mixed
 > confirmed_scope: current_order_rules_approved_wash_groom_flows_and_offline_financial_ledger_with_staff_refunds
-> pending_scope: interruption_client_label_other_state_recovery_mixed_business_checkout_wallet_principal_bonus_allocation_and_remaining_ledger_corrections
+> pending_scope: interruption_client_label_other_state_recovery_mixed_business_checkout_partial_refund_allocation_and_remaining_ledger_corrections
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -29,10 +29,13 @@
 > ledger_side_effects: automatic_wallet_ledger_and_applicable_inventory_updates
 > refund_owner_confirmation_required: false
 > refund_roles: [merchant_owner, active_store_staff]
-> refund_method_values: [member_balance, cash]
-> refund_default_method: member_balance
-> refund_original_method_restriction: none
+> refund_method_values: original_payment_methods
+> refund_default_method: original_payment_methods
+> refund_original_method_restriction: required
 > refund_auto_restock: false
+> wallet_deduction_order: principal_then_bonus
+> wallet_refund_component_rule: restore_original_components
+> partial_refund_allocation: pending
 
 1. 微信、支付宝、现金等真实收付款在线下完成，本系统只记录实际方式与金额，不接入收银系统或第三方收款／退款接口，不设计自动打款、通道回调、支付处理中、未知结果对账和部分通道失败重试等流程。“收银／支付／已收款”在本项目指记账操作及结果，不是系统向外部账户扣款。
 2. 老板或有效在职员工可以即时记账，也可以结束工作后录入已经发生的线下交易；实际交易时间与服务端录入时间区分保存，未录入前客户端不假装已结算。预约确认、接宠检查、服务状态、结果发布等仍在营业时及时操作，不改成事后补录。洗美正常完成后收款及中止例外仍有效，补录不是预收许可。
@@ -284,13 +287,17 @@ V1.0 只保留三个分类：
 
 全部门店消费订单的本店老板和有效在职员工均可登记退款，无需老板审批，不设置待老板确认、批准／拒绝／撤回批准流程。退款原因必填，关联原单并保存实际经办人、金额、方式、实际退款时间及服务端录入时间；不改写原实付。本次退款不得超过本单已实收扣除已退的剩余额，累计退款不得超过原实收；未实收或免单无可退资金。
 
-退款优先退到本商户下原顾客会员余额，现金为另一渠道；可全退余额、全退现金或余额＋现金，按本次实际处理记录，不限制原付款方式，也不强制先退原余额支付部分。这里的“优先”是默认选择，不是系统擅自退款或强制补足余额后才可现金。现金须在线下确实退回后确认记账；退会员余额由本次确认在系统内实际入账并生成退款余额流水。可无小程序绑定，但不得为临时顾客伪造User或错充其他人的钱包；本金／赠送分账仍待03c§5，不自行认定全部退本金或全部退赠送。
+退款全部原路退回，逐笔对应原消费的真实付款方式及原账户：会员余额退原商户／原顾客钱包，微信退原微信付款账户，支付宝退原支付宝付款账户，现金退现金，其他方式按原渠道。不能把微信／支付宝付款改退现金或钱包，也不能把原余额部分转为现金；不提供自由改退款渠道的选项。余额原扣本金退本金、原扣赠送退赠送，不相互转换，消费扣款顺序按03c§5先本金再赠送。
+
+组合付款全额退款时分别退各原渠道实际已付未退的金额，例如原钱包60元＋微信40元且均未退，全退须钱包60元＋原微信40元；每个渠道及余额组成的累计退款不超过各自原实付／实际扣款。不得为临时顾客伪造User、另建接收钱包或退给其他顾客。组合付款部分退款及钱包本金／赠送的部分退款分配仍按03c§5／DEC-STAFF-05待确认，不擅定比例、优先次序或沿用消费扣款顺序来分配退款。
+
+本系统仍只记账、不接外部支付退款接口。原微信／支付宝／现金等须由经办人在线下核实并实际原路退回后确认记账，不因选择原渠道就声称系统已打款；原会员余额部分在确认退款时由系统实际入原钱包并生成余额流水，退款前后金额和原交易关联保留。
 
 沿用退款请求稳定标识和版本作为录入草稿／防重依据，不承载审批。同单同时最多一份未完成退款录入；该次完成后仍有可退金额可再次登记。保存草稿不表示已退款，确认时重新校验原单、剩余可退及当前版本；同一确认重复提交不重复退款、加余额或计流水。客户端只展示已经确认记入账本的真实退款结果，不把默认渠道、草稿或页面成功动画当到账。
 
 退款不自动改写服务完成、实际投喂或库存。只有确实收回且可再次销售的商品，才按原SKU登记退货并由系统一次恢复库存；不需老板逐单审批。仅退款、不退货或不可再次销售均不自动回库，不涉及积分奖励库存。退款方式不改变03c§11既有优惠券规则，也不扩展充值退款、任意余额调整或积分补偿。
 
-优惠券未核销锁定因订单取消／未完成结算释放时，按03c§11暂停有效期并补回实际锁定时长；实际收款或免单结算后不能按未付款超时释放已核销券。整单取消／全额退款和部分退款仍按03c§11区分；本金／赠送分账及其余账本更正规则在核心业务规则阶段统一确认，不再等待外部支付通道设计。
+优惠券未核销锁定因订单取消／未完成结算释放时，按03c§11暂停有效期并补回实际锁定时长；实际收款或免单结算后不能按未付款超时释放已核销券。整单取消／全额退款和部分退款仍按03c§11区分；部分退款分配及其余账本更正规则在核心业务规则阶段统一确认，不再等待外部支付通道设计。
 
 寄养加餐因提前离店、取消或其他原因无法投喂时，执行终止与财务处理分开记录。已经记收款的订单不得直接改为未付款、删除交易或自动无条件退款；由本店老板／有效员工按本节登记真实退款，无需老板审批，其他撤销／冲正仍按对应正式规则。客户端保留原因和可见结果，已经发生的实际投喂及其时间轴记录不得因退款而改写为未发生。
 

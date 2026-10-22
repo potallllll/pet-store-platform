@@ -2,7 +2,7 @@
 
 > status: mixed
 > confirmed_scope: current_page_map_and_confirmed_interactions_except_pending_risk_care_and_wash_groom_workflow_edges
-> pending_scope: risk_visual_unresolved_03h_care_process_interruption_label_mixed_business_checkout_ai_version_contract_wallet_allocation_and_remaining_ledger_corrections
+> pending_scope: risk_visual_unresolved_03h_care_process_interruption_label_mixed_business_checkout_ai_version_contract_partial_refund_allocation_and_remaining_ledger_corrections
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -958,7 +958,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 ### 14.2 恢复与异常验收要求
 
 - 关键提交至少覆盖成功、失败、重复动作、响应丢失、离开后返回、身份验证后继续；记录是否产生了第二笔业务，不能仅截图按钮置灰。
-- 洗美逐项验：六项未检查拒绝开始、异常／无法检查记录主人真实决定、完成前复检、无图完成／普通结果立即可见、逐宠状态／整单金额、正常服务不预收／中止明确金额例外、全未开始取消无收费／无免单成交。未结算重开空原因可成功、已结算拒绝，旧结果与新版通知／已读不串、AI权益不重置。未付不自动挂单、手动挂单空原因拒绝、顾客内部备注隐藏、记清收款／免单自动解除；改0保存不结算、明确免单后才waived。全部消费最多两种支付（余额内部分账算一种）；消费退款老板／有效员工均可、无老板审批，默认余额优先、现金／组合可选且不限制原付款方式，未实收／超剩余额拒绝，草稿不算已退。即时／晚记账均仅一次更新余额／流水／适用库存，退款不自动回库、真实退货才联动，余额不足不能负数；未记账不伪造客户端成功，不产生外部支付接口或回调。中止标签／混合业务／本金赠送分账及其余更正等未决子项保持blocked。
+- 洗美逐项验：六项未检查拒绝开始、异常／无法检查记录主人真实决定、完成前复检、无图完成／普通结果立即可见、逐宠状态／整单金额、正常服务不预收／中止明确金额例外、全未开始取消无收费／无免单成交。未结算重开空原因可成功、已结算拒绝，旧结果与新版通知／已读不串、AI权益不重置。未付不自动挂单、手动挂单空原因拒绝、顾客内部备注隐藏、记清收款／免单自动解除；改0保存不结算、明确免单后才waived。全部消费最多两种支付（余额内部分账算一种）；消费退款老板／有效员工均可、无老板审批，消费先扣本金再扣赠送，退款按原付款渠道／原账户退回，未实收／超剩余额拒绝，草稿不算已退。即时／晚记账均仅一次更新余额／流水／适用库存，退款不自动回库、真实退货才联动，余额不足不能负数；未记账不伪造客户端成功，不产生外部支付接口或回调。中止标签／混合业务／部分退款分配及其余更正等未决子项保持blocked。
 - 启动覆盖分享 / 通知冷启动、后台恢复、广告无填充 / 失败、登录返回、目标无效及跨门店权限。
 - 加餐覆盖已收款／已免单未投喂、重复确认、零元不跳过出库／执行及免单后不被未付款超时取消；积分覆盖最后一份库存并发、取消与核销竞态及补偿处理中。
 - C-ORDER-01逐项覆盖：护理仅开单无客户端预约、商品只关联原SKU、普通员工与老板不限幅整单调价／无逐单审批、原因与其他补充、负数／超精度拒绝、0元未确认不结算、免单不造付款／不扣余额、收款／免单／调价／取消并发与重复请求、商品一次出库及收入0、免单后金额锁定与真实顾客展示。只验收本轮确认范围，护理过程未决不得冒充已通过。
