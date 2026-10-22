@@ -142,6 +142,24 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         if catalog_meta.get(key) != expected:
             add(results, "error", "catalog.confirmed_rules", staff_path, f"section 3.0.8 {key} must be {expected}")
 
+    wash_flow = staff.split("### 4.3 ", 1)[-1].split("\n## 5.", 1)[0]
+    wash_meta = dict(META_RE.findall(wash_flow)) if "### 4.3 " in staff else {}
+    for key, expected in {
+        "workflow_scope": "wash_groom_only",
+        "service_state_values": "[not_started, in_progress, completed, cancelled, interrupted]",
+        "pre_service_check_required": "true",
+        "service_photo_required": "false",
+        "service_result_publish": "on_service_completion",
+        "multi_pet_order_model": "one_customer_one_order_independent_pet_service_records",
+        "multi_pet_settlement": "together_no_per_pet_split_or_installments",
+        "bulk_complete_all_pets": "excluded",
+        "actual_collection_timing": "after_service_completion",
+        "unpaid_departure_handling": "order_on_hold",
+        "pickup_confirmation": "excluded",
+    }.items():
+        if wash_meta.get(key) != expected:
+            add(results, "error", "wash_groom.confirmed_flow", staff_path, f"section 4.3 {key} must be {expected}")
+
     orders_path = Path("docs/03d-customer-orders.md")
     orders = current_text[orders_path.as_posix()]
     settlement = orders.split("### 10.1 ", 1)[-1].split("\n## 11.", 1)[0]

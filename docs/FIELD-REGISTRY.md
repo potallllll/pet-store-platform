@@ -344,7 +344,7 @@ F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型
 | F-SVC-001 | `service_record_id` | S | ID | 一次真实洗护／美容／护理／寄养服务记录标识。 |
 | F-SVC-002 | `service_type` | C | Enum | 洗护／美容／护理／寄养；新增care护理仅门店开单，不自动开放客户端预约、洗美AI报告或医疗流程；商品不属于此枚举。 |
 | F-SVC-003 | `service_customer_status` | C | Enum | 客户侧简化状态；洗美不得直接暴露全部店员内部步骤。 |
-| F-SVC-004 | `service_internal_status` | S | Enum | 店员内部细状态，04§4.1已确认由本店老板／有效员工手动操作，服务端校验并留痕；不自动联动付款／交付或用客户端三态替代。完整枚举／合法迁移／回退更正仍待DEC-STAFF-04，字段存在不批准任意跳转。 |
+| F-SVC-004 | `service_internal_status` | S | Enum | 洗美按04§4.3固定not_started／in_progress／completed／cancelled／interrupted，由本店有效员工手动操作、服务端校验并审计；不自动付款／交付。重开门槛及其他类型完整流程待决，不将五态套到护理／寄养。 |
 | F-SVC-005 | `service_started_at` | S | Datetime | 实际开始服务时间。 |
 | F-SVC-006 | `service_completed_at` | S | Datetime | 实际完成服务时间。 |
 | F-SVC-007 | `service_result_viewed_at` | S | Datetime | 客户真正查看本次结果时间；查看后完成卡可退出首页当前服务。 |
@@ -356,6 +356,14 @@ F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型
 | F-SVC-013 | `ai_report_status` | S | Enum | 未创建 / 生成中 / 已完成 / 失败等真实任务状态。 |
 | F-SVC-014 | `ai_report_entitlement_id` | S | ID | 对应 `ai_report` 激励广告获得的报告资格。 |
 | F-SVC-015 | `ai_report_content` | S | Struct/Text | 已生成的护理 / 外观观察报告，不作为医疗诊断。 |
+| F-SVC-016 | `pre_service_check_status` | C | Enum | 洗美前检查：not_checked／no_obvious_abnormality／abnormal，默认未检查，不能默认正常；未检查不得开始。异常说明用F-SVC-011，检查详情用F-SVC-008，清单及异常继续服务条件仍待DEC-STAFF-04。 |
+| F-SVC-017 | `pre_service_checked_at` | S | Datetime | 本service_record_id前检查实际完成的服务端记录时间；不通过空勾选或补录时间伪造检查，不与服务实际开始时间混用。 |
+| F-SVC-018 | `pre_service_checked_by_staff_id` | S | ID | 实际检查的本店有效员工；关联稳定staff_id，离职不改历史，照片不强制。 |
+| F-SVC-019 | `service_record_version` | S | Int | 同一宠物服务记录的操作版本，供检查／开始／完成／重新处理／时间更正等竞态校验；不替代订单金额版本或审核row_version，不表示所有待决动作已获批准。 |
+
+洗美同顾客多宠共用F-ORD-001／order_id，每宠独立F-SVC-001／service_record_id及F-PET-001／pet_id，各原F-ORD-005明细关联真实宠物与服务记录。服务唯一归属本店业务对象并按merchant_id隔离，不创建第二套消费账本或用订单头单个pet_id覆盖多宠。一宠完成／取消不改变其他宠物；一起结算，暂不按宠拆账／分次付款。收款仅在服务完成后，照片非必传、普通结果完成即发布、不设确认接走；异常收费、免单时点及重开前置条件仍待对应DEC。
+
+F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值／更正记录，结束不早于开始、不填未来，不重写原操作时间、付款或真实服务事实。操作人／时间／前后值／原因复用F-AUD，不增加提成／默认业绩分配；其他有效员工可接手。
 
 ### 8.2 寄养与时间轴
 
@@ -529,10 +537,12 @@ F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型
 | F-ORD-027 | `source_channel` | C | Enum | 复用 F-CORE-011。订单来源分析不得另造 `order_source`。 |
 | F-ORD-028 | `business_scenario` | C | Enum | 复用 F-CORE-012；寄养加餐固定 `boarding_feed`。 |
 | F-ORD-029 | `boarding_id` | C | ID | 寄养加餐订单必须稳定关联当前寄养。 |
-| F-ORD-030 | `pet_id` | C | ID | 服务 / 寄养加餐等与具体宠物的关联。 |
+| F-ORD-030 | `pet_id` | C | ID | 具体服务记录／服务明细及寄养加餐与真实宠物的关联；洗美多宠订单共用order_id，不能在订单头只存一个pet_id覆盖其他宠物，也不为不同顾客并单。 |
 | F-ORD-031 | `original_request_snapshot` | S | Struct | 客户原始购买需求快照；门店改单不得无痕覆盖。 |
 | F-ORD-032 | `order_amount_version` | S | Int | 同一订单金额版本，供调价、实际收款、免单及取消／超时等校验同一金额／状态；结算先成功则拒绝直接改价，调价先成功则旧金额结算失败重新核对。不能复用项目版本或审核row_version。 |
 | F-ORD-033 | `manual_adjustment_reason_code` | S | Enum | actual_care / store_discount / input_correction / other，对应实际护理情况／到店优惠／录入更正／其他。调价原因必选；other须在F-ORD-018补文字，其余保存真实原因，不据原因名称开放收款后改价。 |
+| F-ORD-034 | `order_on_hold` | C | Bool | 原订单是否已标记挂单；未结算离店按挂单处理，不等于付款／免单／取消，不新建第二张账单。手动／自动触发、解除及展示等仍待DEC-STAFF-05，不依赖已取消的接走确认字段。 |
+| F-ORD-035 | `order_held_at` | S | Datetime | 原订单实际挂单操作的服务端时间；不伪填接走时间，不自动推定挂单已收款。原因／操作者／变更审计复用F-AUD，完整挂单生命周期待决。 |
 
 全部到店消费订单整单调价不限业务金额／比例、无老板逐单审批，但须有效角色／对象、非负精确金额、前后确认、原因及版本校验。免单原因、操作者、时间复用F-AUD-009／002／003／010并关联原order_id与幂等请求；paid_amount、final_receivable_amount及收入均为0，settled_at及payment_status=waived共同表达已结算。无实际付款时不产生F-PAY-001～006记录或余额扣款；商品仍一次出库，服务／投喂不自动完成，详见03d§10.1。
 

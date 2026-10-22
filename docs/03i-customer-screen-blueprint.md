@@ -1,12 +1,12 @@
 # 03I 客户端「页面蓝图与关键交互验收场景」
 
 > status: mixed
-> confirmed_scope: current_page_map_and_confirmed_interactions_except_pending_risk_ui_and_care_process_details
-> pending_scope: risk_module_visual_unresolved_03h_edges_and_care_service_process_details
+> confirmed_scope: current_page_map_and_confirmed_interactions_except_pending_risk_care_and_wash_groom_workflow_edges
+> pending_scope: risk_module_visual_unresolved_03h_edges_care_process_and_wash_groom_exception_mapping_reopen_and_hold_details
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: [DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01, DEC-FOOD-HEAT-01, DEC-STAFF-04]
+> blocked_by: [DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01, DEC-FOOD-HEAT-01, DEC-STAFF-04, DEC-STAFF-05]
 > parent_stage: 03_customer_miniapp
 > version: V1.0
 
@@ -305,6 +305,8 @@ UI 层可在顶部门店栏下使用品牌 / 生活方式 Banner；精选商品�
 6. 关联订单入口（如需要）
 
 AI 不得放在普通结果 / 前后对比之前。
+
+洗美完成即发布普通结果，不等付款或确认接走；04§4.3照片不强制，缺图真实提示、后补不伪造素材。同顾客多宠一单、每宠结果／进度独立，不因一宠完成或取消覆盖其他宠物；实际收款在完成后，挂单显示真实未结算，不新增线上付款或确认接走按钮。中止／重开后展示、异常金额、免单时点及挂单文案仍按03d／04对应DEC，不自行填默认值。
 
 ### 5.1 N 组拖动对比
 
@@ -956,6 +958,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 ### 14.2 恢复与异常验收要求
 
 - 关键提交至少覆盖成功、失败、重复动作、响应丢失、离开后返回、身份验证后继续；记录是否产生了第二笔业务，不能仅截图按钮置灰。
+- 洗美按04§4.3逐项验：未检查拒绝开始、无图可完成且普通结果立即可见、逐宠独立状态与一单一起结算、服务未完成拒绝实际收款、挂单不伪记收款／不按商品超时删消费、不提供确认接走、时间更正留原记录。重开门槛、中止映射／收费、免单时点及挂单细则未决子项保持blocked，不以正常路径通过覆盖。
 - 启动覆盖分享 / 通知冷启动、后台恢复、广告无填充 / 失败、登录返回、目标无效及跨门店权限。
 - 加餐覆盖已收款／已免单未投喂、重复确认、零元不跳过出库／执行及免单后不被未付款超时取消；积分覆盖最后一份库存并发、取消与核销竞态及补偿处理中。
 - C-ORDER-01逐项覆盖：护理仅开单无客户端预约、商品只关联原SKU、普通员工与老板不限幅整单调价／无逐单审批、原因与其他补充、负数／超精度拒绝、0元未确认不结算、免单不造付款／不扣余额、收款／免单／调价／取消并发与重复请求、商品一次出库及收入0、免单后金额锁定与真实顾客展示。只验收本轮确认范围，护理过程未决不得冒充已通过。

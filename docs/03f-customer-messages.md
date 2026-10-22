@@ -1,12 +1,12 @@
 # 03F 客户端「消息中心 + 微信通知」模块
 
 > status: mixed
-> confirmed_scope: existing_message_rules_and_sections_13_2_13_3_confirmed_directions
-> pending_scope: sms_delivery_configuration_and_food_store_mapping_and_staff_todo_lifecycle
+> confirmed_scope: existing_message_rules_confirmed_wash_groom_completion_and_sections_13_2_13_3_directions
+> pending_scope: sms_configuration_food_store_mapping_todo_lifecycle_and_wash_groom_exception_reopen_correction_and_hold_notifications
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: [DEC-STAFF-03, DEC-STAFF-07]
+> blocked_by: [DEC-STAFF-03, DEC-STAFF-04, DEC-STAFF-05, DEC-STAFF-07]
 > parent_stage: 03_customer_miniapp
 > version: V1.0
 
@@ -87,6 +87,8 @@ V1.0 主要消息节点：
 其中“服务完成”为重要通知，应优先尝试微信通知。
 
 服务完成消息直接跳转本次服务结果页，可查看 N 组前后照片对比，并由客户主动决定是否查看 AI 洗护报告。
+
+按04§4.3，门店完成洗美即发布普通结果并触发原完成通知，不等待实际收款，不额外要求确认接走。照片可缺失或后补，消息／结果页如实提示，不伪造对比；取消／中止／重开与结果更正如何通知仍待DEC-STAFF-04，不重复发送虚假完成或付款。相同业务事件的重试只通知一次，失败不回滚状态／账务。挂单不生成收款成功通知，顾客催款渠道与频率待DEC-STAFF-05，不自动发短信。
 
 **服务完成本身不启动 AI 分析，也不把本次服务照片提交给 AI Provider。**
 
