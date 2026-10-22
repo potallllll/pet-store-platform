@@ -2,7 +2,7 @@
 
 > status: mixed
 > status_scope: staff_requirements
-> confirmed_scope: sections_3_0_3_2_6_1_and_6_5_including_store_profile_review_withdrawal_seven_day_wait_and_license_non_public_rule
+> confirmed_scope: sections_3_0_3_2_6_1_and_6_5_including_store_profile_review_withdrawal_wait_upload_rules_and_license_non_public_rule
 > pending_scope: all_other_staff_proposals_and_cross_store_risk_details
 > change_policy: record_required
 > development_readiness: blocked
@@ -163,8 +163,8 @@
 #### 3.0.6 门店资料：四项内容与修改审核
 
 > status: mixed
-> confirmed_scope: four_profile_fields_review_activation_withdrawal_single_pending_request_seven_day_wait_and_license_non_public_rule
-> pending_scope: media_constraints_and_platform_review_page_details
+> confirmed_scope: four_profile_fields_review_activation_withdrawal_single_pending_request_wait_upload_rules_and_license_non_public_rule
+> pending_scope: platform_review_page_details
 > blocked_by: [DEC-STAFF-01]
 > confirmed_by: user
 > confirmed_on: 2026-10-22
@@ -180,6 +180,13 @@
 > store_profile_wait_calculation_status: confirmed
 > store_business_license_customer_visibility: not_public
 > store_business_license_readers: [merchant_owner, platform_super_admin]
+> store_profile_image_formats: [jpg, jpeg, png]
+> store_front_photo_count: 1
+> store_front_photo_aspect_ratio: "1:1"
+> store_front_photo_max_bytes: 3145728
+> store_business_license_image_count: 1
+> store_business_license_image_max_bytes: 10485760
+> store_profile_upload_sources: [camera, album]
 
 “我的 → 老板管理 → 门店资料”包含门店门头照片、门店名称、门店地址、门店营业执照四项。老板可查看本店当前有效资料，点击“修改”进入编辑，提交修改申请后由Platform Super Admin在平台Web后台审核；老板与普通员工均不能自行批准。
 
@@ -212,7 +219,17 @@
 
 营业执照不向顾客公开，仅供本店老板资料管理及Platform Super Admin平台审核使用，普通员工不开放读取。顾客页面及接口不得展示或返回营业执照原件、脱敏副本、缩略图或可访问材料的引用／链接；媒体访问同样由服务端校验身份与门店范围，不能只在前端隐藏。审核通过不改变该可见范围。
 
-待确认：图片数量／格式／大小与详细校验，以及阶段05的平台Web具体审核页面。平台处理申请的审核等待时长不设未经确认的默认值，不与上述生效后168小时的再次提交等待期混用。已确认的提交、撤回、审核、生效、等待期和字段可见范围继续有效。
+图片上传规则已确认，仅适用于本节门店资料，不覆盖其他模块的图片／广告素材要求：
+
+- 门头照片1张，最终提交图片固定正方形（像素宽高相等、比例1:1），不超过3MB，能清楚辨认门店及招牌。不要求某个未经确认的固定像素尺寸；不能把仅在页面用正方形容器裁切显示当作上传文件已符合比例。非正方形照片须由老板确认1:1裁剪后再提交，不直接拉伸变形。
+- 营业执照1张，不超过10MB；证照内容须完整、清晰，不裁掉内容。营业执照不套用门头的正方形比例或裁剪要求，也不套用3MB上限。
+- 两项均支持JPG／JPEG／PNG，支持拍照或从相册选择，提交前可预览、替换。门头裁剪不得裁掉识别门店所必需的招牌内容；执照内容不完整或无法辨认时由后台拒绝并注明原因，不据此新增强制OCR或自动批准。
+- 本模块文件大小统一按1MB＝1024×1024字节计量：门头上限3,145,728字节，营业执照上限10,485,760字节；按实际上传并提交审核的文件校验，等于上限允许，超过上限拒绝。前端提示与服务端使用同一计量和上限。
+- 前端预校验，服务端再次校验数量、文件实际类型／可解码性、实际字节数，以及门头的实际像素宽高；不能只相信文件扩展名、前端宽高或请求中的文件大小。媒体上传、引用及读取须校验本店身份和归属，不能将其他门店的材料混入申请。
+- 上传中、失败或校验未通过的新图片不能作为有效提交材料；明确提示原因并允许重试。新图成功上传前不丢弃原资料／有效引用，不能把预览成功当作上传成功或审核通过。任一拟替换图片尚未成功上传并校验时，不提交该份不完整申请；未修改图片沿用原有效引用，不强迫老板每次重传两张。
+- 上传／替换成功仅为编辑材料准备完成，不直接改写当前有效资料或待审快照；仍须按本节提交、撤回、审核和生效规则处理。失败重试不重复创建审核申请，不改变168小时等待期，也不放宽营业执照访问范围。
+
+待确认：阶段05的平台Web具体审核页面。平台处理申请的审核等待时长不设未经确认的默认值，不与上述生效后168小时的再次提交等待期混用。已确认的资料字段、提交、撤回、审核、生效、等待期、上传规则和字段可见范围继续有效。
 
 ### 3.1 五个入口的建议职责
 
@@ -484,7 +501,7 @@
 
 | ID | 状态 | 核心问题 | 影响及收口 |
 |---|---|---|---|
-| DEC-STAFF-01 | pending | 尚待确认老板管理其他菜单、其余手机／Web分工及第一条优先验证流程；导航、业务六项菜单、客户页结构、“我的”七项菜单、员工管理结构、工作台分组顺序及门店资料规则见§3.0／3.2。门店资料单份待审、撤回后修改重提、撤回／批准竞态及从上次审核通过并生效起满168小时才允许再次提交已确认；素材约束和平台审核页细节仍待讨论，见§3.0.6 | 阶段04/05，页面范围；已确认子项不回退 |
+| DEC-STAFF-01 | pending | 尚待确认老板管理其他菜单、其余手机／Web分工及第一条优先验证流程；导航、业务六项菜单、客户页结构、“我的”七项菜单、员工管理结构、工作台分组顺序及门店资料规则见§3.0／3.2。门店资料审核、撤回、生效后168小时再次提交及图片上传规则已确认；门头1张／1:1／≤3MB，执照1张／完整清晰／≤10MB，均JPG／JPEG／PNG。平台审核页细节仍待阶段05讨论，见§3.0.6 | 阶段04/05，页面范围；已确认子项不回退 |
 | DEC-STAFF-02 | pending | 临时客户、无手机号、多宠开单、资料复用与绑定冲突的完整接宠路径；新增顾客提醒弹窗的具体展示节点（弹窗要求已确认，见§6.5.1） | 阶段04/06，与03g身份规则核对 |
 | DEC-STAFF-03 | pending | 争议待办归属争议门店已确认；未明确争议门店的食品投诉映射、其他待办归属、店内领取/转交/关闭、多人同时处理冲突、通知与任务关系 | 阶段04/06/08 |
 | DEC-STAFF-04 | pending | 洗美页分组已确认；详细状态及分组映射、必填检查/照片、步骤回退、更正与客户发布时点仍待确认 | 阶段04/06，与03/03i联动 |
