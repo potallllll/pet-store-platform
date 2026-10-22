@@ -2,7 +2,7 @@
 
 > status: mixed
 > status_scope: staff_requirements
-> confirmed_scope: sections_3_0_3_2_6_1_and_6_5_including_store_profile_fields_review_activation_and_license_non_public_rule
+> confirmed_scope: sections_3_0_3_2_6_1_and_6_5_including_store_profile_review_withdrawal_seven_day_wait_and_license_non_public_rule
 > pending_scope: all_other_staff_proposals_and_cross_store_risk_details
 > change_policy: record_required
 > development_readiness: blocked
@@ -163,14 +163,19 @@
 #### 3.0.6 门店资料：四项内容与修改审核
 
 > status: mixed
-> confirmed_scope: four_profile_fields_owner_submission_platform_review_activation_and_license_non_public_rule
-> pending_scope: media_constraints_and_pending_request_operations
+> confirmed_scope: four_profile_fields_review_activation_withdrawal_single_pending_request_seven_day_wait_and_license_non_public_rule
+> pending_scope: media_constraints_and_seven_day_wait_calculation_and_enforcement_point
 > blocked_by: [DEC-STAFF-01, DEC-STAFF-07]
 > confirmed_by: user
 > confirmed_on: 2026-10-22
 > store_profile_entry: 老板管理/门店资料
 > store_profile_fields: [门店门头, 门店名称, 门店地址, 门店营业执照]
 > store_profile_change_activation: after_platform_approval
+> store_profile_max_pending_requests_per_store: 1
+> store_profile_pending_edit_policy: withdraw_then_new_submission
+> store_profile_withdraw_approval_conflict_policy: first_successful_server_transition_wins
+> store_profile_post_approval_wait_days: 7
+> store_profile_wait_calculation_status: pending
 > store_business_license_customer_visibility: not_public
 > store_business_license_readers: [merchant_owner, platform_super_admin]
 
@@ -180,15 +185,24 @@
 
 - 保存本次提交的完整四项资料快照及所基于的有效版本；未改变的项沿用原值，审核员审核的是确定快照。已提交内容不得在审核员不知情时改写。
 - 审核中继续展示原有效资料，不能先覆盖门店名称、地址或门头，再等待后台补审；老板可在管理页区分“当前有效资料”和“本次待审修改”。
-- 后台审核通过后，服务端将整份已审核快照与对应有效版本一起生效；不能只改部分字段、先通知通过再发布，或将未审核的新编辑内容混入。拒绝时原资料继续有效，管理页显示结果与原因，老板可修改后重新提交审核。
+- 后台审核通过后，服务端将整份已审核快照与对应有效版本一起生效；不能只改部分字段、先通知通过再发布，或将未审核的新编辑内容混入。拒绝时原资料继续有效，管理页显示结果与原因，老板可按下述等待期规则修改后重新提交审核。
 - 客户端、店员端和Web中使用门店资料的现行展示位置均按各自字段可见范围读取当前有效版本；生效后刷新相关视图／缓存，不因四项一起生效而公开营业执照。历史订单、服务、投诉及审计中的原事实、快照和Store归属不随名称／地址修改而被覆盖。
 - 每次修改、审核和生效均关联同一Store并保留提交人、审核人、时间、前后版本及结果。重复提交／批准不得重复生效；基线版本已变化的旧审核结果不能覆盖新的有效版本，须重新核对并审核。
 - 本节限定“已创建门店的资料修改”需要审核；02§5原有老板自助注册并创建门店的规则继续执行，不据本次要求增加首次注册人工批准、停店或账号审批。
 - 门店门头照片不自动替代客户端品牌Banner、门店头像或广告素材；本次只确认资料项，不改变已有页面广告位规则。
 
+修改申请与撤回规则已确认：
+
+1. 同一Store同时最多只有一份待审核申请；服务端原子校验，重复点击或并发请求不能创建第二份待审申请。历史申请不因该限制被删除。
+2. 待审核时不得直接改写已提交快照；本店老板可撤回申请，修改后重新提交为新的申请及审核项，不能恢复或覆盖原申请。重新提交仍须符合单份待审及审核通过后的等待期规则。
+3. 撤回成功后旧申请为`withdrawn`，后台不能再批准或激活该申请；保留原提交快照、撤回人、时间和操作历史。撤回不改变当前有效资料。
+4. 已审核通过并生效的申请不能撤回，后续修改必须重新申请；本次审核通过后，再次修改需要等待7天。拒绝或撤回本身不新起7天等待期，也不能解除既有的通过后等待期；不能借撤回／重提绕过限制。
+5. 撤回与批准同时发生时，以服务端先成功完成的状态转换为准，不以前端点击顺序、网络请求到达或管理员打开审核页的时间为准。撤回先成功则批准失败；批准并生效先成功则撤回失败。状态校验、版本校验及批准生效须保证原子性，不允许两边都成功。
+6. 操作后明确显示真实结果：撤回成功、已撤回不能批准、已通过并生效不能撤回，或状态变化后需要刷新；失败不能显示成功。重试返回已有结果，不重复撤回、批准、生效或创建申请。
+
 营业执照不向顾客公开，仅供本店老板资料管理及Platform Super Admin平台审核使用，普通员工不开放读取。顾客页面及接口不得展示或返回营业执照原件、脱敏副本、缩略图或可访问材料的引用／链接；媒体访问同样由服务端校验身份与门店范围，不能只在前端隐藏。审核通过不改变该可见范围。
 
-待确认：图片数量／格式／大小与详细校验、审核中再次修改／撤回的具体操作。审核等待时长不设未经确认的默认值。平台Web具体审核页面在阶段05细化，但“批准后才变更展示”的跨端规则现已生效。
+待确认：图片数量／格式／大小与详细校验；7天等待期按连续168小时还是自然日计算、以审核通过还是成功生效时间起算，以及限制打开编辑还是提交申请的具体节点。7天本身已经确认，计算和拦截节点未确认前不得自行生成截止时间、默认开放修改或宣称等待期已完整实现。平台处理申请的审核等待时长不设未经确认的默认值，不与上述通过后7天的再次修改等待期混用。平台Web具体审核页面在阶段05细化，已确认的提交、撤回、审核、生效和字段可见范围继续有效。
 
 ### 3.1 五个入口的建议职责
 
@@ -460,7 +474,7 @@
 
 | ID | 状态 | 核心问题 | 影响及收口 |
 |---|---|---|---|
-| DEC-STAFF-01 | pending | 尚待确认老板管理其他菜单、其余手机／Web分工及第一条优先验证流程；导航、业务六项菜单、客户页结构、“我的”七项菜单、员工管理结构、门店资料四项及修改提交／平台审核／生效分工、工作台分组顺序已确认。门店资料的待审再次修改／撤回、素材约束和平台审核页细节仍待讨论，见§3.0.6 | 阶段04/05，页面范围；已确认子项不回退 |
+| DEC-STAFF-01 | pending | 尚待确认老板管理其他菜单、其余手机／Web分工及第一条优先验证流程；导航、业务六项菜单、客户页结构、“我的”七项菜单、员工管理结构、工作台分组顺序及门店资料规则见§3.0／3.2。门店资料单份待审、撤回后修改重提、撤回／批准竞态和通过后7天再次修改等待期已确认；等待期计算及拦截节点、素材约束和平台审核页细节仍待讨论，见§3.0.6 | 阶段04/05，页面范围；已确认子项不回退 |
 | DEC-STAFF-02 | pending | 临时客户、无手机号、多宠开单、资料复用与绑定冲突的完整接宠路径；新增顾客提醒弹窗的具体展示节点（弹窗要求已确认，见§6.5.1） | 阶段04/06，与03g身份规则核对 |
 | DEC-STAFF-03 | pending | 争议待办归属争议门店已确认；未明确争议门店的食品投诉映射、其他待办归属、店内领取/转交/关闭、多人同时处理冲突、通知与任务关系 | 阶段04/06/08 |
 | DEC-STAFF-04 | pending | 洗美页分组已确认；详细状态及分组映射、必填检查/照片、步骤回退、更正与客户发布时点仍待确认 | 阶段04/06，与03/03i联动 |
