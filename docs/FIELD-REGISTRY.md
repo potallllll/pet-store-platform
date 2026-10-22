@@ -89,10 +89,10 @@
 | F-CORE-002 | `merchant_id` | C | ID | Merchant / Tenant 唯一标识，是商户私有数据的核心租户隔离字段。V1 一商户一门店，但仍不得与 `store_id` 混用。 |
 | F-CORE-003 | `store_id` | C | ID | Store 唯一标识。表达实际门店上下文、权益归属和可工作门店，不等于 Merchant。 |
 | F-CORE-004 | `customer_id` | C | ID | 某Merchant的客户业务记录／关系标识，可在线下先建且关联Platform User可以为空；完成安全绑定后仍使用同一customer_id。余额、优惠券、门店订单等归属该关系。 |
-| F-CORE-005 | `staff_id` | C | ID | 店员业务身份标识；员工停用不删除，历史记录继续稳定引用。 |
+| F-CORE-005 | `staff_id` | C | ID | 店员业务身份标识；停用或从本店名单逻辑删除均不删除该稳定身份，历史记录继续引用。 |
 | F-CORE-006 | `merchant_owner_user_id` | S | ID | 商户老板所对应的平台/经营账号稳定引用；不新增“店长”角色。 |
 | F-CORE-007 | `role_key` | S | Enum | 经营角色固定语义：`platform_super_admin / merchant_owner / staff`。Customer/User 不计入这三个经营角色。 |
-| F-CORE-008 | `permission_key` | S | Text | 细粒度权限标识。例：`reward_fulfillment.manage`；具体完整权限矩阵阶段 08 冻结。 |
+| F-CORE-008 | `permission_key` | S | Text | 服务端能力标识。例：`reward_fulfillment.manage`；完整角色映射阶段08收口。02已确认店员使用统一默认业务集合，不提供逐员工配置；老板／平台专属及敏感记录边界继续校验。 |
 | F-CORE-009 | `business_timezone` | C | Text | 全局业务判定时区，当前固定 `Asia/Shanghai`。不得以客户端本地时区决定签到、自然日等业务归属。 |
 | F-CORE-010 | `idempotency_key` | C | Text | 同一次业务提交 / 回调的幂等键；重复请求必须恢复原结果，不新建第二笔。 |
 | F-CORE-011 | `source_channel` | C | Enum | 业务来源渠道，例如 `mini_program / wechat / meituan / douyin / phone / walk_in / other`。不得用业务场景替代渠道。 |
@@ -138,20 +138,23 @@
 
 ## 5. 店员归属、邀请与当前已确认导航（STAFF）
 
-> `04-staff-miniapp.md` 已确认范围为§3.0导航、洗美分组、客户页结构、普通员工“我的”菜单，§3.2工作台分组与组内顺序，以及§6.1投诉回应基线、§6.5跨端职责。其余菜单、员工权限与跨店共享细节仍待确认；本注册表不授予业务权限。
+> `04-staff-miniapp.md` 已确认范围为§3.0导航、洗美分组、客户页结构、“我的”菜单、老板管理／员工管理结构及统一店员资格和记录可见性，§3.2工作台分组与组内顺序，以及§6.1投诉回应基线、§6.5跨端职责。其余菜单与跨店共享细节仍待确认；本注册表不授予业务权限。
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
 | F-STAFF-001 | `staff_merchant_id` | C | ID | Staff 唯一租户归属，值必须对应 `merchant_id`。一个 Staff 不能属于多个 Merchant。 |
 | F-STAFF-002 | `staff_store_assignment_id` | C | ID | 店员可工作门店关系记录标识；V1 虽一店，也不能用单一 Merchant/Store 模糊字段代替。 |
 | F-STAFF-003 | `staff_store_id` | C | ID | Staff 当前唯一可工作 Store。 |
-| F-STAFF-004 | `staff_status` | S | Enum | 在职/停用等员工状态；停用不删除历史业务引用。 |
+| F-STAFF-004 | `staff_status` | C | Enum | active / disabled / removed，分别为有效在职／停用／移出本店名单；后两者均禁止本店访问并失效会话，历史身份及业务引用保留。恢复动作适用于disabled，removed重新加入路径待确认。 |
 | F-STAFF-005 | `staff_invitation_id` | S | ID | 店员邀请记录。 |
 | F-STAFF-006 | `staff_invitation_expires_at` | C | Datetime | 邀请失效时间。 |
 | F-STAFF-007 | `staff_invitation_status` | C | Enum | 邀请有效 / 已使用 / 已撤销 / 已过期等状态。 |
 | F-STAFF-008 | `staff_invitation_created_by` | C | ID | 创建邀请的老板/授权主体。 |
 | F-STAFF-009 | `staff_invitation_used_by` | C | ID | 实际使用邀请加入的用户。 |
 | F-STAFF-010 | `staff_invitation_used_at` | C | Datetime | 邀请使用时间。 |
+| F-STAFF-011 | `staff_disabled_at` | S | Datetime | 最近一次停用实际生效时间；各次变更历史使用F-AUD审计，不覆盖旧事件。 |
+| F-STAFF-012 | `staff_removed_at` | S | Datetime | 员工移出本店当前名单及终止有效关系的时间；不表示物理删除账号或经营历史。 |
+| F-STAFF-013 | `staff_restored_at` | S | Datetime | 最近一次从disabled恢复active的生效时间；恢复使用当前统一店员资格。 |
 
 当前已确认的店员端一级功能标识固定为：
 
@@ -161,7 +164,7 @@
 - `staff_nav.customers` → 客户
 - `staff_nav.me` → 我的
 
-`DEC-STAFF-01`～`08` 未关闭前，不在本注册表冻结待办归属、收款审批、寄养位置、员工默认权限等讨论字段。
+店员默认业务集合与员工状态采用02／04已确认规则；`DEC-STAFF-01`～`08`尚未确认的待办流转、收款审批、寄养位置、移出后重新加入等字段不得据统一权限自行补齐。
 
 ---
 
@@ -915,6 +918,8 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 
 余额、积分、订单、库存、员工离职、Customer 换绑、调价、收款、退款 / 冲正、寄养执行、兑换核销等历史不得通过普通更新无痕覆盖。
 
+F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按职责查看；Staff即使是actor_id也不能据此读取完整审计。员工可见的工作记录从原业务事实生成最小视图，不能将F-AUD原始内容、提成字段或审计附件混入工作记录、业务详情、导出接口。
+
 ---
 
 ## 23. 高风险字段禁止混用表
@@ -1034,15 +1039,28 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 |---|---|
 | `staff_me.employee_store_info` | 员工与门店信息 |
 | `staff_me.work_records` | 我的工作记录 |
-| `staff_me.performance_commission` | 我的业绩与提成 |
+| `staff_me.performance` | 我的业绩（不含提成） |
 | `staff_me.notification_settings` | 通知设置 |
 | `staff_me.account_security` | 账号与安全 |
 | `staff_me.help_feedback` | 帮助与反馈 |
 | `staff_me.logout` | 退出登录 |
 
-老板专属入口另使用`staff_me.owner_management` → 老板管理，所属页面为`staff_nav.me`，仅当前商户有效Merchant Owner可见并进入；04§3.0.4为业务依据。该产品标识不是权限码，不改变七项公共菜单的既定顺序。
+老板专属入口另使用`staff_me.owner_management` → 老板管理，所属页面为`staff_nav.me`，仅当前商户有效Merchant Owner可见并进入；04§3.0.4为业务依据。该产品标识不是权限码，不改变七项公共菜单的顺序。
 
-本次不新增业绩算法、权限或账号恢复字段；老板管理内部菜单仍待确认。
+`staff_me.performance_commission`已退役，旧路由不得向普通员工返回提成，非提成业绩统一映射到`staff_me.performance`。`staff_me.work_records`沿用原标识，但可查看本店其他员工的工作事实；不能按该标识返回系统操作日志。
+
+老板管理已确认的产品标识如下；仅标识菜单／动作，不是新增权限码：
+
+| 产品标识 | 名称与归属 |
+|---|---|
+| `staff_owner.employee_management` | 老板管理／员工管理 |
+| `staff_owner.employee_list` | 员工管理／员工列表 |
+| `staff_owner.invite_employee` | 员工管理／邀请员工 |
+| `staff_owner.disable_employee` | 员工列表内／停用员工 |
+| `staff_owner.remove_employee` | 员工列表内／删除员工，逻辑移出本店名单 |
+| `staff_owner.restore_employee` | 员工列表内／恢复员工，适用于被停用记录 |
+
+提成及系统日志的门店入口归老板管理，平台入口归平台管理；具体菜单名称及排序尚待确认，不先注册候选菜单标识。业绩算法、删除后重新加入和其他老板管理菜单仍待确认。
 
 ## 25. Pending 字段处理规则
 
@@ -1057,7 +1075,7 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 - `F-FEED-024`～`027`：上门喂养修改/取消/响应/失效时限，受 `DEC-FEED-01`～`03` 阻塞；
 - `F-RWD-027`～`028`：积分自提期限 / 改领取门店，受 `DEC-POINTS-02` 阻塞；
 - 启动广告具体秒数默认值/范围受 `DEC-LAUNCH-01` 阻塞；字段存在但不能写死运营常数；
-- 店员端 §3.0／§3.2 之外尚未确认的工作台细节、二级菜单、收款/审批、寄养位置、待办归属、员工权限等字段受 `DEC-STAFF-01`～`08` 阻塞。
+- 店员端尚未确认的工作台细节、其他二级菜单、收款/审批、寄养位置、待办流转、移出员工后重新加入等字段受 `DEC-STAFF-01`～`08` 阻塞；统一店员资格及工作记录／提成／审计可见性已确认，不恢复为待决。
 
 Pending 字段确认后：
 
