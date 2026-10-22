@@ -1,8 +1,8 @@
 # 03F 客户端「消息中心 + 微信通知」模块
 
 > status: mixed
-> confirmed_scope: existing_message_rules_confirmed_wash_groom_completion_and_sections_13_2_13_3_directions
-> pending_scope: sms_configuration_food_store_mapping_todo_lifecycle_and_wash_groom_exception_reopen_correction_and_hold_notifications
+> confirmed_scope: existing_messages_wash_groom_result_version_completion_and_recompletion_notifications_and_sections_13_2_13_3_directions
+> pending_scope: sms_configuration_food_store_mapping_todo_lifecycle_interruption_correction_and_hold_collection_notifications
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -88,7 +88,7 @@ V1.0 主要消息节点：
 
 服务完成消息直接跳转本次服务结果页，可查看 N 组前后照片对比，并由客户主动决定是否查看 AI 洗护报告。
 
-按04§4.3，门店完成洗美即发布普通结果并触发原完成通知，不等待实际收款，不额外要求确认接走。照片可缺失或后补，消息／结果页如实提示，不伪造对比；取消／中止／重开与结果更正如何通知仍待DEC-STAFF-04，不重复发送虚假完成或付款。相同业务事件的重试只通知一次，失败不回滚状态／账务。挂单不生成收款成功通知，顾客催款渠道与频率待DEC-STAFF-05，不自动发短信。
+按04§4.4，完成洗美即发布本宠普通结果／原完成通知，不等收款或接走确认；照片缺失如实提示。未结算重新处理后当前显示服务中，旧普通结果保留历史、非当前最终，再次完成形成新版本并可再通知一次；同一转换／结果版本的重试不重复发，也不能把旧版已读当新版已读。AI权益不自动重置，不因重新完成自动AI。中止／补图更正的额外通知、挂单催款渠道与频率仍待对应DEC，不自动发短信；挂单不发收款成功，退款申请／老板确认不发实际退款到账消息。通知失败不回滚真实状态／资金。
 
 **服务完成本身不启动 AI 分析，也不把本次服务照片提交给 AI Provider。**
 

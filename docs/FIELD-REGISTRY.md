@@ -280,7 +280,7 @@ F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型
 | F-PET-002 | `pet_name` | C | Text | 宠物名称／门店表单“宠物昵称”唯一字段；首次建档及04§4.1服务开单必填，不另建dog_name，不限制仅狗使用。 |
 | F-PET-003 | `pet_type` | C | Enum/Text | 猫 / 狗 / 其他；首次建档必填。 |
 | F-PET-004 | `pet_avatar` | C | Ref | 宠物头像，选填。 |
-| F-PET-005 | `pet_breed` | C | Text | 品种：03b客户端首次建档选填，04§4.1门店宠物服务开单必填，缺失补齐且已有值复用；不强制普通商品关联宠物。其他业务公开须由对应视图明确允许。 |
+| F-PET-005 | `pet_breed` | C | Text | 品种：客户端首次建档选填，门店宠物服务开单必填，缺失补齐／已有值复用；确不明确可填混种／不详，不强迫猜或AI认定。普通商品不强制宠物，公开范围按对应视图。 |
 | F-PET-006 | `pet_sex` | C | Enum | 性别，选填。 |
 | F-PET-007 | `pet_birth_date` | C | Date | 出生日期，选填。 |
 | F-PET-008 | `pet_age` | C | Number/Text | 由出生日期派生的展示年龄，不要求每年人工覆盖。 |
@@ -344,7 +344,7 @@ F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型
 | F-SVC-001 | `service_record_id` | S | ID | 一次真实洗护／美容／护理／寄养服务记录标识。 |
 | F-SVC-002 | `service_type` | C | Enum | 洗护／美容／护理／寄养；新增care护理仅门店开单，不自动开放客户端预约、洗美AI报告或医疗流程；商品不属于此枚举。 |
 | F-SVC-003 | `service_customer_status` | C | Enum | 客户侧简化状态；洗美不得直接暴露全部店员内部步骤。 |
-| F-SVC-004 | `service_internal_status` | S | Enum | 洗美按04§4.3固定not_started／in_progress／completed／cancelled／interrupted，由本店有效员工手动操作、服务端校验并审计；不自动付款／交付。重开门槛及其他类型完整流程待决，不将五态套到护理／寄养。 |
+| F-SVC-004 | `service_internal_status` | S | Enum | 洗美五态not_started／in_progress／completed／cancelled／interrupted，由本店有效员工手动操作并审计；已完成仅未结算原单可重新处理，原因选填，已结算不重开。不为每项目另设状态，不自动付款／交付，不套护理／寄养。 |
 | F-SVC-005 | `service_started_at` | S | Datetime | 实际开始服务时间。 |
 | F-SVC-006 | `service_completed_at` | S | Datetime | 实际完成服务时间。 |
 | F-SVC-007 | `service_result_viewed_at` | S | Datetime | 客户真正查看本次结果时间；查看后完成卡可退出首页当前服务。 |
@@ -356,12 +356,17 @@ F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型
 | F-SVC-013 | `ai_report_status` | S | Enum | 未创建 / 生成中 / 已完成 / 失败等真实任务状态。 |
 | F-SVC-014 | `ai_report_entitlement_id` | S | ID | 对应 `ai_report` 激励广告获得的报告资格。 |
 | F-SVC-015 | `ai_report_content` | S | Struct/Text | 已生成的护理 / 外观观察报告，不作为医疗诊断。 |
-| F-SVC-016 | `pre_service_check_status` | C | Enum | 洗美前检查：not_checked／no_obvious_abnormality／abnormal，默认未检查，不能默认正常；未检查不得开始。异常说明用F-SVC-011，检查详情用F-SVC-008，清单及异常继续服务条件仍待DEC-STAFF-04。 |
+| F-SVC-016 | `pre_service_check_status` | C | Enum | 洗美前检查not_checked／no_obvious_abnormality／abnormal／unable_to_check；默认未检查，六项真实结果见F-SVC-020，无法检查不伪记正常。未检查不得开始，异常／无法检查须主人决定F-SVC-021及说明，不输出医疗诊断。 |
 | F-SVC-017 | `pre_service_checked_at` | S | Datetime | 本service_record_id前检查实际完成的服务端记录时间；不通过空勾选或补录时间伪造检查，不与服务实际开始时间混用。 |
 | F-SVC-018 | `pre_service_checked_by_staff_id` | S | ID | 实际检查的本店有效员工；关联稳定staff_id，离职不改历史，照片不强制。 |
 | F-SVC-019 | `service_record_version` | S | Int | 同一宠物服务记录的操作版本，供检查／开始／完成／重新处理／时间更正等竞态校验；不替代订单金额版本或审核row_version，不表示所有待决动作已获批准。 |
+| F-SVC-020 | `pre_service_check_items` | C | Struct[] | 本service_record_id的skin／ears／eyes／mouth／nails／coat六项真实结果及必要说明，可标注异常／无法检查，不默认正常；不增加项目工序状态。护理注意事项可向本人顾客展示，内部备注不混入。 |
+| F-SVC-021 | `pre_service_owner_decision` | C | Enum | 异常／无法检查时主人已明确表达的continue_authorized或discontinue，未记录为空、不默认同意；店员记录告知及真实决定，说明复用F-SVC-008／011，操作时间／人复用F-AUD。不是线上身份验证、医疗同意书或跨店共享授权。 |
+| F-SVC-022 | `post_service_has_new_abnormality` | C | Bool | 完成前复检的是否新增异常，未确认为空，必须真实确认为false或true；true须F-SVC-011说明，不强制照片或重复整套前检查。 |
+| F-SVC-023 | `service_result_version` | S | Int | 本宠普通结果的真实发布版本；完成发布，未结算重新处理后旧版保留历史、非当前最终，再完成新版本并对应新完成事件。不是AI权益／任务版本，不自动重置资格或启动AI。 |
+| F-SVC-024 | `service_result_viewed_version` | S | Int | 本人顾客实际查看的普通结果版本，配合F-SVC-007记录；不能用已看旧版冒充看过重新完成的新结果。旧版及当前版可见性仍须同一Customer权限校验。 |
 
-洗美同顾客多宠共用F-ORD-001／order_id，每宠独立F-SVC-001／service_record_id及F-PET-001／pet_id，各原F-ORD-005明细关联真实宠物与服务记录。服务唯一归属本店业务对象并按merchant_id隔离，不创建第二套消费账本或用订单头单个pet_id覆盖多宠。一宠完成／取消不改变其他宠物；一起结算，暂不按宠拆账／分次付款。收款仅在服务完成后，照片非必传、普通结果完成即发布、不设确认接走；异常收费、免单时点及重开前置条件仍待对应DEC。
+洗美多宠一order_id、每宠独立service_record_id／pet_id及对应原明细，按merchant_id隔离，不新建第二账本。全部服务结束且异常费用明确可一起结算，不按宠拆账／分次付款；正常完成后收费，中止可明确实际应收／原因后结算、不伪记完成，全未开始即全取消不收费、不记免单成交。照片可选、普通结果完成发布，无接走确认；未结算重开原因选填，挂单手动且原因必填，改0后仍明确免单，不自动结算。
 
 F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值／更正记录，结束不早于开始、不填未来，不重写原操作时间、付款或真实服务事实。操作人／时间／前后值／原因复用F-AUD，不增加提成／默认业绩分配；其他有效员工可接手。
 
@@ -445,7 +450,7 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 | F-CPN-013 | `coupon_status` | S | Enum | 可用、已锁定、已使用、已过期等业务状态。 |
 | F-CPN-014 | `coupon_source_type` | S | Enum | 充值赠送、人工赠送、邀请码兑换、平台积分兑换。 |
 | F-CPN-015 | `points_redemption_id` | C | ID | 平台积分兑换发券时关联的兑换记录。 |
-| F-CPN-016 | `coupon_locked_order_id` | S | ID | 收银选择后临时锁定的订单；未完成收款则解除锁定并按规则恢复。 |
+| F-CPN-016 | `coupon_locked_order_id` | S | ID | 收银选券后临时锁定的原单，取消／未结算释放按03c；免单亦为已结算，不按未付款任务释放已核销券或复活原已过期券。 |
 | F-CPN-017 | `coupon_redeemed_at` | S | Datetime | 订单实际收款或明确确认免单完成消费结算后的正式核销时间，原券适用规则不变。 |
 | F-CPN-018 | `coupon_note` | C | Text | 可选备注。 |
 | F-CPN-019 | `coupon_locked_at` | S | Datetime | 当前一次有效锁定开始时间；用于计算锁定前剩余有效时长并防止重复延期。 |
@@ -541,8 +546,8 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 | F-ORD-031 | `original_request_snapshot` | S | Struct | 客户原始购买需求快照；门店改单不得无痕覆盖。 |
 | F-ORD-032 | `order_amount_version` | S | Int | 同一订单金额版本，供调价、实际收款、免单及取消／超时等校验同一金额／状态；结算先成功则拒绝直接改价，调价先成功则旧金额结算失败重新核对。不能复用项目版本或审核row_version。 |
 | F-ORD-033 | `manual_adjustment_reason_code` | S | Enum | actual_care / store_discount / input_correction / other，对应实际护理情况／到店优惠／录入更正／其他。调价原因必选；other须在F-ORD-018补文字，其余保存真实原因，不据原因名称开放收款后改价。 |
-| F-ORD-034 | `order_on_hold` | C | Bool | 原订单是否已标记挂单；未结算离店按挂单处理，不等于付款／免单／取消，不新建第二张账单。手动／自动触发、解除及展示等仍待DEC-STAFF-05，不依赖已取消的接走确认字段。 |
-| F-ORD-035 | `order_held_at` | S | Datetime | 原订单实际挂单操作的服务端时间；不伪填接走时间，不自动推定挂单已收款。原因／操作者／变更审计复用F-AUD，完整挂单生命周期待决。 |
+| F-ORD-034 | `order_on_hold` | C | Bool | 洗美完成未收款先待结算，店员手动挂单且原因必填后设true，不自动挂单；顾客待结算／真实金额，内部备注不公开。付清或明确免单成功自动解除、历史保留，不依赖接走确认或套商品超时取消。 |
+| F-ORD-035 | `order_held_at` | S | Datetime | 原单实际手动挂单的服务端时间，不伪填接走／付款时间；原因必填，复用F-AUD-009及人／时间／前后状态，不新增同义原因字段。后续催款／特殊更正细则仍待决。 |
 
 全部到店消费订单整单调价不限业务金额／比例、无老板逐单审批，但须有效角色／对象、非负精确金额、前后确认、原因及版本校验。免单原因、操作者、时间复用F-AUD-009／002／003／010并关联原order_id与幂等请求；paid_amount、final_receivable_amount及收入均为0，settled_at及payment_status=waived共同表达已结算。无实际付款时不产生F-PAY-001～006记录或余额扣款；商品仍一次出库，服务／投喂不自动完成，详见03d§10.1。
 
@@ -552,13 +557,17 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 |---|---|---:|---|---|
 | F-PAY-001 | `payment_record_id` | S | ID | 一次正式收款记录。 |
 | F-PAY-002 | `payment_split_id` | S | ID | 组合支付中的单一支付拆分。 |
-| F-PAY-003 | `payment_method` | C | Enum | 会员余额 / 微信 / 支付宝 / 现金 / 其他配置方式。 |
+| F-PAY-003 | `payment_method` | C | Enum | 会员余额／微信／支付宝／现金／其他配置方式；全部门店消费同次最多两种不同方式，合计须等于应收。余额本金／赠送内部拆分仍算一种，不向顾客披露内部拆分。免单不造支付方式／拆分。 |
 | F-PAY-004 | `payment_amount` | C | Money | 当前支付方式实际金额。 |
 | F-PAY-005 | `payment_confirmed_by_staff_id` | S | ID | 确认实际收款的有权限店员。客户不能自行写此结果。 |
 | F-PAY-006 | `payment_confirmed_at` | S | Datetime | 店员确认收款时间。 |
 | F-PAY-007 | `refund_record_id` | S | ID | 退款记录标识。 |
 | F-PAY-008 | `refund_reason` | S | Text | 退款原因。 |
 | F-PAY-009 | `refunded_at` | S | Datetime | 退款结果成立时间。 |
+| F-PAY-010 | `refund_request_id` | S | ID | 全部门店消费订单退款申请稳定标识，关联原order_id及同店Customer；员工申请、本店老板确认，老板可直接处理，不凭申请生成真实退款。不扩展充值退款／余额调整／积分补偿。 |
+| F-PAY-011 | `refund_requested_amount` | C | Money | 请求退款金额，独立于原实付／已退金额；确认须对应同一金额／版本，不以旧确认批准新金额、不退未实际收取金额。 |
+| F-PAY-012 | `refund_owner_approval_status` | S | Enum | pending_owner／owner_approved表达待本店老板确认／已确认，人／时间／金额版本依据F-AUD关联原申请；不是实际退款成功，拒绝／撤回／执行结果等完整细则仍待DEC-STAFF-05。 |
+| F-PAY-013 | `refund_request_version` | S | Int | 本退款申请版本；老板确认校验原单／金额／当前版本，重试不重复申请或实际退款，不替代订单金额版本。字段不批准未决执行流程。 |
 
 ---
 
@@ -1169,7 +1178,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 - `F-FEED-024`～`027`：上门喂养修改/取消/响应/失效时限，受 `DEC-FEED-01`～`03` 阻塞；
 - `F-RWD-027`～`028`：积分自提期限 / 改领取门店，受 `DEC-POINTS-02` 阻塞；
 - 启动广告具体秒数默认值/范围受 `DEC-LAUNCH-01` 阻塞；字段存在但不能写死运营常数；
-- 店员端尚未确认的工作台细节、其他二级菜单、其他收款／退款／审批流程、护理执行、寄养位置及待办流转等字段受 `DEC-STAFF-01`～`08` 阻塞；统一店员资格、记录可见性、取消提成、返聘、项目四类／表单／停用恢复与旧预约例外、全部到店整单不限额调价／无老板逐单审批／零元免单均已确认，不恢复为待决，也不以此解锁其他流程。
+- 工作台其他细节／二级菜单、混合业务／组合失败／实际退款执行／冲正、护理／寄养及待办流转等未决字段仍受DEC-STAFF-01～08约束。统一资格／记录可见性／取消提成／返聘、项目生命周期／旧预约例外、洗美两批及补充规则、全部消费不限幅调价／明确免单／最多两种支付／退款老板确认均已定，不回退也不据此解锁其他流程。
 
 Pending 字段确认后：
 

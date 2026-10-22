@@ -119,6 +119,10 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         if metadata(appointment).get(key) != expected:
             add(results, "error", "appointment.manual_model", Path("docs/03a-customer-appointment.md"), f"{key} must be {expected}")
     registry = current_text["docs/FIELD-REGISTRY.md"]
+    registered_ids = re.findall(r"^\|\s*(F-[A-Z0-9-]+)\s*\|", registry, re.MULTILINE)
+    duplicate_fields = sorted({item for item in registered_ids if registered_ids.count(item) > 1})
+    if duplicate_fields:
+        add(results, "error", "registry.duplicate_id", Path("docs/FIELD-REGISTRY.md"), f"duplicate registered field IDs: {', '.join(duplicate_fields)}")
     for field_id in ("F-APPT-019", "F-APPT-020", "F-APPT-027"):
         row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
         cells = [cell.strip() for cell in row.split("|")]
@@ -142,7 +146,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         if catalog_meta.get(key) != expected:
             add(results, "error", "catalog.confirmed_rules", staff_path, f"section 3.0.8 {key} must be {expected}")
 
-    wash_flow = staff.split("### 4.3 ", 1)[-1].split("\n## 5.", 1)[0]
+    wash_flow = staff.split("### 4.3 ", 1)[-1].split("\n### 4.4 ", 1)[0]
     wash_meta = dict(META_RE.findall(wash_flow)) if "### 4.3 " in staff else {}
     for key, expected in {
         "workflow_scope": "wash_groom_only",
@@ -153,12 +157,31 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "multi_pet_order_model": "one_customer_one_order_independent_pet_service_records",
         "multi_pet_settlement": "together_no_per_pet_split_or_installments",
         "bulk_complete_all_pets": "excluded",
-        "actual_collection_timing": "after_service_completion",
+        "actual_collection_timing": "after_completion_or_confirmed_interruption",
         "unpaid_departure_handling": "order_on_hold",
         "pickup_confirmation": "excluded",
     }.items():
         if wash_meta.get(key) != expected:
             add(results, "error", "wash_groom.confirmed_flow", staff_path, f"section 4.3 {key} must be {expected}")
+
+    details = staff.split("### 4.4 ", 1)[-1].split("\n## 5.", 1)[0]
+    detail_meta = dict(META_RE.findall(details)) if "### 4.4 " in staff else {}
+    for key, expected in {
+        "reopen_allowed": "unsettled_order_only",
+        "reopen_reason_required": "false",
+        "pre_service_check_items": "[skin, ears, eyes, mouth, nails, coat]",
+        "post_service_new_abnormality_confirmation": "required",
+        "hold_trigger": "staff_manual_after_pending_settlement",
+        "hold_reason_required": "true",
+        "hold_release": "automatic_on_successful_settlement",
+        "zero_price_save_settles_order": "false",
+        "zero_price_explicit_confirmation_required": "true",
+        "checkout_max_payment_methods": "2",
+        "refund_owner_confirmation_required": "true",
+        "payment_refund_cross_business_scope": "all_store_consumption_orders",
+    }.items():
+        if detail_meta.get(key) != expected:
+            add(results, "error", "wash_groom.confirmed_details", staff_path, f"section 4.4 {key} must be {expected}")
 
     orders_path = Path("docs/03d-customer-orders.md")
     orders = current_text[orders_path.as_posix()]
@@ -175,6 +198,8 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "waiver_requires_explicit_confirmation": "true",
         "waiver_actual_payment_amount": "0",
         "waiver_revenue_amount": "0",
+        "checkout_max_payment_methods": "2",
+        "refund_owner_confirmation_required": "true",
     }.items():
         if settlement_meta.get(key) != expected:
             add(results, "error", "settlement.confirmed_rules", orders_path, f"section 10.1 {key} must be {expected}")
