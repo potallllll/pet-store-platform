@@ -295,6 +295,9 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "boarding_pet_base_amount": "own_daily_rate_times_own_billable_nights",
         "boarding_combined_settlement": "allowed_same_merchant_same_customer",
         "boarding_combined_amount": "sum_selected_boarding_item_base_amounts_before_existing_discounts_adjustments",
+        "boarding_partial_departure_settlement": "separate_at_each_actual_departure",
+        "boarding_settlement_items": "departing_unsettled_boarding_items_only",
+        "boarding_remaining_pets": "keep_boarding_unsettled_without_prepayment",
     }.items():
         if billing_meta.get(key) != expected:
             add(results, "error", "boarding.billing_rules", staff_path, f"section 5.2 {key} must be {expected}")
