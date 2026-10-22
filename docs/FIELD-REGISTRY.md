@@ -111,6 +111,32 @@
 
 ---
 
+### 3.2 门店资料与修改审核（STORE_PROFILE）
+
+门店资料及修改申请均使用F-CORE-003／`store_id`作为唯一Store归属，并关联F-CORE-002／`merchant_id`执行租户隔离；不得按名称或地址重新确定所属门店。04§3.0.6是四项资料、提交、审核和生效的业务依据。
+
+| 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
+|---|---|---:|---|---|
+| F-STORE-001 | `store_front_photo_ref` | C | Ref | 门店门头照片引用；不等于门店头像、品牌Banner或广告素材。具体媒体限制待细化。 |
+| F-STORE-002 | `store_name` | C | Text | 门店名称；当前展示取有效版本，待审值仅存提交快照。 |
+| F-STORE-003 | `store_address` | C | Text/Struct | 门店地址；当前展示取有效版本，结构化拆分或地图参数在后续技术设计中收口，不根据地址迁移Store归属。 |
+| F-STORE-004 | `store_business_license_ref` | C | Ref | 门店营业执照材料引用；用于老板资料管理及平台审核，顾客公开范围及脱敏待确认，不能据字段存在返回公开原件。 |
+| F-STORE-005 | `store_profile_version` | S | Int | 当前有效门店资料版本；只有对应提交被平台批准且生效后更新。 |
+| F-STORE-006 | `store_profile_change_id` | S | ID | 单次修改提交的稳定标识；提交后四项快照不允许无痕改写。 |
+| F-STORE-007 | `store_profile_base_version` | S | Int | 本次修改基于的有效版本；批准生效时再校验，旧版本审核结果不得覆盖新版本。 |
+| F-STORE-008 | `store_profile_submitted_at` | S | Datetime | 老板实际提交修改的服务端时间，打开编辑页不写为已提交。 |
+| F-STORE-009 | `store_profile_activated_at` | S | Datetime | 本次审核批准结果成功切换为有效版本的时间；区别于审核操作时间。 |
+| F-STORE-010 | `store_profile_activated_change_id` | S | ID | 当前有效资料版本来源的已生效修改申请标识；不得关联待审／拒绝申请。首次注册初始资料可以为空，不据此新增注册审批。 |
+
+修改审核复用现有唯一元字段，不新增含义相同的第二套状态或快照字段：
+
+- F-REV-001／`review_item_id`关联本次审核项，F-REV-004／`review_target_type=store_profile_change`，F-REV-005／`review_target_id=store_profile_change_id`；
+- F-REV-007／`submitted_value`保存本次四项完整快照，键沿用F-STORE-001～004；当前有效资料与快照各自有明确版本上下文；
+- F-REV-011／`current_review_status`承接待审、批准、拒绝等审核结果，审核人／时间／批注复用F-REV-021／022／015；F-REV-003／`row_version`防止过期审核覆盖；
+- 提交人及前后状态变更复用F-AUD操作者、对象、前后状态及请求标识，不能把前端保存成功当作审核通过；
+- F-STORE-005与F-STORE-007校验的是业务有效版本，F-REV-003校验的是审核项版本，二者不能互相替代；
+- 复用审核元字段不批准本业务的批量导出／上传、待审撤回等未确认动作；营业执照不得因复用F-REV而进入顾客公开接口。
+
 ## 4. 登录、Customer 绑定与账号安全（AUTH）
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
@@ -603,7 +629,7 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-REV-001 | `review_item_id` | S | ID | 单条待审核对象；Excel 行号不得替代。 |
 | F-REV-002 | `review_batch_id` | S | ID | 一次导出 / 上传审核批次。 |
 | F-REV-003 | `row_version` | C | Int | 乐观并发版本；导出后原记录变化则拒绝旧行覆盖。 |
-| F-REV-004 | `review_target_type` | S | Enum | complaint / pet_safety / customer_risk 等审核对象类型。 |
+| F-REV-004 | `review_target_type` | S | Enum | complaint / pet_safety / customer_risk / store_profile_change等审核对象类型；门店资料修改关联F-STORE-006，不复用投诉对象。 |
 | F-REV-005 | `review_target_id` | S | ID | 被审核真实业务对象。 |
 | F-REV-006 | `review_content_type` | S | Enum/Text | 提交内容类型。 |
 | F-REV-007 | `submitted_value` | S | Struct/Text | 原始提交内容快照；审核上传不得覆盖。 |
@@ -1055,6 +1081,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 | 产品标识 | 名称与归属 |
 |---|---|
 | `staff_owner.employee_management` | 老板管理／员工管理 |
+| `staff_owner.store_profile` | 老板管理／门店资料，四项内容及审核生效按04§3.0.6；与其他老板管理菜单的排序未定 |
 | `staff_owner.employee_list` | 员工管理／员工列表 |
 | `staff_owner.invite_employee` | 员工管理／邀请员工 |
 | `staff_owner.disable_employee` | 员工列表内／停用员工 |
@@ -1062,6 +1089,8 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 | `staff_owner.restore_employee` | 员工列表内／恢复员工，适用于被停用记录 |
 
 系统日志的门店入口归老板管理，平台入口归平台管理；具体菜单名称及排序尚待确认，不先注册候选菜单标识。业绩统计口径和其他老板管理菜单仍待确认；返聘流程已确认，复用新邀请、原员工及本轮门店关系，不另建“返聘人员”角色或重复staff_id。
+
+门店资料的四个内容字段和修改审核生效已确认，见§3.2。营业执照公开范围、媒体限制和待审再次修改／撤回仍受DEC-STAFF-01／07约束；不能把本表字段存在视为这些细节已确认。
 
 ## 25. Pending 字段处理规则
 
