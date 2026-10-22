@@ -1,12 +1,12 @@
 # 03D 客户端「我的订单」模块
 
 > status: mixed
-> confirmed_scope: current_order_rules_approved_wash_groom_and_care_twelve_item_flows_and_offline_financial_ledger_with_staff_refunds
-> pending_scope: interruption_client_label_other_state_recovery_remaining_mixed_business_checkout_except_same_pet_wash_groom_care_add_on_partial_refund_allocation_and_remaining_ledger_corrections
+> confirmed_scope: current_order_rules_wash_groom_care_twelve_boarding_admission_basic_care_sixteen_and_offline_financial_ledger
+> pending_scope: interruption_client_label_other_state_recovery_remaining_mixed_business_checkout_except_same_pet_wash_groom_care_add_on_partial_refund_allocation_ledger_corrections_and_boarding_departure_billing
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: [DEC-STAFF-04, DEC-STAFF-05]
+> blocked_by: [DEC-STAFF-04, DEC-STAFF-05, DEC-STAFF-06]
 > parent_stage: 03_customer_miniapp
 > version: V1.0
 
@@ -184,6 +184,10 @@ V1.0 只保留三个分类：
 - 当前费用 / 预计费用或最终实付金额
 
 寄养过程中可能发生延住、提前离店、加项或费用调整，因此正式结算前显示“当前金额 / 预计金额”，完成结算后显示最终实付金额。
+
+入住与日常照护16项按04§5.1已确认：实际到店后门店明确确认入住、单宠只一笔有效在住；多宠各自boarding_id／位置／时间，不能把一宠状态或预计时间覆盖另一宠。实际入住／预计离店与预约计划时间分开，预计到点不自动完成、续住或加费。本轮不确认多宠合并结算、实际离店流程、计费单位或收款时点，不能套洗美／护理后收款顺序。
+
+本次寄养资料单独保存，临时修改只影响此次；饮食及零食授权未知须标待核实，不凭长期旧允许值放行当前加餐。普通照护记录统一选择喂食／遛狗／清扫笼子、实际时间、选填照片后确认，只写本宠一次真实事件、不代替商品加餐原单执行或产生销售。顾客可见动态和内部备注明确区分，通知开关不决定可见性；内部内容、计数及媒体不泄露，消息已读不关闭寄养异常。
 
 ## 7. 服务加项与改单
 

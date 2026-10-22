@@ -1,7 +1,7 @@
 # 03F 客户端「消息中心 + 微信通知」模块
 
 > status: mixed
-> confirmed_scope: existing_messages_wash_groom_result_version_completion_and_recompletion_notifications_and_sections_13_2_13_3_directions
+> confirmed_scope: existing_messages_wash_groom_result_version_completion_and_recompletion_notifications_and_sections_13_2_13_3_directions_and_boarding_record_visibility_controls
 > pending_scope: sms_configuration_food_store_mapping_todo_lifecycle_interruption_correction_care_and_hold_collection_notifications
 > status_scope: full_document
 > change_policy: record_required
@@ -133,7 +133,9 @@ AI 报告生成完成后默认不额外重复发送微信通知。客户之后�
 
 多个短时间内连续新增的普通图片、视频或寄养动态由后端尽量合并提示，例如“旺财有 3 条新的寄养动态”，减少消息轰炸。
 
-寄养异常记录默认勾选“通知客户”；店员可在仅作内部记录时主动取消通知。
+寄养异常记录默认勾选“通知客户”；是否可见与是否通知分开，按04§5.1／F-BOARD-025明确区分顾客可见动态和本店内部备注。顾客可见动态关闭通知仍在本人有权查看的时间轴；内部记录即使勾选通知，也不得泄露内容、缩略图、数量或跳转。内部记录可关闭通知，不得仅凭取消通知就把公开动态当作已隐藏。
+
+统一照护录入选择喂食／遛狗／清扫笼子、实际发生时间、选填照片后保存；没有照片也可记真实事件，补录按实际时间排序。普通照护不新增逐条微信轰炸、每日上传配额或批量完成，原动态提示与合并原则继续有效。异常须员工实际处理、填写结果并明确标记已处理，发送成功／已读不能关闭异常；预计离店到点仅提醒核对，不自动宣布已离店、续住或加费，费用和实际离店流程仍待决。
 
 异常通知直接进入对应寄养详情 / 时间轴。
 

@@ -1,12 +1,12 @@
 # 03I 客户端「页面蓝图与关键交互验收场景」
 
 > status: mixed
-> confirmed_scope: current_page_map_confirmed_care_twelve_item_flow_and_other_confirmed_interactions
-> pending_scope: risk_visual_unresolved_03h_remaining_care_edges_interruption_label_remaining_mixed_business_checkout_ai_version_contract_partial_refund_allocation_and_remaining_ledger_corrections
+> confirmed_scope: current_page_map_confirmed_care_twelve_boarding_admission_basic_care_sixteen_and_other_confirmed_interactions
+> pending_scope: risk_visual_unresolved_03h_remaining_care_edges_interruption_label_remaining_mixed_business_checkout_ai_version_contract_partial_refund_allocation_remaining_ledger_corrections_and_boarding_departure_billing
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: [DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01, DEC-FOOD-HEAT-01, DEC-STAFF-04, DEC-STAFF-05]
+> blocked_by: [DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01, DEC-FOOD-HEAT-01, DEC-STAFF-04, DEC-STAFF-05, DEC-STAFF-06]
 > parent_stage: 03_customer_miniapp
 > version: V1.0
 
@@ -178,6 +178,12 @@ UI 层可在顶部门店栏下使用品牌 / 生活方式 Banner；精选商品�
 - 店员补录历史事件时，应插回真实发生时间位置，而不是简单显示为最新录入。
 
 寄养详情下方在符合条件时提供“投喂零食”。
+
+入住与日常照护按04§5.1已确认16项：实际到店、检查与资料核对后门店明确确认才进入有效寄养，预约到点不自动入住；同宠在住防重，多宠独立boarding_id／位置／入住与预计离店。预计离店到点只提醒、不自动结束／续住／加费，实际离店和计费／结算等仍待DEC-STAFF-05／06。
+
+统一照护表单固定逐宠单选喂食／遛狗／清扫笼子 → 选择实际发生时间 → 上传照片（选填）→ 确认保存；不是三个独立表单，不做批量完成、不设每日媒体配额。一个确认只产生一笔真实记录，实际时间和录入时间分开，重试不重复；普通喂食不能推进商品加餐状态或重复其已生成动态。
+
+顾客仅查看本人有权读取的customer_visible动态，store_internal不进入时间轴、今日数量、最近动态、缩略图或消息；关闭notify_customer不会把原本可见动态隐藏。异常由员工实际处理、填写结果并明确关闭，已读／发送成功不代表已处理。临时寄养资料只影响本次，当前加餐读取当期有效授权及限制，未核实或矛盾不能凭长期旧值默认允许。
 
 ### 3.5 消费争议 / 风险反馈
 
@@ -673,7 +679,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 - 最新动态在上。
 - 按日期分组。
 - 支持文本和图片 / 视频动态。
-- 至少演示喂食、饮水、玩耍、排泄等多个动作。
+- 时间轴继续支持喂食、饮水、玩耍、排泄等既有事件；04§5.1的统一照护录入下拉只提供喂食／遛狗／清扫笼子，不把时间轴展示类型误作该表单的必填选项或删除其他既有事件。
 
 ### C-BOARDING-02：寄养加餐
 
@@ -960,6 +966,8 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 | C-UI-03 | 加载 / 空 / 错 / 忙碌等控件状态 | [10a-customer-ui-design-system.md](10a-customer-ui-design-system.md) |
 
 ### 14.2 恢复与异常验收要求
+
+- C-BOARDING-01覆盖04§5.1已确认范围：实际到店并核对后明确入住，缺检查／必需时间拒绝，同宠重复或并发只一笔有效在住，多宠独立；位置可空、重复只提醒，预计离店必须晚于实际入住、到点不自动结束／续住／加费。统一照护入口单选三动作→实际时间→选填照片，缺图可保存、缺动作／时间不可保存，不批量或造全天执行、不把历史录入时间当发生时间；重试不重复。验证内部动态即使通知勾选也不泄露时间轴／数量／缩略图／消息，可见动态关闭通知仍能本人查看；异常缺处理结果不能标已处理，已读／发送成功不关闭。临时资料只改本次，明确同步仍校验原字段维护权；未知饮食不填假值，当前零食授权待核实／拒绝时不以长期旧允许值放行。C-BOARDING-02～05补验普通喂食不替代原商品单投喂、不扣库存／余额或重复写加餐动态。计费、收款时点、多宠合并结算、实际离店、疫苗／特殊照护及其他剩余DEC不得冒充已确认或已通过；现有验收ID及追踪状态不变。
 
 - 关键提交至少覆盖成功、失败、重复动作、响应丢失、离开后返回、身份验证后继续；记录是否产生了第二笔业务，不能仅截图按钮置灰。
 - 洗美逐项验：六项未检查拒绝开始、异常／无法检查记录主人真实决定、完成前复检、无图完成／普通结果立即可见、逐宠状态／整单金额、正常服务不预收／中止明确金额例外、全未开始取消无收费／无免单成交。未结算重开空原因可成功、已结算拒绝，旧结果与新版通知／已读不串、AI权益不重置。未付不自动挂单、手动挂单空原因拒绝、顾客内部备注隐藏、记清收款／免单自动解除；改0保存不结算、明确免单后才waived。全部消费最多两种支付（余额内部分账算一种）；消费退款老板／有效员工均可、无老板审批，消费先扣本金再扣赠送，退款按原付款渠道／原账户退回，未实收／超剩余额拒绝，草稿不算已退。即时／晚记账均仅一次更新余额／流水／适用库存，退款不自动回库、真实退货才联动，余额不足不能负数；未记账不伪造客户端成功，不产生外部支付接口或回调。中止标签／混合业务／部分退款分配及其余更正等未决子项保持blocked。

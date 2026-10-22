@@ -378,22 +378,34 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 |---|---|---:|---|---|
 | F-BOARD-001 | `boarding_id` | C | ID | 一次有效寄养业务标识。 |
 | F-BOARD-002 | `boarding_status` | C | Enum | 客户侧至少寄养中 / 已完成 / 已取消；内部可更细。 |
-| F-BOARD-003 | `check_in_at` | C | Datetime | 实际/计划入住日期时间，具体上下文由记录类型决定。 |
-| F-BOARD-004 | `expected_checkout_at` | S | Datetime | 预计离店时间。 |
+| F-BOARD-003 | `check_in_at` | C | Datetime | 寄养记录的实际入住时间，必填、默认当前时间；不能与F-APPT-009预约计划时间混用。确认须实际到店，改值保留原值与操作记录。 |
+| F-BOARD-004 | `expected_checkout_at` | S | Datetime | 本次预计离店时间，必填且晚于实际入住；到点只提醒，不自动离店／续住／加费，实际离店仍是F-BOARD-005。 |
 | F-BOARD-005 | `actual_checkout_at` | S | Datetime | 实际离店时间。 |
 | F-BOARD-006 | `boarding_day_index` | S | Int | 当前第几天的展示派生值。 |
 | F-BOARD-007 | `boarding_event_id` | S | ID | 寄养时间轴单条动态。 |
-| F-BOARD-008 | `boarding_event_type` | C | Enum | 喂食、饮水、排泄、遛宠、玩耍、休息、清洁、用药/特殊照护、媒体、加餐、异常、自定义等。 |
-| F-BOARD-009 | `occurred_at` | C | Datetime | 真实发生时间；时间轴按此倒序。 |
+| F-BOARD-008 | `boarding_event_type` | C | Enum | 原时间轴事件类型继续含喂食、饮水、排泄、遛宠、玩耍、休息、清洁、用药／特殊照护、媒体、加餐、异常、自定义等；04§5.1统一照护表单只单选feeding=喂食／walking=遛狗／cleaning=清扫笼子，不新增同义动作字段，也不删除其他既有事件或授权特殊照护执行细则。 |
+| F-BOARD-009 | `occurred_at` | C | Datetime | 实际发生时间；统一照护录入必须选择并确认，允许真实历史补录、不录未来已完成动作，时间轴按此倒序，不由照片或录入时间代替。 |
 | F-BOARD-010 | `recorded_at` | C | Datetime | 系统录入时间；补录时不得冒充真实发生时间。 |
 | F-BOARD-011 | `boarding_event_content` | S | Text/Struct | 动态正文 / 结构化动作内容。 |
-| F-BOARD-012 | `boarding_event_media_refs` | S | Ref[] | 与该动态同一时间点关联的图片 / 视频。 |
+| F-BOARD-012 | `boarding_event_media_refs` | S | Ref[] | 与该宠物／该次事件关联的真实图片／视频；统一照护照片选填、无每日配额、不跨宠自动复用，缺图不阻止保存真实照护，沿用媒体权限。 |
 | F-BOARD-013 | `boarding_event_created_by_staff_id` | S | ID | 录入该动态的店员。 |
-| F-BOARD-014 | `notify_customer` | C | Bool | 异常记录等是否通知客户；内部记录可由店员明确关闭。 |
+| F-BOARD-014 | `notify_customer` | C | Bool | 是否主动提醒顾客，不决定F-BOARD-025可见性；false不隐藏顾客可见动态，内部记录即使勾选也不能发给顾客。异常通知原默认规则保留，通知／已读不关闭处理待办。 |
 | F-BOARD-015 | `boarding_feed_execution_status` | C | Enum | `pending / waiting_feed / fed / abnormal_pending / canceled` 对应语义；付款状态必须另记。 |
 | F-BOARD-016 | `fed_at` | C | Datetime | 实际投喂发生时间。只在实际执行成功时写入。 |
 | F-BOARD-017 | `fed_by_staff_id` | C | ID | 实际执行投喂并确认的店员。 |
 | F-BOARD-018 | `feed_timeline_event_id` | S | ID | 投喂成功后唯一关联的寄养动态，重复确认不得产生第二条。 |
+| F-BOARD-019 | `boarding_location_label` | S | Text | 本次寄养位置的选填简单文字，如A01笼位／客厅散养；同店相同位置已有在住宠物只提醒，不代表房型／房价／笼位库存或硬容量。 |
+| F-BOARD-020 | `boarding_profile_snapshot` | S | Struct | 本次寄养资料，按F-PET-018～027等已确认寄养字段带入；临时修改只影响当前寄养，明确同步且有原字段维护权才回写长期档案。不是第二个Pet，不含可由员工代改的当前食品品牌或跨店授权。当前加餐必须读取本次有效资料，不能只读长期档案旧值。 |
+| F-BOARD-021 | `boarding_belongings` | S | Text/Struct | 选填随带物品文字及真实媒体引用；不强制逐件建档，不自动成为销售／库存对象，不因入住就默认向顾客或其他门店公开。 |
+| F-BOARD-022 | `boarding_admission_check_status` | S | Enum | not_checked／no_obvious_abnormality／abnormal／unable_to_check，默认未检查；入住前必须真实三选一，异常／无法检查须说明及沟通后接收决定，不强填洗美六项、不表示医学检查。 |
+| F-BOARD-023 | `boarding_admission_notes` | S | Text | 入住异常／无法检查的必要说明，以及与宠物主人沟通后本店接收或不接收决定的说明，复用同一核对记录及原审计关联；不接收不创建有效入住。 |
+| F-BOARD-024 | `boarding_admission_decision` | S | Enum | accepted／declined；本店员工核对后的真实接收／不接收决定，未完成为空，不默认接收。不代替疫苗等尚未确定准入政策，也不是老板审批或有效入住本身。 |
+| F-BOARD-025 | `boarding_event_visibility` | S | Enum | customer_visible／store_internal，由明确所属入口／表单确定，不从notify_customer推断。store_internal不进入顾客API、动态数量、缩略图、时间轴或消息；customer_visible关闭提醒仍可查看。 |
+| F-BOARD-026 | `boarding_abnormal_handling_status` | S | Enum | pending／handled，关联原寄养异常；实际处理并有F-BOARD-027结果后，员工明确标已处理。消息发送／顾客已读／普通照护保存／跨天不自动关闭；操作者、时间及变更复用F-AUD，不等于寄养已结束。 |
+| F-BOARD-027 | `boarding_abnormal_handling_result` | S | Text | 异常已处理时必填的真实处理结果；不是医学判断，处理人与时间留痕，不以通知状态代替。 |
+| F-BOARD-028 | `boarding_profile_unverified_fields` | S | Ref[] | 本次仍待核实的寄养资料字段注册号列表，与F-BOARD-020配合；未知不填假餐数／无过敏／允许零食。F-PET-026未核实不判允许，本次加餐不拿长期旧授权绕过，矛盾须核实、不伪造安全结论。 |
+
+04§5.1确认本店同一pet_id最多一笔未结束有效寄养，多宠每只独立boarding_id／位置／时间；结合原预约、Customer／Pet、F-CORE-010幂等请求及审计防重复／并发，不以昵称或手机号自动合并，不据此决定多宠结算。统一照护复用F-BOARD-007～013，不新建care_event同义字段；普通喂食不创建商品交易／扣库存或推进F-BOARD-015，加餐仍回原商品单确认并只写一次F-BOARD-018动态。计费、收款时点、实际离店、延住／提前离店、疫苗及特殊照护等剩余规则仍待DEC-STAFF-05／06。
 
 ---
 
@@ -1187,7 +1199,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 - `F-FEED-024`～`027`：上门喂养修改/取消/响应/失效时限，受 `DEC-FEED-01`～`03` 阻塞；
 - `F-RWD-027`～`028`：积分自提期限 / 改领取门店，受 `DEC-POINTS-02` 阻塞；
 - 启动广告具体秒数默认值/范围受 `DEC-LAUNCH-01` 阻塞；字段存在但不能写死运营常数；
-- 工作台其他细节／二级菜单、其余混合业务、部分退款分配、账本更正／冲正、护理额外通知／挂单等剩余细节、寄养及待办流转等未决字段仍受DEC-STAFF-01～08约束。统一资格／记录可见性／取消提成／返聘、项目生命周期／旧预约例外、洗美两批及护理12项、全部消费不限幅调价／明确免单／最多两种支付及线下交易账本已定；消费退款无需老板审批，消费先扣本金再扣赠送，退款按原付款渠道／原账户退回，确认后自动联动资产／适用库存。外部支付通道及其失败恢复不在V1范围，不恢复退役审批字段或据此解锁其他流程。
+- 工作台其他细节／二级菜单、其余混合业务、部分退款分配、账本更正／冲正、护理额外通知／挂单等剩余细节、寄养§5.2剩余流程及待办流转等未决字段仍受DEC-STAFF-01～08约束。统一资格／记录可见性／取消提成／返聘、项目生命周期／旧预约例外、洗美两批、护理12项及寄养入住／基础照护16项、全部消费不限幅调价／明确免单／最多两种支付及线下交易账本已定；消费退款无需老板审批，消费先扣本金再扣赠送，退款按原付款渠道／原账户退回，确认后自动联动资产／适用库存。外部支付通道及其失败恢复不在V1范围，不恢复退役审批字段或据此解锁其他流程。
 
 Pending 字段确认后：
 

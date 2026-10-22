@@ -229,6 +229,66 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         if care_meta.get(key) != expected:
             add(results, "error", "care.confirmed_rules", staff_path, f"section 4.5 {key} must be {expected}")
 
+    boarding = staff.split("### 5.1 ", 1)[-1].split("\n### 5.2 ", 1)[0]
+    boarding_meta = dict(META_RE.findall(boarding)) if "### 5.1 " in staff else {}
+    for key, expected in {
+        "status": "confirmed",
+        "status_scope": "boarding_admission_and_basic_care_sixteen_rules_only",
+        "boarding_admission_trigger": "staff_confirm_after_actual_arrival",
+        "boarding_check_in_time_required": "true",
+        "boarding_expected_checkout_time_required": "true",
+        "boarding_expected_checkout_validation": "later_than_check_in",
+        "boarding_multi_pet_model": "independent_boarding_records_per_pet",
+        "boarding_multi_pet_combined_settlement": "pending",
+        "boarding_duplicate_active_stay": "blocked_same_merchant_same_pet",
+        "boarding_location_required": "false",
+        "boarding_location_model": "free_text_no_room_booking",
+        "boarding_location_duplicate_policy": "warn_not_block",
+        "boarding_admission_check_required": "true",
+        "boarding_admission_check_model": "overall_observation_not_six_item_form",
+        "boarding_profile_edit_default": "current_stay_only",
+        "boarding_profile_archive_sync": "explicit_action_and_existing_field_permissions",
+        "boarding_diet_confirmation_required": "true",
+        "boarding_unknown_diet_handling": "mark_unverified_no_safe_or_allowed_default",
+        "boarding_belongings_required": "false",
+        "boarding_care_record_entry": "single_form",
+        "boarding_care_action_values": "[feeding, walking, cleaning]",
+        "boarding_care_action_labels": "[喂食, 遛狗, 清扫笼子]",
+        "boarding_care_action_selection": "single",
+        "boarding_care_record_steps": "[action, occurred_at, optional_photos, confirm]",
+        "boarding_care_time_policy": "explicit_actual_occurred_at",
+        "boarding_care_photo_required": "false",
+        "boarding_care_batch_completion": "excluded",
+        "boarding_daily_media_quota": "excluded",
+        "boarding_event_visibility": "independent_of_notify_customer",
+        "boarding_abnormal_close": "staff_confirms_actual_handling_with_result",
+        "boarding_checkout_due_policy": "remind_only_no_auto_end_renew_or_fee",
+        "boarding_billing_and_collection": "pending",
+        "boarding_actual_checkout": "pending",
+        "boarding_vaccination_admission": "pending",
+        "boarding_special_care_execution": "pending",
+        "boarding_shift_handover": "pending",
+    }.items():
+        if boarding_meta.get(key) != expected:
+            add(results, "error", "boarding.confirmed_rules", staff_path, f"section 5.1 {key} must be {expected}")
+
+    for field_id, field_name in {
+        "F-BOARD-019": "boarding_location_label",
+        "F-BOARD-020": "boarding_profile_snapshot",
+        "F-BOARD-021": "boarding_belongings",
+        "F-BOARD-022": "boarding_admission_check_status",
+        "F-BOARD-023": "boarding_admission_notes",
+        "F-BOARD-024": "boarding_admission_decision",
+        "F-BOARD-025": "boarding_event_visibility",
+        "F-BOARD-026": "boarding_abnormal_handling_status",
+        "F-BOARD-027": "boarding_abnormal_handling_result",
+        "F-BOARD-028": "boarding_profile_unverified_fields",
+    }.items():
+        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
+        cells = [cell.strip() for cell in row.split("|")]
+        if len(cells) < 4 or cells[2] != f"`{field_name}`" or cells[3] not in {"C", "S"}:
+            add(results, "error", "boarding.field_mapping", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must remain active as {field_name}")
+
     orders_path = Path("docs/03d-customer-orders.md")
     orders = current_text[orders_path.as_posix()]
     settlement = orders.split("### 10.1 ", 1)[-1].split("\n## 11.", 1)[0]
@@ -307,6 +367,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "具体护理过程状态／内容待": "the twelve approved care workflow rules are confirmed",
         "护理执行流程仍待DEC-STAFF-04": "the twelve approved care workflow rules are confirmed",
         "护理过程未决不得冒充已通过": "approved care workflow scope must not be classified as wholly pending",
+        "寄养主链分析（未确认细节）": "boarding admission and basic-care approved scope is no longer wholly pending",
     }
     for phrase, message in prohibited.items():
         for path, text in current_text.items():
