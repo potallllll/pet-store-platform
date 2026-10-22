@@ -174,7 +174,7 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 
 ## 5. 店员归属、邀请与当前已确认导航（STAFF）
 
-> `04-staff-miniapp.md` 已确认范围为§3.0导航、洗美分组、客户页结构、“我的”菜单、老板管理／员工管理结构及统一店员资格和记录可见性，§3.2工作台分组与组内顺序，以及§6.1投诉回应基线、§6.5跨端职责。其余菜单与跨店共享细节仍待确认；本注册表不授予业务权限。
+> `04-staff-miniapp.md` 已确认范围以该文档confirmed_scope及已确认子节为准，含§3.0导航、洗美分组、客户页结构、“我的”、老板／员工管理、统一店员资格及记录可见性，§3.0.6～3.0.9的门店资料／营业设置／项目分类与生命周期／全部到店整单调价及免单，§3.2工作台分组顺序及§6.1、§6.5已确认职责。护理执行流程、其他菜单和未决业务仍按对应DEC收口；本注册表不授予业务权限。
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
@@ -201,7 +201,7 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 - `staff_nav.customers` → 客户
 - `staff_nav.me` → 我的
 
-店员默认业务集合、员工状态和返聘采用02／04已确认规则；`DEC-STAFF-01`～`08`尚未确认的待办流转、收款审批、寄养位置等字段不得据统一权限自行补齐。
+店员默认业务集合、员工状态和返聘采用02／04已确认规则；`DEC-STAFF-01`～`08`尚未确认的待办流转、其他财务流程／审批、寄养位置等字段不得据统一权限自行补齐，不把已确认到店整单调价／免单重新列为待决。
 
 ---
 
@@ -215,8 +215,8 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 | F-APPT-004 | `customer_id` | C | ID | 预约所属当前 Merchant Customer。 |
 | F-APPT-005 | `pet_ids` | C | Ref[] | 一次预约选择的真实宠物；内部每只宠物建立独立服务项。 |
 | F-APPT-006 | `appointment_pet_item_id` | S | ID | 多宠预约中的单宠服务项标识。 |
-| F-APPT-007 | `service_category` | S | Enum | 洗护 / 美容 / 寄养大类。 |
-| F-APPT-008 | `service_item_id` | S | ID | 本店服务项目主资料的稳定标识，预约与洗美开单共用，不另建同义项目ID；修改／停用沿用原ID，不覆盖历史业务事实，管理边界见04§3.0.8。 |
+| F-APPT-007 | `service_category` | S | Enum | 实际服务业务大类：洗护／美容／护理／寄养；护理只供门店开单，不表示预约允许护理。不是经营项目四类入口的business_item_category，也不包含商品。 |
+| F-APPT-008 | `service_item_id` | S | ID | 本店服务主资料稳定标识，预约及门店服务开单共用；修改／停用／恢复沿用原ID。商品用原product_id／sku_id，不伪造service_item；边界见04§3.0.8。 |
 | F-APPT-009 | `requested_start_at` | S | Datetime | 客户提出的期望到店日期时间，须在营业范围内且未临时关闭，不要求对应固定间隔时段。提交不等于已确认，人工确认及版本切换按03a§11。 |
 | F-APPT-010 | `boarding_checkout_at` | S | Datetime | 寄养预约预计离店日期时间。仅寄养使用。 |
 | F-APPT-011 | `reference_price` | C | Money | 项目主资料及预约展示的参考价统一逻辑名；主资料值由老板维护，预约当时值按业务上下文保留事实／快照，不能混为同一可覆盖对象。参考价不锁定成交价，本单收款前调价用F-ORD金额字段，不回写项目主资料或预约快照。 |
@@ -237,23 +237,27 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 | F-APPT-026 | `reschedule_proposal_expires_at` | S | Datetime | 改期提议有效截止；不得晚于03a§11.5规定的最早截止。 |
 | F-APPT-027 | `slot_reservation_status` | D | Enum | 已退役的名额状态；none / reserved / used / released仅供历史迁移识别，不能用于当前预约状态机或后台任务。 |
 | F-APPT-028 | `customer_change_cutoff_at` | S | Datetime | 客户可修改／接受改期的服务端截止；等于或晚于该时间禁止修改。已确认预约按当前有效开始时间与建议新开始时间对应截止的较早者计算，未确认申请按当前申请的预约开始时间与建议新开始时间对应截止的较早者计算。取消规则不复用本字段。 |
+| F-APPT-029 | `appointment_service_item_snapshot` | S | Struct[] | 预约原提交的真实服务项／宠物关联、service_item_id、项目版本及当时名称／参考价等事实快照，用于停用前旧预约继续确认／转开单的例外校验；不凭同名、旧缓存或客户端声明放行新宠物／停用项目，也不复活终结预约。 |
 
 03a§11的当前模型为门店人工确认。F-APPT-019／020／027退役不删除历史、不回收注册号，也不删除预约版本、改期提议或6小时截止字段。新申请、人工确认及接受改期关联F-STORE-012～014校验目标时间，不以固定间隔网格或硬名额计数限制接待；同一预约并发转换仍校验F-APPT-022，多宠同批全成全败。寄养建议容量提醒按03a§7单独执行，不借此恢复洗美名额。
 
 ### 6.1 轻量服务项目主资料（SERVICE_ITEM）
 
-04§3.0.8确认洗护／美容项目入口、新增／修改／停用、项目名称／所属大类／参考价／服务说明四项及收款前可调整本单收费。具体必填／数值校验和调价幅度／审批细则仍待确认，不据此扩展复杂计价模型。主资料以F-CORE-003／store_id为唯一Store归属、merchant_id作租户隔离；对象标识复用F-APPT-008／service_item_id，大类复用F-APPT-007（本节洗护／美容），参考价复用F-APPT-011，不为预约和开单复制项目或按名称匹配归属。
+04§3.0.8已确认四类入口、三类服务的四项表单／校验、保存生效、启停恢复及旧预约例外；03d§10.1／04§3.0.9已确认全部到店消费订单不限幅整单调价及免单。主资料以store_id为唯一Store归属、merchant_id作租户隔离；服务标识复用F-APPT-008，实际服务大类F-APPT-007，参考价F-APPT-011。不另建第二套项目或价款账本。
+
+F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型F-APPT-002、实际服务类型F-SVC-002或商品自定义分类F-PROD-003。商品分支仅选择／关联本店F-PROD-001／002已有商品／SKU，名称、售价、说明及库存从原商品主资料读取，不复制为service_item或用服务表单限制截断既有商品；护理仅门店开单，不新增客户端护理预约，原寄养业务仍独立保留。
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
-| F-SITEM-001 | `service_item_enabled` | S | Bool | 项目可供新业务选择／已停用的唯一可用状态，true表示可选、false表示停用；新预约／直接新开单由服务端复核。初始状态、停用后的恢复及停用前旧预约履约流程仍待04§3.0.8确认，不据此新增恢复按钮或自动取消旧预约。 |
+| F-SITEM-001 | `service_item_enabled` | S | Bool | 服务项目可用状态；新增成功默认true，老板停用设false、恢复沿用原ID设true。停用阻止全新选择，原预约原项例外须校验F-APPT-029及有效预约，不放行新宠物／项目或终结预约。 |
 | F-SITEM-002 | `service_item_version` | S | Int | 服务项目主资料版本；用于修改／停用与新业务提交的并发校验，不能用新内容覆盖旧预约、订单或服务事实／快照，不代替F-APPT-022预约版本。 |
-| F-SITEM-003 | `service_item_name` | C | Text | 项目名称；修改主资料不无痕覆盖旧预约、订单或服务记录中的名称事实，名称不替代稳定项目ID。 |
-| F-SITEM-004 | `service_item_description` | C | Text | 服务说明；具体必填／长度等校验待04§3.0.8收口，不夹带工时、排班或复杂套餐参数。 |
+| F-SITEM-003 | `service_item_name` | C | Text | 三类服务项目名称，必填、去首尾空白后1～30个Unicode字符；同类同名提醒不禁止，不按名称合并或覆盖历史，名称不替代稳定ID。 |
+| F-SITEM-004 | `service_item_description` | C | Text | 三类服务说明，选填、最多300个Unicode字符，不强制图片或夹带工时／排班／复杂套餐参数。 |
+| F-SITEM-005 | `business_item_category` | C | Enum | 管理／开单入口固定wash / groom / care / product，对应洗护／美容／护理／商品；前三类使用服务主资料，product仅关联原商品／SKU，不重写预约、服务或商品分类枚举。 |
 
-管理变更的操作者、时间及前后内容／状态复用F-AUD。仅本店老板维护项目主资料，员工可按统一结算业务资格调整本单收费，不因此获得主资料改价权限；不物理删除项目或新增工时、排班、复杂服务套餐字段。现有充值套餐及真实服务时长记录不受影响。初始状态／恢复、旧预约停用后履约和具体字段／金额校验等仍待确认，不宣称完整解阻。
+三类服务参考价复用F-APPT-011，必填、大于0、最多两位小数，不用0表示待定；字数按Unicode码点而非字节校验。四项服务表单不覆盖03e商品字段及SKU售价。项目由本店老板维护，新增／修改合法保存后生效，不需平台审核或168小时等待；原ID恢复不改历史。F-AUD记录变更；不新增工时／排班／复杂服务套餐，护理执行细节仍待DEC-STAFF-04，不把本节确认扩大为完整流程已解阻。
 
-本单收费复用F-ORD-008／009／010保留原始明细及应收，F-ORD-011／012保留优惠，F-ORD-013记录人工调价差额、F-ORD-014最终应收；F-ORD-018～020记录原因、操作人及服务端时间。不能直接改写reference_price、明细原价或paid_amount冒充本单调价；收款后锁定及幂等／并发校验见03d§10、04§3.0.8。
+本单收费复用F-ORD-008／009／010保留原始明细及应收，F-ORD-011／012保留优惠，F-ORD-013记录人工调价差额、F-ORD-014最终应收；F-ORD-018～020及033记录原因、操作人及服务端时间。不能直接改写reference_price、明细原价或paid_amount冒充本单调价；实收或免单成功后锁定及幂等／并发校验见03d§10.1、04§3.0.9。
 
 ---
 
@@ -326,8 +330,8 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
-| F-SVC-001 | `service_record_id` | S | ID | 一次真实洗护 / 美容 / 寄养服务记录标识。 |
-| F-SVC-002 | `service_type` | C | Enum | 洗护 / 美容 / 寄养。 |
+| F-SVC-001 | `service_record_id` | S | ID | 一次真实洗护／美容／护理／寄养服务记录标识。 |
+| F-SVC-002 | `service_type` | C | Enum | 洗护／美容／护理／寄养；新增care护理仅门店开单，不自动开放客户端预约、洗美AI报告或医疗流程；商品不属于此枚举。 |
 | F-SVC-003 | `service_customer_status` | C | Enum | 客户侧简化状态；洗美不得直接暴露全部店员内部步骤。 |
 | F-SVC-004 | `service_internal_status` | S | Enum | 店员内部细状态容器；完整枚举待阶段 04/06 冻结。不得用客户端三态替代。 |
 | F-SVC-005 | `service_started_at` | S | Datetime | 实际开始服务时间。 |
@@ -423,7 +427,7 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 | F-CPN-014 | `coupon_source_type` | S | Enum | 充值赠送、人工赠送、邀请码兑换、平台积分兑换。 |
 | F-CPN-015 | `points_redemption_id` | C | ID | 平台积分兑换发券时关联的兑换记录。 |
 | F-CPN-016 | `coupon_locked_order_id` | S | ID | 收银选择后临时锁定的订单；未完成收款则解除锁定并按规则恢复。 |
-| F-CPN-017 | `coupon_redeemed_at` | S | Datetime | 确认订单收款后的正式核销时间。 |
+| F-CPN-017 | `coupon_redeemed_at` | S | Datetime | 订单实际收款或明确确认免单完成消费结算后的正式核销时间，原券适用规则不变。 |
 | F-CPN-018 | `coupon_note` | C | Text | 可选备注。 |
 | F-CPN-019 | `coupon_locked_at` | S | Datetime | 当前一次有效锁定开始时间；用于计算锁定前剩余有效时长并防止重复延期。 |
 | F-CPN-020 | `coupon_unlocked_at` | S | Datetime | 当前一次锁定实际解除时间；与锁定时间、原／新valid_until及关联订单共同留痕。 |
@@ -459,7 +463,7 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 | F-PROD-006 | `sale_price` | C | Money | 当前 SKU 售价 / 参考售价。 |
 | F-PROD-007 | `inventory_status` | C | Enum | 客户侧仅：有货 / 库存紧张 / 暂时无货；默认不暴露精确数量。 |
 | F-PROD-008 | `available_inventory_qty` | S | Int | 后台真实可售库存数量；不默认返回普通客户端。 |
-| F-PROD-009 | `reserved_inventory_qty` | S | Int | 已确认未收款订单的预占库存。 |
+| F-PROD-009 | `reserved_inventory_qty` | S | Int | 已确认但尚未结算订单的预占库存；实际收款或明确免单成功后一次转出库，输入0未确认免单仍未结算。 |
 | F-PROD-010 | `product_description` | C | Text | 商品介绍。 |
 | F-PROD-011 | `sku_spec_values` | S | Struct | 口味、容量、包装等规格值。 |
 | F-PROD-012 | `boarding_feed_enabled` | C | Bool | SKU / 商品是否允许用于寄养加餐。 |
@@ -498,25 +502,28 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 | F-ORD-011 | `automatic_discount_amount` | C | Money | 自动优惠金额。 |
 | F-ORD-012 | `coupon_discount_amount` | C | Money | 优惠券优惠金额。 |
 | F-ORD-013 | `manual_adjustment_amount` | C | Money | 人工调价金额，可正可负；不能覆盖其他金额。 |
-| F-ORD-014 | `final_receivable_amount` | C | Money | 调价/优惠后最终应收。 |
+| F-ORD-014 | `final_receivable_amount` | C | Money | 调价／优惠后最终应收，非负、最多两位小数；整单输入，由服务端算差额，不设业务调价上限。0元须明确确认免单才结算，不以主资料参考价覆盖。 |
 | F-ORD-015 | `paid_amount` | C | Money | 实际已收款金额。 |
 | F-ORD-016 | `refund_amount` | C | Money | 已退款金额；不得通过改写原实付实现退款。 |
-| F-ORD-017 | `payment_status` | S | Enum | 未收款 / 已收款 / 部分退款 / 已退款等财务结果语义。 |
+| F-ORD-017 | `payment_status` | S | Enum | 既有未收款／已收款／部分退款／已退款等结果；新增稳定值waived=已免单、无实际付款。waived表示明确免单已成功结算，不能伪造为已收款或仅因金额0自动写入；与服务／执行状态分离。 |
 | F-ORD-018 | `manual_adjustment_reason` | C | Text | 人工调价原因。 |
 | F-ORD-019 | `manual_adjusted_by_staff_id` | C | ID | 调价操作人。 |
 | F-ORD-020 | `manual_adjusted_at` | C | Datetime | 调价时间。 |
 | F-ORD-021 | `manual_adjustment_note` | C | Text | 可选调价备注。 |
 | F-ORD-022 | `order_confirmed_at` | S | Datetime | 门店确认商品/订单内容的时间。 |
-| F-ORD-023 | `settled_at` | S | Datetime | 收款结算成立时间。 |
+| F-ORD-023 | `settled_at` | S | Datetime | 实际收款或明确免单成功的服务端结算时间；免单不是payment_confirmed_at，不新建虚假支付记录。 |
 | F-ORD-024 | `order_canceled_at` | S | Datetime | 订单取消时间。 |
 | F-ORD-025 | `order_cancel_reason` | S | Text | 人工 / 自动取消原因。 |
-| F-ORD-026 | `auto_cancel_reason` | C | Text | 未付款超过保留时间等系统自动取消原因。 |
+| F-ORD-026 | `auto_cancel_reason` | C | Text | 尚未结算超过保留时间等系统自动取消原因；已收款／免单不得按未付款超时取消。 |
 | F-ORD-027 | `source_channel` | C | Enum | 复用 F-CORE-011。订单来源分析不得另造 `order_source`。 |
 | F-ORD-028 | `business_scenario` | C | Enum | 复用 F-CORE-012；寄养加餐固定 `boarding_feed`。 |
 | F-ORD-029 | `boarding_id` | C | ID | 寄养加餐订单必须稳定关联当前寄养。 |
 | F-ORD-030 | `pet_id` | C | ID | 服务 / 寄养加餐等与具体宠物的关联。 |
 | F-ORD-031 | `original_request_snapshot` | S | Struct | 客户原始购买需求快照；门店改单不得无痕覆盖。 |
-| F-ORD-032 | `order_amount_version` | S | Int | 同一订单金额版本，供收款前调价与收款确认校验同一金额／状态；调价先成功时旧金额收款请求须失败并重新核对，收款先成功时拒绝直接调价。不能复用项目主资料版本或审核row_version，不新增另一套金额账本。 |
+| F-ORD-032 | `order_amount_version` | S | Int | 同一订单金额版本，供调价、实际收款、免单及取消／超时等校验同一金额／状态；结算先成功则拒绝直接改价，调价先成功则旧金额结算失败重新核对。不能复用项目版本或审核row_version。 |
+| F-ORD-033 | `manual_adjustment_reason_code` | S | Enum | actual_care / store_discount / input_correction / other，对应实际护理情况／到店优惠／录入更正／其他。调价原因必选；other须在F-ORD-018补文字，其余保存真实原因，不据原因名称开放收款后改价。 |
+
+全部到店消费订单整单调价不限业务金额／比例、无老板逐单审批，但须有效角色／对象、非负精确金额、前后确认、原因及版本校验。免单原因、操作者、时间复用F-AUD-009／002／003／010并关联原order_id与幂等请求；paid_amount、final_receivable_amount及收入均为0，settled_at及payment_status=waived共同表达已结算。无实际付款时不产生F-PAY-001～006记录或余额扣款；商品仍一次出库，服务／投喂不自动完成，详见03d§10.1。
 
 ### 12.2 付款拆分
 
@@ -1114,9 +1121,10 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 | `staff_owner.business_hours` | 营业与预约设置／营业时间，组内第一项，仅本店老板修改 |
 | `staff_owner.temporary_closure` | 营业与预约设置／临时关闭，组内第二项，仅本店老板修改；不是平台停用门店 |
 | `staff_owner.service_item_management` | 老板管理／服务项目管理，入口及操作边界按04§3.0.8；与其他老板菜单的排序未定 |
-| `staff_owner.create_service_item` | 服务项目管理内／新增项目，仅本店老板；四项字段已确认，具体校验及其他待决细节不因此冻结 |
+| `staff_owner.create_service_item` | 服务项目管理内／新增服务项目，仅本店老板；三类服务四项表单及校验已确认，商品分支只关联已有SKU |
 | `staff_owner.edit_service_item` | 服务项目管理内／修改项目，仅本店老板，不回写历史业务事实 |
 | `staff_owner.disable_service_item` | 服务项目管理内／停用项目，仅本店老板，不物理删除或自动取消旧预约 |
+| `staff_owner.restore_service_item` | 服务项目管理内／恢复已停用服务项目，仅本店老板，沿用原service_item_id和历史 |
 | `staff_owner.employee_list` | 员工管理／员工列表 |
 | `staff_owner.invite_employee` | 员工管理／邀请员工 |
 | `staff_owner.disable_employee` | 员工列表内／停用员工 |
@@ -1140,7 +1148,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 - `F-FEED-024`～`027`：上门喂养修改/取消/响应/失效时限，受 `DEC-FEED-01`～`03` 阻塞；
 - `F-RWD-027`～`028`：积分自提期限 / 改领取门店，受 `DEC-POINTS-02` 阻塞；
 - 启动广告具体秒数默认值/范围受 `DEC-LAUNCH-01` 阻塞；字段存在但不能写死运营常数；
-- 店员端尚未确认的工作台细节、其他二级菜单、收款/审批、寄养位置、待办流转等字段受 `DEC-STAFF-01`～`08` 阻塞；统一店员资格、工作记录／业绩／审计可见性、取消提成及原店返聘流程已确认，不恢复为待决。
+- 店员端尚未确认的工作台细节、其他二级菜单、其他收款／退款／审批流程、护理执行、寄养位置及待办流转等字段受 `DEC-STAFF-01`～`08` 阻塞；统一店员资格、记录可见性、取消提成、返聘、项目四类／表单／停用恢复与旧预约例外、全部到店整单不限额调价／无老板逐单审批／零元免单均已确认，不恢复为待决，也不以此解锁其他流程。
 
 Pending 字段确认后：
 

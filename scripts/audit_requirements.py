@@ -124,6 +124,43 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         cells = [cell.strip() for cell in row.split("|")]
         if len(cells) < 4 or cells[3] != "D":
             add(results, "error", "appointment.retired_field", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must remain registered as D (retired)")
+
+    # Check the confirmed subsection, not the staff document's still-mixed overall status.
+    staff_path = Path("docs/04-staff-miniapp.md")
+    staff = current_text[staff_path.as_posix()]
+    catalog = staff.split("#### 3.0.8", 1)[-1].split("#### 3.0.9", 1)[0]
+    catalog_meta = dict(META_RE.findall(catalog)) if "#### 3.0.8" in staff else {}
+    for key, expected in {
+        "status": "confirmed",
+        "business_item_category_order": "[洗护, 美容, 护理, 商品]",
+        "care_customer_booking": "disabled",
+        "product_catalog_integration": "select_existing_product_and_sku",
+        "service_item_new_enabled": "true",
+        "service_item_name_max_chars": "30",
+        "service_item_description_max_chars": "300",
+    }.items():
+        if catalog_meta.get(key) != expected:
+            add(results, "error", "catalog.confirmed_rules", staff_path, f"section 3.0.8 {key} must be {expected}")
+
+    orders_path = Path("docs/03d-customer-orders.md")
+    orders = current_text[orders_path.as_posix()]
+    settlement = orders.split("### 10.1 ", 1)[-1].split("\n## 11.", 1)[0]
+    settlement_meta = dict(META_RE.findall(settlement)) if "### 10.1 " in orders else {}
+    for key, expected in {
+        "status": "confirmed",
+        "adjustment_scope": "all_onsite_consumption_orders",
+        "adjustment_business_limit": "none",
+        "adjustment_owner_approval": "not_required",
+        "adjustment_roles": "[merchant_owner, active_store_staff]",
+        "adjustment_input": "final_receivable_amount",
+        "waiver_payment_status": "waived",
+        "waiver_requires_explicit_confirmation": "true",
+        "waiver_actual_payment_amount": "0",
+        "waiver_revenue_amount": "0",
+    }.items():
+        if settlement_meta.get(key) != expected:
+            add(results, "error", "settlement.confirmed_rules", orders_path, f"section 10.1 {key} must be {expected}")
+
     for path, text in current_text.items():
         if "blocked_by:" in text.split("\n## ", 1)[0] and "DEC-APPT-01" in metadata(text).get("blocked_by", ""):
             add(results, "error", "appointment.stale_blocker", Path(path), "closed DEC-APPT-01 remains in blocked_by")

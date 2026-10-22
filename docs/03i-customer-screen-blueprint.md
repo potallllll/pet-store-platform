@@ -1,12 +1,12 @@
 # 03I 客户端「页面蓝图与关键交互验收场景」
 
 > status: mixed
-> confirmed_scope: current_page_map_and_confirmed_interactions_except_pending_risk_ui_details
-> pending_scope: risk_module_visual_and_unresolved_03h_edges
+> confirmed_scope: current_page_map_and_confirmed_interactions_except_pending_risk_ui_and_care_process_details
+> pending_scope: risk_module_visual_unresolved_03h_edges_and_care_service_process_details
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: [DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01, DEC-FOOD-HEAT-01]
+> blocked_by: [DEC-FEED-01, DEC-FEED-02, DEC-FEED-03, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01, DEC-FOOD-HEAT-01, DEC-STAFF-04]
 > parent_stage: 03_customer_miniapp
 > version: V1.0
 
@@ -280,9 +280,10 @@ UI 层可在顶部门店栏下使用品牌 / 生活方式 Banner；精选商品�
 - 一只宠物时自动预选。
 - 已有客户 / 宠物资料自动带出。
 - 无宠物时允许轻量添加，保存后返回当前流程。
-- 洗护／美容可选项目与店员开单共用本店项目主资料，按04§3.0.8排除已停用项目；提交时复核，旧页面不可绕过。停用不自动取消旧预约或替换原项目，旧预约的后续处理以该节已确认／待确认边界为准。
+- 洗护／美容可选项目与门店开单共用主资料，全新预约排除停用项目并由服务端复核。停用前未终结的原预约可继续原项目／原宠物确认和转开单，不能新增停用项目／宠物或复活已终结预约，营业／6小时规则仍有效，见04§3.0.8。
+- 项目管理四类不等于预约四类：护理仅门店开单，客户端不新增护理预约；商品走原商品／SKU购买需求，寄养预约保留。原预约停用项目可以标注已停用及原预约保留，不能变成新选择入口。
 - 价格只作参考，不出现在线支付。
-- 服务项目填写内容为项目名称、所属大类、参考价、服务说明，项目主资料按04§3.0.8共用。门店结算时可在确认收款前调整本单收费，客户端订单展示本单真实应收／实付；不得将参考价表现为不可改成交价，也不提供顾客改价入口或用最新参考价覆盖历史。
+- 三类服务表单及校验按04§3.0.8：名称必填≤30字、大类必选、参考价必填且大于0／最多两位小数、说明选填≤300字。同类同名只提醒；商品分支关联已有SKU，不复制该表单。客户端只选其中洗护／美容；订单展示真实应收／实付，不给顾客改价权或用最新参考价覆盖历史。
 - 同页提供“我的预约”入口或预约记录区域。
 - 提交后明确显示“待门店确认”，不得表现成已经正式预约成功。
 - 时间须在门店营业范围内且未临时关闭，不要求匹配预生成的固定间隔时段；不显示剩余名额、已满、抢位或保留名额倒计时。门店人工判断忙闲并确认或提出新时间，营业时间及临时关闭以04§3.0.7为准。
@@ -506,7 +507,9 @@ H5 原型可以使用 1 / 2 / 4 / 6 组模拟控制验证动态能力，但该�
 
 顶部只保留：全部 / 服务 / 商品。
 
-服务订单进入同一服务结果页，不创建第二套报告页面。
+洗护／美容订单复用对应服务结果页，寄养复用原寄养详情，不创建第二套报告。护理虽不开放客户端预约，其真实消费仍作为服务订单展示项目及金额；具体护理过程状态／内容待04的DEC-STAFF-04，不自动套洗美三态、照片或AI报告，也不因此新增一个护理预约入口。
+
+全部到店消费订单由门店执行03d§10.1整单调价／明确免单；顾客只读取真实结果。免单成功明确显示“已免单，实付0元”，无实际支付方式／支付凭证；输入0未确认不算已完成。付款／免单与服务、交付、投喂状态分离，不让0元或已结算掩盖未执行事项。
 
 ### 10.4 商品
 
@@ -880,7 +883,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 | C-HOME-AD-06 | 底部广告各状态组合场景 | [03o-customer-home-banner-ad.md](03o-customer-home-banner-ad.md) |
 | C-BOARDING-01 | 寄养动态时间轴与补录排序 | [03i-customer-screen-blueprint.md](03i-customer-screen-blueprint.md) |
 | C-BOARDING-02 | 寄养加餐提交至实际执行 | [03e-customer-products.md](03e-customer-products.md) |
-| C-BOARDING-03 | 已收款未投喂仍为处理中 | [03e-customer-products.md](03e-customer-products.md) |
+| C-BOARDING-03 | 已收款／已免单未投喂仍为处理中，零元不重复出库或自动完成 | [03e-customer-products.md](03e-customer-products.md) |
 | C-BOARDING-04 | 重复执行确认仅写一次动态 | [03e-customer-products.md](03e-customer-products.md) |
 | C-BOARDING-05 | 提前离店 / 撤回允许 / 无法投喂收口 | [03e-customer-products.md](03e-customer-products.md) |
 | C-RISK-01 | 首页消费争议入口与未核验展示边界 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
@@ -919,7 +922,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 | C-POINTS-04 | 积分兑换商户券与幂等补偿 | [03k-customer-loyalty-points.md](03k-customer-loyalty-points.md) |
 | C-POINTS-05 | 实物兑换、总仓到店与自提 | [03k-customer-loyalty-points.md](03k-customer-loyalty-points.md) |
 | C-POINTS-06 | 库存并发、取消与核销互斥及结果恢复 | [03k-customer-loyalty-points.md](03k-customer-loyalty-points.md) |
-| C-ORDER-01 | 订单分类与同一服务结果页 | [03d-customer-orders.md](03d-customer-orders.md) |
+| C-ORDER-01 | 订单分类与洗美同一结果页、护理消费边界、整单调价及免单真实展示／并发组合场景 | [03d-customer-orders.md](03d-customer-orders.md) |
 | C-PRODUCT-01 | 商品购买需求及线下收款边界 | [03e-customer-products.md](03e-customer-products.md) |
 | C-MSG-01 | 单一时间流与业务详情跳转 | [03f-customer-messages.md](03f-customer-messages.md) |
 | C-MSG-02 | 平台消息、门店隔离和未读范围 | [03f-customer-messages.md](03f-customer-messages.md) |
@@ -954,7 +957,8 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 
 - 关键提交至少覆盖成功、失败、重复动作、响应丢失、离开后返回、身份验证后继续；记录是否产生了第二笔业务，不能仅截图按钮置灰。
 - 启动覆盖分享 / 通知冷启动、后台恢复、广告无填充 / 失败、登录返回、目标无效及跨门店权限。
-- 加餐覆盖已收款未投喂、重复确认、寄养提前结束及取消后入口资格；积分覆盖最后一份库存并发、取消与核销竞态及补偿处理中。
+- 加餐覆盖已收款／已免单未投喂、重复确认、零元不跳过出库／执行及免单后不被未付款超时取消；积分覆盖最后一份库存并发、取消与核销竞态及补偿处理中。
+- C-ORDER-01逐项覆盖：护理仅开单无客户端预约、商品只关联原SKU、普通员工与老板不限幅整单调价／无逐单审批、原因与其他补充、负数／超精度拒绝、0元未确认不结算、免单不造付款／不扣余额、收款／免单／调价／取消并发与重复请求、商品一次出库及收入0、免单后金额锁定与真实顾客展示。只验收本轮确认范围，护理过程未决不得冒充已通过。
 - 新的上门喂养 / 积分异常流程先验证已确认不变量；涉及 DEC-FEED / DEC-POINTS 的截止和权限参数，待对应决策确认后补实际用例值，不把待决视为已通过。
 - 03a第11节的每个典型推演均属于 `C-APPT-01` 的正式子场景；执行记录须逐项说明营业／临时关闭配置、人工处理结果、原预约、提议及预约版本和最终状态，并证明没有固定间隔／硬名额拦截，不能只截图预约表单或只记录一次总通过。
 - 原型允许有标注的模拟成功 / 失败状态；正式上线必须验证服务端真实权限、并发结果和恢复。文档检查、token计算或原型演示均不等于实际客户端验收通过。
@@ -987,7 +991,7 @@ Platform Super Admin 可独立配置素材 / 广告单元、投放时效、频�
 | C-POINTS-01 | 积分签到 | 当前积分、签到 | 广告完成 / 失败模拟 |
 | C-POINTS-02 | 周积分 | 每日积分、本周累计 | 7天总计50验收 |
 | C-POINTS-05 | 积分商城 | 奖励、领取门店、自提状态 | 兑换 / 门店选择 |
-| C-ORDER-01 | 我的订单 | 全部/服务/商品 | 服务订单进同一结果页 |
+| C-ORDER-01 | 我的订单 | 全部/服务/商品、真实调价与已免单0元 | 洗美复用结果页，护理不自动套AI报告 |
 | C-PRODUCT-01 | 商品 | 列表、详情、SKU、购物车 | 提交购买需求 |
 | C-MSG-01 | 消息 | 关键业务消息 | 深链 / 邀请操作 |
 | C-ADVISOR-01 | 养宠顾问入口 | 有资格显示/无资格隐藏 | 门店切换 + 拖动吸附 + “调整位置 → 左侧 / 右侧 / 重置” |
