@@ -110,11 +110,28 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     appointment = current_text["docs/03a-customer-appointment.md"]
     if metadata(appointment).get("status") != "confirmed" or "DEC-APPT-01" in metadata(appointment).get("blocked_by", ""):
         add(results, "error", "appointment.decision", Path("docs/03a-customer-appointment.md"), "DEC-APPT-01 must remain confirmed and unblocked")
+    for key, expected in {
+        "booking_model": "manual_store_confirmation",
+        "fixed_booking_interval": "retired",
+        "hard_slot_capacity": "retired",
+        "slot_reservation": "retired",
+    }.items():
+        if metadata(appointment).get(key) != expected:
+            add(results, "error", "appointment.manual_model", Path("docs/03a-customer-appointment.md"), f"{key} must be {expected}")
+    registry = current_text["docs/FIELD-REGISTRY.md"]
+    for field_id in ("F-APPT-019", "F-APPT-020", "F-APPT-027"):
+        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
+        cells = [cell.strip() for cell in row.split("|")]
+        if len(cells) < 4 or cells[3] != "D":
+            add(results, "error", "appointment.retired_field", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must remain registered as D (retired)")
     for path, text in current_text.items():
         if "blocked_by:" in text.split("\n## ", 1)[0] and "DEC-APPT-01" in metadata(text).get("blocked_by", ""):
             add(results, "error", "appointment.stale_blocker", Path(path), "closed DEC-APPT-01 remains in blocked_by")
 
     prohibited = {
+        "申请不占位、确认原子占位": "appointment hard-slot reservations were retired; use manual confirmation",
+        "客户不能自由输入预约时间，只能选择门店开放的预约时段": "fixed booking intervals were retired",
+        "时段名额以后端提交时实时校验为准": "hard slot capacity must not control current appointments",
         "独立风险查询入口": "cross-store risk lookup must not become an arbitrary standalone query",
         "不确认此前建议的客户页全部结构": "customer page structure was subsequently confirmed",
     }

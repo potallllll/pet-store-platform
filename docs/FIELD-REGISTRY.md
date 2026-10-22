@@ -128,6 +128,9 @@
 | F-STORE-009 | `store_profile_activated_at` | S | Datetime | 本次审核批准结果成功切换为有效版本的时间；区别于审核操作时间。 |
 | F-STORE-010 | `store_profile_activated_change_id` | S | ID | 当前有效资料版本来源的已生效修改申请标识；不得关联待审／拒绝申请。首次注册初始资料可以为空，不据此新增注册审批。 |
 | F-STORE-011 | `store_profile_next_submission_at` | S | Datetime | 本Store下次允许提交资料修改申请的时间，由服务端按上次已审核通过且成功生效的F-STORE-009加连续168小时计算，不按自然日截断。没有此类修改历史时为空，不用首次注册时间补造等待期。仅表示时间条件，仍须校验身份、单份待审、有效版本等；不是审核截止时间或自动提交时间。 |
+| F-STORE-012 | `store_business_hours` | C | Struct | 本Store营业日期及时间范围，按Asia/Shanghai解释；由04§3.0.7本店老板维护，不表达固定预约间隔或名额。 |
+| F-STORE-013 | `store_temporary_closures` | C | Struct[] | 本Store指定日期临时关闭的明确时间范围，可覆盖某段时间、半天或全天；不默认上午／下午分界，不表示平台停店或自动终止原预约／服务。 |
+| F-STORE-014 | `store_business_settings_version` | S | Int | 营业时间／临时关闭有效配置版本；老板合法保存后更新，用于新申请／确认／改期与配置变更的一致性校验，不等同于资料审核有效版本F-STORE-005。 |
 
 修改审核复用现有唯一元字段，不新增含义相同的第二套状态或快照字段：
 
@@ -141,6 +144,8 @@
 - 复用审核元字段不批准本业务的批量导出／上传等未确认动作；营业执照不得因复用F-REV而进入顾客公开接口。
 
 两项图片引用仅指向已成功上传并经服务端校验的本店材料；上传中的临时预览或失败引用不得进入提交快照。数量、格式、比例、大小及失败恢复按04§3.0.6执行，本模块1MB＝1024×1024字节。未改项沿用原有效引用，图片上传成功不等于审核生效，不据此新增图片数组或第二套同义资料字段。
+
+F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store_id为唯一门店归属、merchant_id作租户隔离。它们不属于门店资料四项审核快照，不受F-STORE-011的168小时限制；保存与审计复用F-AUD，不能写入固定预约间隔或恢复退役名额字段。各端对营业／临时关闭使用同一有效版本。
 
 ## 4. 登录、Customer 绑定与账号安全（AUTH）
 
@@ -212,7 +217,7 @@
 | F-APPT-006 | `appointment_pet_item_id` | S | ID | 多宠预约中的单宠服务项标识。 |
 | F-APPT-007 | `service_category` | S | Enum | 洗护 / 美容 / 寄养大类。 |
 | F-APPT-008 | `service_item_id` | S | ID | 商户配置的具体预约服务项目。 |
-| F-APPT-009 | `requested_start_at` | S | Datetime | 客户选择的预约开始时间。只能来自门店开放时段。 |
+| F-APPT-009 | `requested_start_at` | S | Datetime | 客户提出的期望到店日期时间，须在营业范围内且未临时关闭，不要求对应固定间隔时段。提交不等于已确认，人工确认及版本切换按03a§11。 |
 | F-APPT-010 | `boarding_checkout_at` | S | Datetime | 寄养预约预计离店日期时间。仅寄养使用。 |
 | F-APPT-011 | `reference_price` | C | Money | 预约页参考价，不代表最终结算金额。 |
 | F-APPT-012 | `special_request` | C | Text | 本次寄养等场景的临时特殊要求。 |
@@ -222,16 +227,18 @@
 | F-APPT-016 | `appointment_cancel_reason` | S | Text | 预约取消原因。 |
 | F-APPT-017 | `appointment_canceled_at` | S | Datetime | 预约取消时间。 |
 | F-APPT-018 | `appointment_created_at` | S | Datetime | 预约申请创建时间。 |
-| F-APPT-019 | `slot_capacity` | C | Int | 洗护／美容按Store+到店时段配置的宠物容量；寄养不使用该硬名额。 |
-| F-APPT-020 | `slot_reserved_count` | S | Int | 当前已确认预约占用的宠物名额数；待确认申请不计入，确认／改期必须原子更新。 |
+| F-APPT-019 | `slot_capacity` | D | Int | 已退役的洗护／美容时段硬名额，永久注册号保留；新代码、API、配置及校验不读写或使用隐藏默认值，仅供历史迁移识别。不是寄养建议容量。 |
+| F-APPT-020 | `slot_reserved_count` | D | Int | 已退役的时段占用名额计数，永久注册号保留；不得据此拒绝申请／确认或恢复占用／释放任务。 |
 | F-APPT-021 | `reschedule_proposal_id` | S | ID | 单次有效改期提议稳定标识；旧提议不得覆盖新版本。 |
 | F-APPT-022 | `appointment_version` | S | Int | 预约乐观并发版本；确认、改期、开始服务使用同一版本校验。 |
 | F-APPT-023 | `reschedule_proposal_status` | C | Enum | active / accepted / rejected / withdrawn / expired / superseded；任一时刻最多一个active提议。 |
 | F-APPT-024 | `reschedule_proposed_by_actor_type` | S | Enum | customer / staff；用于判断由哪一方提出以及下一步确认方。 |
 | F-APPT-025 | `reschedule_proposed_by_actor_id` | S | ID | 发起改期提议的稳定操作者标识。 |
 | F-APPT-026 | `reschedule_proposal_expires_at` | S | Datetime | 改期提议有效截止；不得晚于03a§11.5规定的最早截止。 |
-| F-APPT-027 | `slot_reservation_status` | S | Enum | none / reserved / used / released；预约主状态、服务状态与名额状态分开表达。 |
+| F-APPT-027 | `slot_reservation_status` | D | Enum | 已退役的名额状态；none / reserved / used / released仅供历史迁移识别，不能用于当前预约状态机或后台任务。 |
 | F-APPT-028 | `customer_change_cutoff_at` | S | Datetime | 客户可修改／接受改期的服务端截止；等于或晚于该时间禁止修改。已确认预约按当前有效开始时间与建议新开始时间对应截止的较早者计算，未确认申请按当前申请的预约开始时间与建议新开始时间对应截止的较早者计算。取消规则不复用本字段。 |
+
+03a§11的当前模型为门店人工确认。F-APPT-019／020／027退役不删除历史、不回收注册号，也不删除预约版本、改期提议或6小时截止字段。新申请、人工确认及接受改期关联F-STORE-012～014校验目标时间，不以固定间隔网格或硬名额计数限制接待；同一预约并发转换仍校验F-APPT-022，多宠同批全成全败。寄养建议容量提醒按03a§7单独执行，不借此恢复洗美名额。
 
 ---
 
@@ -1087,6 +1094,9 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 |---|---|
 | `staff_owner.employee_management` | 老板管理／员工管理 |
 | `staff_owner.store_profile` | 老板管理／门店资料，四项内容及审核生效按04§3.0.6；与其他老板管理菜单的排序未定 |
+| `staff_owner.business_settings` | 老板管理／营业与预约设置，仅两项，见04§3.0.7；与其他老板管理菜单的排序未定 |
+| `staff_owner.business_hours` | 营业与预约设置／营业时间，组内第一项，仅本店老板修改 |
+| `staff_owner.temporary_closure` | 营业与预约设置／临时关闭，组内第二项，仅本店老板修改；不是平台停用门店 |
 | `staff_owner.employee_list` | 员工管理／员工列表 |
 | `staff_owner.invite_employee` | 员工管理／邀请员工 |
 | `staff_owner.disable_employee` | 员工列表内／停用员工 |
