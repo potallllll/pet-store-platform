@@ -164,7 +164,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         if wash_meta.get(key) != expected:
             add(results, "error", "wash_groom.confirmed_flow", staff_path, f"section 4.3 {key} must be {expected}")
 
-    details = staff.split("### 4.4 ", 1)[-1].split("\n## 5.", 1)[0]
+    details = staff.split("### 4.4 ", 1)[-1].split("\n### 4.5 ", 1)[0].split("\n## 5.", 1)[0]
     detail_meta = dict(META_RE.findall(details)) if "### 4.4 " in staff else {}
     for key, expected in {
         "reopen_allowed": "unsettled_order_only",
@@ -195,6 +195,39 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     }.items():
         if detail_meta.get(key) != expected:
             add(results, "error", "wash_groom.confirmed_details", staff_path, f"section 4.4 {key} must be {expected}")
+
+    care = staff.split("### 4.5 ", 1)[-1].split("\n## 5.", 1)[0]
+    care_meta = dict(META_RE.findall(care)) if "### 4.5 " in staff else {}
+    for key, expected in {
+        "status": "confirmed",
+        "status_scope": "care_twelve_item_workflow_only",
+        "care_create_entry": "工作台/到店开单/护理",
+        "care_record_entry": "业务/订单与收银",
+        "care_workbench_service_group": "服务中/其他服务",
+        "care_workbench_exception_group": "异常与临期/其他异常",
+        "care_customer_booking": "disabled",
+        "care_wash_groom_nav": "excluded",
+        "care_wash_groom_add_on": "same_pet_same_order_shared_service_progress",
+        "care_state_values": "[not_started, in_progress, completed, cancelled, interrupted]",
+        "care_creation_state": "not_started",
+        "care_state_changes": "staff_manual",
+        "care_precheck_required": "true",
+        "care_precheck_model": "overall_observation_not_six_item_form",
+        "care_precheck_owner_decision": "abnormal_or_unable_to_check",
+        "care_postcheck_new_abnormality": "required",
+        "care_photo_required": "false",
+        "care_routine_note_required": "false",
+        "care_result_publish": "on_service_completion",
+        "care_ai_report": "excluded",
+        "care_multi_pet_order": "one_customer_one_order_independent_pet_service_records",
+        "care_settlement": "together_after_completion_or_confirmed_interruption",
+        "care_all_unstarted_cancelled_charge": "none",
+        "care_interrupted_billing": "actual_receivable_with_reason",
+        "care_reopen_allowed": "unsettled_order_only",
+        "care_reopen_reason_required": "false",
+    }.items():
+        if care_meta.get(key) != expected:
+            add(results, "error", "care.confirmed_rules", staff_path, f"section 4.5 {key} must be {expected}")
 
     orders_path = Path("docs/03d-customer-orders.md")
     orders = current_text[orders_path.as_posix()]
@@ -270,6 +303,10 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "优先退会员余额": "refunds must follow original payment routes",
         "不限制原付款方式": "refunds must follow original payment routes",
         "不受原付款方式限制": "refunds must follow original payment routes",
+        "护理执行细节另议": "the twelve approved care workflow rules are confirmed",
+        "具体护理过程状态／内容待": "the twelve approved care workflow rules are confirmed",
+        "护理执行流程仍待DEC-STAFF-04": "the twelve approved care workflow rules are confirmed",
+        "护理过程未决不得冒充已通过": "approved care workflow scope must not be classified as wholly pending",
     }
     for phrase, message in prohibited.items():
         for path, text in current_text.items():

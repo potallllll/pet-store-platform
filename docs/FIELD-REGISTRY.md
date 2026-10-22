@@ -266,7 +266,7 @@ F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型
 | F-SITEM-004 | `service_item_description` | C | Text | 三类服务说明，选填、最多300个Unicode字符，不强制图片或夹带工时／排班／复杂套餐参数。 |
 | F-SITEM-005 | `business_item_category` | C | Enum | 管理／开单入口固定wash / groom / care / product，对应洗护／美容／护理／商品；前三类使用服务主资料，product仅关联原商品／SKU，不重写预约、服务或商品分类枚举。 |
 
-三类服务参考价复用F-APPT-011，必填、大于0、最多两位小数，不用0表示待定；字数按Unicode码点而非字节校验。四项服务表单不覆盖03e商品字段及SKU售价。项目由本店老板维护，新增／修改合法保存后生效，不需平台审核或168小时等待；原ID恢复不改历史。F-AUD记录变更；不新增工时／排班／复杂服务套餐，护理执行细节仍待DEC-STAFF-04，不把本节确认扩大为完整流程已解阻。
+三类服务参考价复用F-APPT-011，必填、大于0、最多两位小数，不用0表示待定；字数按Unicode码点而非字节校验。四项服务表单不覆盖03e商品字段及SKU售价。项目由本店老板维护，新增／修改合法保存后生效，不需平台审核或168小时等待；原ID恢复不改历史。F-AUD记录变更；不新增工时／排班／复杂服务套餐，护理12项流程按04§4.5，其余明确未决细节仍待对应DEC，不把本节确认扩大为完整平台已解阻。
 
 本单收费复用F-ORD-008／009／010保留原始明细及应收，F-ORD-011／012保留优惠，F-ORD-013记录人工调价差额、F-ORD-014最终应收；F-ORD-018～020及033记录原因、操作人及服务端时间。不能直接改写reference_price、明细原价或paid_amount冒充本单调价；实收或免单成功后锁定及幂等／并发校验见03d§10.1、04§3.0.9。
 
@@ -337,38 +337,40 @@ F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型
 
 ## 8. 服务记录、洗护美容结果与寄养动态（SVC / BOARD）
 
-### 8.1 服务与洗美结果
+### 8.1 服务、洗美与护理结果
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
 | F-SVC-001 | `service_record_id` | S | ID | 一次真实洗护／美容／护理／寄养服务记录标识。 |
-| F-SVC-002 | `service_type` | C | Enum | 洗护／美容／护理／寄养；新增care护理仅门店开单，不自动开放客户端预约、洗美AI报告或医疗流程；商品不属于此枚举。 |
+| F-SVC-002 | `service_type` | C | Enum | 洗护／美容／护理／寄养；独立care护理仅门店开单，按04§4.5，不开放客户端预约、护理AI报告或医疗流程。同宠洗美护理加项不改原服务类型／另建care流程；商品不属于此枚举。 |
 | F-SVC-003 | `service_customer_status` | C | Enum | 客户侧简化状态；洗美不得直接暴露全部店员内部步骤。 |
-| F-SVC-004 | `service_internal_status` | S | Enum | 洗美五态not_started／in_progress／completed／cancelled／interrupted，由本店有效员工手动操作并审计；已完成仅未结算原单可重新处理，原因选填，已结算不重开。不为每项目另设状态，不自动付款／交付，不套护理／寄养。 |
+| F-SVC-004 | `service_internal_status` | S | Enum | 洗美及04§4.5独立护理复用not_started／in_progress／completed／cancelled／interrupted，由本店有效员工手动操作；开单不自动开始。已完成仅未结算原单可重新处理、原因选填但审计，已结算不重开。不为同宠洗美护理加项另设进度，不自动付款／交付，不套寄养。 |
 | F-SVC-005 | `service_started_at` | S | Datetime | 实际开始服务时间。 |
 | F-SVC-006 | `service_completed_at` | S | Datetime | 实际完成服务时间。 |
 | F-SVC-007 | `service_result_viewed_at` | S | Datetime | 客户真正查看本次结果时间；查看后完成卡可退出首页当前服务。 |
-| F-SVC-008 | `service_summary` | C | Text/Struct | 本次服务摘要 / 结构化服务记录。 |
+| F-SVC-008 | `service_summary` | C | Text/Struct | 本次服务摘要／结构化服务记录；独立护理普通过程文字选填、无文字如实展示项目和结果，不免除异常／无法检查等必要说明，不混入内部备注或伪造正常。 |
 | F-SVC-009 | `service_staff_ids` | S | Ref[] | 实际服务员工稳定引用；员工离职不改写历史。 |
 | F-SVC-010 | `service_duration` | C | Number | 实际服务时长记录语义，计算口径后续架构可细化；04§3.0.8排除员工工时核算不删除本字段，也不得据此新增员工工时、工资或提成算法。 |
 | F-SVC-011 | `service_abnormal_notes` | C | Text | 服务中异常情况。 |
 | F-SVC-012 | `ai_report_task_id` | S | ID | AI 洗护报告任务标识；服务完成本身不自动创建。 |
 | F-SVC-013 | `ai_report_status` | S | Enum | 未创建 / 生成中 / 已完成 / 失败等真实任务状态。 |
 | F-SVC-014 | `ai_report_entitlement_id` | S | ID | 对应 `ai_report` 激励广告获得的报告资格。 |
-| F-SVC-015 | `ai_report_content` | S | Struct/Text | 已生成的护理 / 外观观察报告，不作为医疗诊断。 |
-| F-SVC-016 | `pre_service_check_status` | C | Enum | 洗美前检查not_checked／no_obvious_abnormality／abnormal／unable_to_check；默认未检查，六项真实结果见F-SVC-020，无法检查不伪记正常。未检查不得开始，异常／无法检查须主人决定F-SVC-021及说明，不输出医疗诊断。 |
+| F-SVC-015 | `ai_report_content` | S | Struct/Text | 已生成的洗美护理／外观观察报告，不作为医疗诊断；文中的护理观察不等于独立care业务可生成AI报告，care无此新增能力。 |
+| F-SVC-016 | `pre_service_check_status` | C | Enum | 共用not_checked／no_obvious_abnormality／abnormal／unable_to_check，默认未检查。洗美按六项F-SVC-020；独立护理按04§4.5只做一次真实整体三选一，不强填六项。未检查不得开始，异常／无法检查须F-SVC-021主人决定及说明，不伪记正常或输出医疗诊断。 |
 | F-SVC-017 | `pre_service_checked_at` | S | Datetime | 本service_record_id前检查实际完成的服务端记录时间；不通过空勾选或补录时间伪造检查，不与服务实际开始时间混用。 |
 | F-SVC-018 | `pre_service_checked_by_staff_id` | S | ID | 实际检查的本店有效员工；关联稳定staff_id，离职不改历史，照片不强制。 |
 | F-SVC-019 | `service_record_version` | S | Int | 同一宠物服务记录的操作版本，供检查／开始／完成／重新处理／时间更正等竞态校验；不替代订单金额版本或审核row_version，不表示所有待决动作已获批准。 |
-| F-SVC-020 | `pre_service_check_items` | C | Struct[] | 本service_record_id的skin／ears／eyes／mouth／nails／coat六项真实结果及必要说明，可标注异常／无法检查，不默认正常；不增加项目工序状态。护理注意事项可向本人顾客展示，内部备注不混入。 |
-| F-SVC-021 | `pre_service_owner_decision` | C | Enum | 异常／无法检查时主人已明确表达的continue_authorized或discontinue，未记录为空、不默认同意；店员记录告知及真实决定，说明复用F-SVC-008／011，操作时间／人复用F-AUD。不是线上身份验证、医疗同意书或跨店共享授权。 |
-| F-SVC-022 | `post_service_has_new_abnormality` | C | Bool | 完成前复检的是否新增异常，未确认为空，必须真实确认为false或true；true须F-SVC-011说明，不强制照片或重复整套前检查。 |
+| F-SVC-020 | `pre_service_check_items` | C | Struct[] | 洗美service_record_id的skin／ears／eyes／mouth／nails／coat六项真实结果及必要说明，不默认正常；独立护理不强制此六项数组，改用F-SVC-016整体检查。同宠洗美护理加项仍须原洗美六项，不因加项减免。本人可见真实护理注意事项，内部备注不混入。 |
+| F-SVC-021 | `pre_service_owner_decision` | C | Enum | 洗美／护理异常或无法检查时宠物主人已明确表达的continue_authorized或discontinue，未记录为空、不默认同意；店员记录告知及真实决定，说明复用F-SVC-008／011，操作时间／人复用F-AUD。不是线上身份验证、医疗同意书或跨店共享授权。 |
+| F-SVC-022 | `post_service_has_new_abnormality` | C | Bool | 洗美及独立护理完成前是否新增异常，未确认为空，须真实确认为false或true；true须F-SVC-011说明，不强制照片或重复整套前检查，不因无照片拒绝完成。 |
 | F-SVC-023 | `service_result_version` | S | Int | 本宠普通结果的真实发布版本；完成发布，未结算重新处理后旧版保留历史、非当前最终，再完成新版本并对应新完成事件。不是AI权益／任务版本，不自动重置资格或启动AI。 |
 | F-SVC-024 | `service_result_viewed_version` | S | Int | 本人顾客实际查看的普通结果版本，配合F-SVC-007记录；不能用已看旧版冒充看过重新完成的新结果。旧版及当前版可见性仍须同一Customer权限校验。 |
 
 洗美多宠一order_id、每宠独立service_record_id／pet_id及对应原明细，按merchant_id隔离，不新建第二账本。全部服务结束且异常费用明确可一起结算，不按宠拆账／分次付款；正常完成后收费，中止可明确实际应收／原因后结算、不伪记完成，全未开始即全取消不收费、不记免单成交。照片可选、普通结果完成发布，无接走确认；未结算重开原因选填，挂单手动且原因必填，改0后仍明确免单，不自动结算。
 
 F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值／更正记录，结束不早于开始、不填未来，不重写原操作时间、付款或真实服务事实。操作人／时间／前后值／原因复用F-AUD，不增加提成／默认业绩分配；其他有效员工可接手。
+
+独立护理按04§4.5复用原order_id、每宠service_record_id／pet_id、服务项、前检查／主人决定／复检、普通结果与版本字段，不新增一套care_order或care_check同义字段。同客多宠一单、独立进度、正常完成后收款／中止实际费用例外、一起结算，全未开始取消不收费。完成发布本人普通结果，不等记账，不新增护理AI；未结算重开原因选填、保留历史，已结算不重开。同宠洗美加护理共用原单／进度，不改service_type、不减免六项检查；不授权商品／寄养混单或扩展跨店共享。
 
 ### 8.2 寄养与时间轴
 
@@ -1185,7 +1187,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 - `F-FEED-024`～`027`：上门喂养修改/取消/响应/失效时限，受 `DEC-FEED-01`～`03` 阻塞；
 - `F-RWD-027`～`028`：积分自提期限 / 改领取门店，受 `DEC-POINTS-02` 阻塞；
 - 启动广告具体秒数默认值/范围受 `DEC-LAUNCH-01` 阻塞；字段存在但不能写死运营常数；
-- 工作台其他细节／二级菜单、混合业务、部分退款分配、账本更正／冲正、护理／寄养及待办流转等未决字段仍受DEC-STAFF-01～08约束。统一资格／记录可见性／取消提成／返聘、项目生命周期／旧预约例外、洗美两批、全部消费不限幅调价／明确免单／最多两种支付及线下交易账本已定；消费退款无需老板审批，消费先扣本金再扣赠送，退款按原付款渠道／原账户退回，确认后自动联动资产／适用库存。外部支付通道及其失败恢复不在V1范围，不恢复退役审批字段或据此解锁其他流程。
+- 工作台其他细节／二级菜单、其余混合业务、部分退款分配、账本更正／冲正、护理额外通知／挂单等剩余细节、寄养及待办流转等未决字段仍受DEC-STAFF-01～08约束。统一资格／记录可见性／取消提成／返聘、项目生命周期／旧预约例外、洗美两批及护理12项、全部消费不限幅调价／明确免单／最多两种支付及线下交易账本已定；消费退款无需老板审批，消费先扣本金再扣赠送，退款按原付款渠道／原账户退回，确认后自动联动资产／适用库存。外部支付通道及其失败恢复不在V1范围，不恢复退役审批字段或据此解锁其他流程。
 
 Pending 字段确认后：
 

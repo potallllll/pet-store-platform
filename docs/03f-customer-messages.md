@@ -2,7 +2,7 @@
 
 > status: mixed
 > confirmed_scope: existing_messages_wash_groom_result_version_completion_and_recompletion_notifications_and_sections_13_2_13_3_directions
-> pending_scope: sms_configuration_food_store_mapping_todo_lifecycle_interruption_correction_and_hold_collection_notifications
+> pending_scope: sms_configuration_food_store_mapping_todo_lifecycle_interruption_correction_care_and_hold_collection_notifications
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -91,6 +91,8 @@ V1.0 主要消息节点：
 按04§4.4，完成洗美即发布本宠普通结果／原完成通知，不等收款或接走确认；照片缺失如实提示。未结算重新处理后当前显示服务中，旧普通结果保留历史、非当前最终，再次完成形成新版本并可再通知一次；同一转换／结果版本的重试不重复发，也不能把旧版已读当新版已读。AI权益不自动重置，不因重新完成自动AI。中止／补图更正的额外通知、挂单催款渠道与频率仍待对应DEC，不自动发短信；挂单不发收款成功，退款录入草稿不发到账消息。财务仅作线下交易记账、消费退款无需老板审批；原微信／支付宝／现金等在线下原路退回并记账，原余额本金／赠送按原归属入原钱包后展示结果，未录入前不伪造成功通知，不新增外部支付回调。通知失败不回滚真实状态／资金。
 
 **服务完成本身不启动 AI 分析，也不把本次服务照片提交给 AI Provider。**
+
+独立护理按04§4.5在完成后立即发布普通结果、本人可查看，不等记账；这不等于已确认护理开始／完成／重新完成的额外消息或微信通知。护理通知细则继续待DEC-STAFF-04，不自动照搬本节洗美通知、创建AI任务或反复要求广告。同宠洗美中的护理加项复用原洗美服务进度和既有通知对象，不新增第二条护理完成通知。
 
 客户在服务结果页点击“查看报告”，完成有效广告观看 / 获得有效查看资格后，后端才创建 AI 分析任务并提交本次可用于分析的前后照片。
 
