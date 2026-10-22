@@ -143,9 +143,9 @@
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
 | F-STAFF-001 | `staff_merchant_id` | C | ID | Staff 唯一租户归属，值必须对应 `merchant_id`。一个 Staff 不能属于多个 Merchant。 |
-| F-STAFF-002 | `staff_store_assignment_id` | C | ID | 店员可工作门店关系记录标识；V1 虽一店，也不能用单一 Merchant/Store 模糊字段代替。 |
+| F-STAFF-002 | `staff_store_assignment_id` | C | ID | 店员可工作门店关系记录标识；删除终止旧关系并保留历史，回原店返聘建立本轮有效关系并仍关联原staff_id；V1同一员工同时至多一家有效门店。 |
 | F-STAFF-003 | `staff_store_id` | C | ID | Staff 当前唯一可工作 Store。 |
-| F-STAFF-004 | `staff_status` | C | Enum | active / disabled / removed，分别为有效在职／停用／移出本店名单；后两者均禁止本店访问并失效会话，历史身份及业务引用保留。恢复动作适用于disabled，removed重新加入路径待确认。 |
+| F-STAFF-004 | `staff_status` | C | Enum | active / disabled / removed，分别为有效在职／停用／移出本店名单；后两者均禁止本店访问并失效会话，历史身份及业务引用保留。disabled可由老板恢复；removed回本店须新邀请被有效接受，沿用原staff_id进入active并追加任职关系及审计。 |
 | F-STAFF-005 | `staff_invitation_id` | S | ID | 店员邀请记录。 |
 | F-STAFF-006 | `staff_invitation_expires_at` | C | Datetime | 邀请失效时间。 |
 | F-STAFF-007 | `staff_invitation_status` | C | Enum | 邀请有效 / 已使用 / 已撤销 / 已过期等状态。 |
@@ -155,6 +155,7 @@
 | F-STAFF-011 | `staff_disabled_at` | S | Datetime | 最近一次停用实际生效时间；各次变更历史使用F-AUD审计，不覆盖旧事件。 |
 | F-STAFF-012 | `staff_removed_at` | S | Datetime | 员工移出本店当前名单及终止有效关系的时间；不表示物理删除账号或经营历史。 |
 | F-STAFF-013 | `staff_restored_at` | S | Datetime | 最近一次从disabled恢复active的生效时间；恢复使用当前统一店员资格。 |
+| F-STAFF-014 | `staff_rejoined_at` | S | Datetime | 被移出员工通过老板新邀请重新回原店入职的实际生效时间，区别于停用恢复。各轮事件关联既有F-STAFF-005邀请及F-STAFF-002关系标识并追加F-AUD审计，不覆盖原删除和服务时间。 |
 
 当前已确认的店员端一级功能标识固定为：
 
@@ -164,7 +165,7 @@
 - `staff_nav.customers` → 客户
 - `staff_nav.me` → 我的
 
-店员默认业务集合与员工状态采用02／04已确认规则；`DEC-STAFF-01`～`08`尚未确认的待办流转、收款审批、寄养位置、移出后重新加入等字段不得据统一权限自行补齐。
+店员默认业务集合、员工状态和返聘采用02／04已确认规则；`DEC-STAFF-01`～`08`尚未确认的待办流转、收款审批、寄养位置等字段不得据统一权限自行补齐。
 
 ---
 
@@ -918,7 +919,7 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 
 余额、积分、订单、库存、员工离职、Customer 换绑、调价、收款、退款 / 冲正、寄养执行、兑换核销等历史不得通过普通更新无痕覆盖。
 
-F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按职责查看；Staff即使是actor_id也不能据此读取完整审计。员工可见的工作记录从原业务事实生成最小视图，不能将F-AUD原始内容、提成字段或审计附件混入工作记录、业务详情、导出接口。
+F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按职责查看；Staff即使是actor_id也不能据此读取完整审计。员工可见的工作记录从原业务事实生成最小视图，不能将F-AUD原始内容或审计附件混入工作记录、业务详情、导出接口。
 
 ---
 
@@ -1039,7 +1040,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 |---|---|
 | `staff_me.employee_store_info` | 员工与门店信息 |
 | `staff_me.work_records` | 我的工作记录 |
-| `staff_me.performance` | 我的业绩（不含提成） |
+| `staff_me.performance` | 我的业绩 |
 | `staff_me.notification_settings` | 通知设置 |
 | `staff_me.account_security` | 账号与安全 |
 | `staff_me.help_feedback` | 帮助与反馈 |
@@ -1047,7 +1048,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 
 老板专属入口另使用`staff_me.owner_management` → 老板管理，所属页面为`staff_nav.me`，仅当前商户有效Merchant Owner可见并进入；04§3.0.4为业务依据。该产品标识不是权限码，不改变七项公共菜单的顺序。
 
-`staff_me.performance_commission`已退役，旧路由不得向普通员工返回提成，非提成业绩统一映射到`staff_me.performance`。`staff_me.work_records`沿用原标识，但可查看本店其他员工的工作事实；不能按该标识返回系统操作日志。
+`staff_me.performance_commission`永久退役且不得复用；旧入口仅可恢复到现行业绩入口`staff_me.performance`，任何角色均不得据旧标识重新获得提成功能。提成功能已取消，不新增其配置、计算、结算、明细、报表、导出字段或API；历史档案保留不代表批准该业务。`staff_me.work_records`沿用原标识，可查看本店其他员工的工作事实，不能按该标识返回系统操作日志。
 
 老板管理已确认的产品标识如下；仅标识菜单／动作，不是新增权限码：
 
@@ -1060,7 +1061,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 | `staff_owner.remove_employee` | 员工列表内／删除员工，逻辑移出本店名单 |
 | `staff_owner.restore_employee` | 员工列表内／恢复员工，适用于被停用记录 |
 
-提成及系统日志的门店入口归老板管理，平台入口归平台管理；具体菜单名称及排序尚待确认，不先注册候选菜单标识。业绩算法、删除后重新加入和其他老板管理菜单仍待确认。
+系统日志的门店入口归老板管理，平台入口归平台管理；具体菜单名称及排序尚待确认，不先注册候选菜单标识。业绩统计口径和其他老板管理菜单仍待确认；返聘流程已确认，复用新邀请、原员工及本轮门店关系，不另建“返聘人员”角色或重复staff_id。
 
 ## 25. Pending 字段处理规则
 
@@ -1075,7 +1076,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 - `F-FEED-024`～`027`：上门喂养修改/取消/响应/失效时限，受 `DEC-FEED-01`～`03` 阻塞；
 - `F-RWD-027`～`028`：积分自提期限 / 改领取门店，受 `DEC-POINTS-02` 阻塞；
 - 启动广告具体秒数默认值/范围受 `DEC-LAUNCH-01` 阻塞；字段存在但不能写死运营常数；
-- 店员端尚未确认的工作台细节、其他二级菜单、收款/审批、寄养位置、待办流转、移出员工后重新加入等字段受 `DEC-STAFF-01`～`08` 阻塞；统一店员资格及工作记录／提成／审计可见性已确认，不恢复为待决。
+- 店员端尚未确认的工作台细节、其他二级菜单、收款/审批、寄养位置、待办流转等字段受 `DEC-STAFF-01`～`08` 阻塞；统一店员资格、工作记录／业绩／审计可见性、取消提成及原店返聘流程已确认，不恢复为待决。
 
 Pending 字段确认后：
 
