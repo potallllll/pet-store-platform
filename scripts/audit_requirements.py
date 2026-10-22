@@ -123,11 +123,11 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     duplicate_fields = sorted({item for item in registered_ids if registered_ids.count(item) > 1})
     if duplicate_fields:
         add(results, "error", "registry.duplicate_id", Path("docs/FIELD-REGISTRY.md"), f"duplicate registered field IDs: {', '.join(duplicate_fields)}")
-    for field_id in ("F-APPT-019", "F-APPT-020", "F-APPT-027"):
+    for field_id in ("F-APPT-019", "F-APPT-020", "F-APPT-027", "F-PAY-012"):
         row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
         cells = [cell.strip() for cell in row.split("|")]
         if len(cells) < 4 or cells[3] != "D":
-            add(results, "error", "appointment.retired_field", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must remain registered as D (retired)")
+            add(results, "error", "registry.retired_field", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must remain registered as D (retired)")
 
     # Check the confirmed subsection, not the staff document's still-mixed overall status.
     staff_path = Path("docs/04-staff-miniapp.md")
@@ -177,8 +177,18 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "zero_price_save_settles_order": "false",
         "zero_price_explicit_confirmation_required": "true",
         "checkout_max_payment_methods": "2",
-        "refund_owner_confirmation_required": "true",
+        "refund_owner_confirmation_required": "false",
         "payment_refund_cross_business_scope": "all_store_consumption_orders",
+        "financial_mode": "offline_transaction_ledger",
+        "external_payment_integration": "excluded",
+        "financial_entry_timing": "immediate_or_after_work",
+        "operational_updates": "timely_during_business",
+        "ledger_side_effects": "automatic_wallet_ledger_and_applicable_inventory_updates",
+        "refund_roles": "[merchant_owner, active_store_staff]",
+        "refund_method_values": "[member_balance, cash]",
+        "refund_default_method": "member_balance",
+        "refund_original_method_restriction": "none",
+        "refund_auto_restock": "false",
     }.items():
         if detail_meta.get(key) != expected:
             add(results, "error", "wash_groom.confirmed_details", staff_path, f"section 4.4 {key} must be {expected}")
@@ -199,10 +209,35 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "waiver_actual_payment_amount": "0",
         "waiver_revenue_amount": "0",
         "checkout_max_payment_methods": "2",
-        "refund_owner_confirmation_required": "true",
+        "refund_owner_confirmation_required": "false",
     }.items():
         if settlement_meta.get(key) != expected:
             add(results, "error", "settlement.confirmed_rules", orders_path, f"section 10.1 {key} must be {expected}")
+
+    ledger = orders.split("### 1.1 ", 1)[-1].split("\n## 2.", 1)[0]
+    ledger_meta = dict(META_RE.findall(ledger)) if "### 1.1 " in orders else {}
+    for key, expected in {
+        "status": "confirmed",
+        "status_scope": "store_consumption_financial_ledger_only",
+        "financial_mode": "offline_transaction_ledger",
+        "external_payment_integration": "excluded",
+        "financial_entry_timing": "immediate_or_after_work",
+        "operational_updates": "timely_during_business",
+        "ledger_side_effects": "automatic_wallet_ledger_and_applicable_inventory_updates",
+        "refund_owner_confirmation_required": "false",
+        "refund_roles": "[merchant_owner, active_store_staff]",
+        "refund_method_values": "[member_balance, cash]",
+        "refund_default_method": "member_balance",
+        "refund_original_method_restriction": "none",
+        "refund_auto_restock": "false",
+    }.items():
+        if ledger_meta.get(key) != expected:
+            add(results, "error", "ledger.confirmed_rules", orders_path, f"section 1.1 {key} must be {expected}")
+
+    wallet_path = Path("docs/03c-customer-wallet.md")
+    wallet_meta = metadata(current_text[wallet_path.as_posix()])
+    if wallet_meta.get("status") != "mixed" or "DEC-STAFF-05" not in wallet_meta.get("blocked_by", ""):
+        add(results, "error", "wallet.allocation_pending", wallet_path, "unresolved principal/bonus allocation must remain explicit and blocked")
 
     for path, text in current_text.items():
         if "blocked_by:" in text.split("\n## ", 1)[0] and "DEC-APPT-01" in metadata(text).get("blocked_by", ""):
@@ -214,6 +249,9 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "时段名额以后端提交时实时校验为准": "hard slot capacity must not control current appointments",
         "独立风险查询入口": "cross-store risk lookup must not become an arbitrary standalone query",
         "不确认此前建议的客户页全部结构": "customer page structure was subsequently confirmed",
+        "退款须本店老板确认": "consumption refunds no longer require owner approval",
+        "退款老板确认（全部门店消费订单）": "consumption refunds no longer require owner approval",
+        "refund_owner_confirmation_required: true": "consumption refunds no longer require owner approval",
     }
     for phrase, message in prohibited.items():
         for path, text in current_text.items():
