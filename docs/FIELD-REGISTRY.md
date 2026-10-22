@@ -404,9 +404,9 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 | F-BOARD-026 | `boarding_abnormal_handling_status` | S | Enum | pending／handled，关联原寄养异常；实际处理并有F-BOARD-027结果后，员工明确标已处理。消息发送／顾客已读／普通照护保存／跨天不自动关闭；操作者、时间及变更复用F-AUD，不等于寄养已结束。 |
 | F-BOARD-027 | `boarding_abnormal_handling_result` | S | Text | 异常已处理时必填的真实处理结果；不是医学判断，处理人与时间留痕，不以通知状态代替。 |
 | F-BOARD-028 | `boarding_profile_unverified_fields` | S | Ref[] | 本次仍待核实的寄养资料字段注册号列表，与F-BOARD-020配合；未知不填假餐数／无过敏／允许零食。F-PET-026未核实不判允许，本次加餐不拿长期旧授权绕过，矛盾须核实、不伪造安全结论。 |
-| F-BOARD-029 | `boarding_billable_nights` | S | Int | 04§5.2结算计费晚数，由服务端按Asia/Shanghai每日03:00统计check_in_at<截点≤actual_checkout_at的非负整数；每晚收一天，0晚无寄养费。入住截点排除、离店截点包含；不同于F-BOARD-006日序，不按24小时向上取整或录入／预计离店算。未实际离店的试算须明确是预计值，不冒充最终计费／实收，也不自动扣款或免单；日价配置等未决规则不得由本字段补定。 |
+| F-BOARD-029 | `boarding_billable_nights` | S | Int | 04§5.2结算计费晚数，由服务端按Asia/Shanghai每日03:00统计check_in_at<截点≤actual_checkout_at的非负整数；每晚收一天，0晚无寄养费。入住截点排除、离店截点包含；不同于F-BOARD-006日序，不按24小时向上取整或录入／预计离店算。未实际离店的试算须明确是预计值，不冒充最终计费／实收，也不自动扣款或免单；逐宠乘本次F-ORD-008日价得基础金额，合并结算不改本宠晚数；入住后改日价及分批离店结算等未决规则不得由本字段补定。 |
 
-04§5.1确认本店同一pet_id最多一笔未结束有效寄养，多宠每只独立boarding_id／位置／时间；结合原预约、Customer／Pet、F-CORE-010幂等请求及审计防重复／并发，不以昵称或手机号自动合并，不据此决定多宠结算。统一照护复用F-BOARD-007～013，不新建care_event同义字段；普通喂食不创建商品交易／扣库存或推进F-BOARD-015，加餐仍回原商品单确认并只写一次F-BOARD-018动态。04§5.2已确认03:00过夜计数与实际离店结算，延期／提前离店据实重算、0晚无寄养费；复用F-CORE-009与实际入住／离店，计费晚数F-BOARD-029，不用预计／录入时间或F-BOARD-006。日价配置、多宠结算、离店交付操作、已结算更正、疫苗及特殊照护等仍待DEC-STAFF-05／06。
+04§5.1确认本店同一pet_id最多一笔未结束有效寄养，多宠每只独立boarding_id／位置／时间；结合原预约、Customer／Pet、F-CORE-010幂等请求及审计防重复／并发，不以昵称或手机号自动合并，多宠一起结算按04§5.2、不能合并各宠入住事实。统一照护复用F-BOARD-007～013，不新建care_event同义字段；普通喂食不创建商品交易／扣库存或推进F-BOARD-015，加餐仍回原商品单确认并只写一次F-BOARD-018动态。04§5.2已确认03:00过夜计数与实际离店结算，延期／提前离店据实重算、0晚无寄养费；复用F-CORE-009与实际入住／离店，计费晚数F-BOARD-029，不用预计／录入时间或F-BOARD-006。日价复用F-ORD-008在入住时逐宠设置、本次保存，基础明细F-ORD-009＝本宠日价×本宠F-BOARD-029，同店同客多宠可一起结算并汇总F-ORD-010；不另造boarding_daily_rate同义字段。入住后改价／分段价／零日价、分批离店结算、离店交付操作、已结算更正、疫苗及特殊照护等仍待DEC-STAFF-05／06。
 
 ---
 
@@ -535,9 +535,9 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 | F-ORD-005 | `order_item_id` | S | ID | 商品或服务订单明细。 |
 | F-ORD-006 | `requested_quantity` | S | Int | 客户原始购买需求数量。 |
 | F-ORD-007 | `confirmed_quantity` | S | Int | 门店确认后的实际数量；需保留原始需求，不无痕覆盖。 |
-| F-ORD-008 | `item_original_unit_price` | S | Money | 明细原始单价。 |
-| F-ORD-009 | `item_original_amount` | S | Money | 商品 / 服务明细原价合计。 |
-| F-ORD-010 | `original_receivable_amount` | C | Money | 系统自动计算的原始应收。 |
+| F-ORD-008 | `item_original_unit_price` | S | Money | 明细原始单价；寄养为本店员工／老板在入住时逐宠填写的本次日价，随该boarding_id原明细保存，不强制统一价／老板价格表、不成为Pet永久价格。不能用未填默认0、其他宠物价格或后续主资料覆盖历史；入住后改日价及零日价政策仍待04§5.3，整单调价另走F-ORD-013／014。 |
+| F-ORD-009 | `item_original_amount` | S | Money | 商品／服务明细原价合计；寄养为本宠本次F-ORD-008日价×F-BOARD-029实际晚数，0晚基础寄养费0，不取其他宠价格或最大晚数套用；不冒充最终应收／实收。 |
+| F-ORD-010 | `original_receivable_amount` | C | Money | 系统自动计算的原始应收；同店同客多宠寄养一起结算时汇总各宠F-ORD-009基础明细，逐宠价格／实际时间／晚数仍独立，优惠／人工调价后最终应收另记，不因一次支付重复统计收入。 |
 | F-ORD-011 | `automatic_discount_amount` | C | Money | 自动优惠金额。 |
 | F-ORD-012 | `coupon_discount_amount` | C | Money | 优惠券优惠金额。 |
 | F-ORD-013 | `manual_adjustment_amount` | C | Money | 人工调价金额，可正可负；不能覆盖其他金额。 |
@@ -556,8 +556,8 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 | F-ORD-026 | `auto_cancel_reason` | C | Text | 尚未结算超过保留时间等系统自动取消原因；已收款／免单不得按未付款超时取消。 |
 | F-ORD-027 | `source_channel` | C | Enum | 复用 F-CORE-011。订单来源分析不得另造 `order_source`。 |
 | F-ORD-028 | `business_scenario` | C | Enum | 复用 F-CORE-012；寄养加餐固定 `boarding_feed`。 |
-| F-ORD-029 | `boarding_id` | C | ID | 寄养加餐订单必须稳定关联当前寄养。 |
-| F-ORD-030 | `pet_id` | C | ID | 具体服务记录／服务明细及寄养加餐与真实宠物的关联；洗美多宠订单共用order_id，不能在订单头只存一个pet_id覆盖其他宠物，也不为不同顾客并单。 |
+| F-ORD-029 | `boarding_id` | C | ID | 复用F-BOARD-001；寄养加餐订单必须稳定关联当前寄养，寄养消费明细逐宠关联本次寄养。多宠一起结算保留每个原明细的boarding_id，不用订单头单个值覆盖其他宠物，不另造同义寄养标识。 |
+| F-ORD-030 | `pet_id` | C | ID | 具体服务记录／服务明细及寄养加餐与真实宠物的关联；寄养多宠结算按04§5.2逐明细关联本宠／boarding_id，不覆盖其他宠物。洗美多宠订单共用order_id，不能在订单头只存一个pet_id覆盖其他宠物，也不为不同顾客并单。 |
 | F-ORD-031 | `original_request_snapshot` | S | Struct | 客户原始购买需求快照；门店改单不得无痕覆盖。 |
 | F-ORD-032 | `order_amount_version` | S | Int | 同一订单金额版本，供调价、实际收款、免单及取消／超时等校验同一金额／状态；结算先成功则拒绝直接改价，调价先成功则旧金额结算失败重新核对。不能复用项目版本或审核row_version。 |
 | F-ORD-033 | `manual_adjustment_reason_code` | S | Enum | actual_care / store_discount / input_correction / other，对应实际护理情况／到店优惠／录入更正／其他。调价原因必选；other须在F-ORD-018补文字，其余保存真实原因，不据原因名称开放收款后改价。 |

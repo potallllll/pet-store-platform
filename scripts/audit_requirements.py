@@ -239,7 +239,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "boarding_expected_checkout_time_required": "true",
         "boarding_expected_checkout_validation": "later_than_check_in",
         "boarding_multi_pet_model": "independent_boarding_records_per_pet",
-        "boarding_multi_pet_combined_settlement": "pending",
+        "boarding_multi_pet_combined_settlement": "allowed_same_merchant_same_customer",
         "boarding_duplicate_active_stay": "blocked_same_merchant_same_pet",
         "boarding_location_required": "false",
         "boarding_location_model": "free_text_no_room_booking",
@@ -276,7 +276,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     billing_meta = dict(META_RE.findall(boarding_billing)) if "### 5.2 " in staff else {}
     for key, expected in {
         "status": "confirmed",
-        "status_scope": "boarding_overnight_count_and_collection_timing_only",
+        "status_scope": "boarding_overnight_count_rate_and_combined_settlement_only",
         "boarding_billing_unit": "overnight",
         "boarding_billing_timezone": "Asia/Shanghai",
         "boarding_billing_cutoff": "03:00:00",
@@ -287,11 +287,23 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "boarding_extension_early_departure": "recalculate_from_actual_stay",
         "boarding_expected_time_billing_effect": "none",
         "boarding_billing_auto_charge": "excluded",
+        "boarding_daily_rate_set_by": "[merchant_owner, active_store_staff]",
+        "boarding_daily_rate_set_at": "admission",
+        "boarding_daily_rate_scope": "current_pet_current_stay",
+        "boarding_daily_rate_required": "true",
+        "boarding_daily_rate_field": "F-ORD-008",
+        "boarding_pet_base_amount": "own_daily_rate_times_own_billable_nights",
+        "boarding_combined_settlement": "allowed_same_merchant_same_customer",
+        "boarding_combined_amount": "sum_selected_boarding_item_base_amounts_before_existing_discounts_adjustments",
     }.items():
         if billing_meta.get(key) != expected:
             add(results, "error", "boarding.billing_rules", staff_path, f"section 5.2 {key} must be {expected}")
 
     for field_id, field_name in {
+        "F-ORD-008": "item_original_unit_price",
+        "F-ORD-009": "item_original_amount",
+        "F-ORD-010": "original_receivable_amount",
+        "F-ORD-029": "boarding_id",
         "F-BOARD-019": "boarding_location_label",
         "F-BOARD-020": "boarding_profile_snapshot",
         "F-BOARD-021": "boarding_belongings",
