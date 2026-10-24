@@ -154,12 +154,12 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "appointment_handler_roles": "[merchant_owner, active_store_staff]",
         "appointment_known_reminder_acknowledgement": "explicit_read_and_continue_before_confirmation",
         "appointment_reminder_auto_rejection": "excluded",
-        "appointment_shared_check_unavailable_label": "共享提醒未完成核验",
-        "appointment_shared_check_unavailable_policy": "manual_check_then_continue_with_record_no_safe_default",
+        "appointment_shared_check_unavailable_label": "共享提醒暂不可用，可继续",
+        "appointment_shared_check_unavailable_policy": "direct_continue_with_unavailable_record_no_staff_verification_or_safe_default",
         "appointment_identity_conflict_effect": "block_shared_query_no_staff_merge_or_authorization_bypass",
         "appointment_manual_continue_scope": "appointment_business_only_not_shared_data_access",
         "appointment_confirmation_creates_service": "false",
-        "appointment_new_customer_reminder_extension": "excluded_pending_separate_confirmation",
+        "appointment_new_customer_reminder_extension": "shared_rules_confirmed_in_section_6_5_1",
     }.items():
         if appointment_staff_meta.get(key) != expected:
             add(results, "error", "appointment.staff_handling", staff_path, f"section 3.7 {key} must be {expected}")
@@ -168,14 +168,48 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     reminder_meta = dict(META_RE.findall(reminder_section)) if "#### 6.5.1 " in staff else {}
     for key, expected in {
         "status": "mixed",
-        "confirmed_scope": "reminder_triggers_separate_dialog_and_appointment_acknowledgement_manual_continuation_in_section_3_7",
-        "pending_scope": "new_customer_acknowledgement_and_failure_continuation_repeated_reminder_frequency_and_other_unconfirmed_business_effects",
+        "confirmed_scope": "all_customer_creation_and_appointment_reminder_acknowledgement_deduplication_failure_continuation_and_audit",
+        "pending_scope": "other_unconfirmed_risk_business_effects_pet_safety_sharing_and_detail_ui",
         "reminder_triggers": "[新增顾客, 确认预约]",
         "reminder_presentation": "separate_dialog",
         "reminder_content": "[宠物注意事项, 风险提示]",
+        "reminder_customer_scope": "all_new_and_returning_customers_at_confirmed_business_triggers",
+        "customer_local_truth_verification_required": "false",
+        "customer_creation_reminder_timing": "after_explicit_customer_save_success",
+        "customer_creation_reminder_failure_effect": "preserve_saved_customer_no_rollback_or_duplicate_create",
+        "customer_reminder_read_action": "explicit_read_and_continue_when_authorized_content_exists",
+        "reminder_unavailable_label": "共享提醒暂不可用，可继续",
+        "reminder_unavailable_continuation": "direct_without_staff_truth_verification_or_manual_check",
+        "reminder_unavailable_result": "preserve_unavailable_fact_no_safe_or_query_success_claim",
+        "reminder_same_operation_deduplication": "same_customer_pet_set_and_content_once",
+        "reminder_retry_and_back_navigation": "reuse_same_business_operation_no_repeated_popup_or_query_charge",
+        "reminder_changed_pet_or_content": "require_new_read_acknowledgement_for_current_authorized_content",
+        "reminder_new_business_operation": "remind_again_no_permanent_ignore",
+        "reminder_repeat_display_query_effect": "no_automatic_new_shared_query",
+        "reminder_shared_query_quota": "preserve_three_per_store_customer_natural_month_and_request_idempotency",
+        "reminder_audit": "actual_actor_read_and_unavailable_continue_separately",
+        "reminder_read_is_customer_share_consent": "false",
+        "reminder_scope_is_bulk_query_authorization": "false",
     }.items():
         if reminder_meta.get(key) != expected:
             add(results, "error", "appointment.reminder_scope", staff_path, f"section 6.5.1 {key} must be {expected}")
+
+    risk = current_text["docs/03h-customer-risk-feedback.md"]
+    conflict_notice = next((line for line in risk.splitlines() if "处理期间店员端只显示统一的" in line), "")
+    if reminder_meta.get("reminder_unavailable_label", "__missing_label__") not in conflict_notice:
+        add(results, "error", "reminder.conflict_message", Path("docs/03h-customer-risk-feedback.md"), "identity-conflict notice must use the current uniform reminder-unavailable label")
+
+    for field_id, field_name in {
+        "F-CUST-001": "customer_contact_mobile",
+        "F-CUST-002": "customer_contact_wechat",
+        "F-CUST-003": "customer_creation_reminder_acknowledged_at",
+        "F-CUST-004": "customer_creation_shared_reminder_unavailable",
+        "F-CUST-005": "customer_creation_reminder_continued_at",
+    }.items():
+        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
+        cells = [cell.strip() for cell in row.split("|")]
+        if len(cells) < 4 or cells[2] != f"`{field_name}`" or cells[3] not in {"C", "S"}:
+            add(results, "error", "reminder.customer_fields", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must remain active as {field_name}")
 
     for field_id, field_name in {
         "F-APPT-014": "store_response_reason",
