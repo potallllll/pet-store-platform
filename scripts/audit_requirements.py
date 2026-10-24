@@ -265,8 +265,8 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "boarding_checkout_due_policy": "remind_only_no_auto_end_renew_or_fee",
         "boarding_billing_and_collection": "confirmed_in_section_5_2",
         "boarding_actual_checkout": "confirmed_with_checkout_receivable_independent_of_payment",
-        "boarding_vaccination_admission": "pending",
-        "boarding_special_care_execution": "pending",
+        "boarding_vaccination_admission": "confirmed_in_section_5_4_materials_and_manual_decision_only",
+        "boarding_special_care_execution": "confirmed_in_section_5_4_special_care_including_medication",
         "boarding_shift_handover": "pending",
     }.items():
         if boarding_meta.get(key) != expected:
@@ -323,6 +323,31 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         if billing_meta.get(key) != expected:
             add(results, "error", "boarding.billing_rules", staff_path, f"section 5.2 {key} must be {expected}")
 
+    boarding_health = staff.split("### 5.4 ", 1)[-1].split("\n## 6.", 1)[0]
+    health_meta = dict(META_RE.findall(boarding_health)) if "### 5.4 " in staff else {}
+    for key, expected in {
+        "status": "confirmed",
+        "status_scope": "boarding_health_materials_special_care_and_basic_abnormal_handling_only",
+        "boarding_health_material_upload_required": "false",
+        "boarding_health_material_status": "[provided, not_provided, unverified]",
+        "boarding_health_material_missing_policy": "manual_store_decision_no_auto_rejection_or_vaccinated_default",
+        "boarding_special_care_requirements": "simple_text_current_stay_snapshot",
+        "boarding_medication_entry": "within_special_care_only",
+        "boarding_medication_instructions": "human_records_owner_instructions_no_system_or_ai_generation_or_change",
+        "boarding_special_care_acceptance": "explicit_store_decision_no_default_acceptance",
+        "boarding_special_care_execution": "per_pet_actual_content_time_performer_optional_photos",
+        "boarding_daily_care_actions": "unchanged_feeding_walking_cleaning",
+        "boarding_complex_care_scheduling": "excluded",
+        "boarding_abnormal_record": "actual_time_observation_handling_optional_photos_not_diagnosis",
+        "boarding_abnormal_contact": "record_actual_contact_status_result_and_explicit_owner_decision",
+        "boarding_owner_not_reached": "no_assumed_consent_or_auto_closure",
+        "boarding_abnormal_close": "actual_handling_result_and_explicit_staff_confirmation",
+        "boarding_abnormal_early_checkout": "existing_actual_checkout_billing_no_auto_waiver_or_refund",
+        "boarding_clinical_treatment_and_emergency_escalation": "pending",
+    }.items():
+        if health_meta.get(key) != expected:
+            add(results, "error", "boarding.health_rules", staff_path, f"section 5.4 {key} must be {expected}")
+
     for field_id, field_name in {
         "F-ORD-008": "item_original_unit_price",
         "F-ORD-009": "item_original_amount",
@@ -343,6 +368,12 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "F-BOARD-028": "boarding_profile_unverified_fields",
         "F-BOARD-029": "boarding_billable_nights",
         "F-BOARD-030": "boarding_checkout_confirmed_at",
+        "F-BOARD-031": "boarding_health_material_status",
+        "F-BOARD-032": "boarding_health_material_refs",
+        "F-BOARD-033": "boarding_special_care_acceptance",
+        "F-BOARD-034": "boarding_abnormal_contact_status",
+        "F-BOARD-035": "boarding_abnormal_contact_result",
+        "F-BOARD-036": "boarding_event_performed_by_staff_id",
     }.items():
         row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
         cells = [cell.strip() for cell in row.split("|")]

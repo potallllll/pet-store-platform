@@ -300,7 +300,7 @@ F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型
 | F-PET-022 | `allergy_notes` | C | Text | 已明确记录的过敏情况；属于敏感宠物资料，仅在实际照护必要且有权限的场景使用。 |
 | F-PET-023 | `diet_restrictions` | C | Text | 禁食 / 忌口信息。 |
 | F-PET-024 | `long_term_medication` | C | Text | 长期用药信息；敏感资料。 |
-| F-PET-025 | `special_care` | C | Text | 特殊照护要求。 |
+| F-PET-025 | `special_care` | C | Text | 特殊照护文字要求，含04§5.4代喂药时主人交代的药名／用法用量等；本次要求进入F-BOARD-020快照，临时修改不自动回写长期资料。来源长期用药仍F-PET-024，不等于门店已接收或已执行，系统／AI不生成或修改用药方案。 |
 | F-PET-026 | `boarding_feed_allowed` | C | Bool | 寄养期间是否允许额外投喂零食；控制寄养加餐入口。 |
 | F-PET-027 | `boarding_notes` | C | Text | 其他寄养备注。 |
 | F-PET-028 | `merchant_internal_pet_notes` | C | Text | 当前 Merchant 内部门店备注，客户端默认不可见且不得跨商户共享。 |
@@ -383,12 +383,12 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 | F-BOARD-005 | `actual_checkout_at` | S | Datetime | 真实离店时间，默认服务端当前时间，结算费用确认时可补填真实过去时间；服务端校验check_in_at≤本值≤当前时间，改值保留原值／人／记录时间。同次本批费用确认即记已离店，非另一次确认接走。未收款／挂单亦以本值停止本次计费，不用预约／预计／收款或录入时间代替；后续收款不重写本值，历史更正仍待04§5.3。 |
 | F-BOARD-006 | `boarding_day_index` | S | Int | 当前第几天的展示派生值，不是计费晚数；计费统一F-BOARD-029，不因03:00计费规则静默修改原日序展示。 |
 | F-BOARD-007 | `boarding_event_id` | S | ID | 寄养时间轴单条动态。 |
-| F-BOARD-008 | `boarding_event_type` | C | Enum | 原时间轴事件类型继续含喂食、饮水、排泄、遛宠、玩耍、休息、清洁、用药／特殊照护、媒体、加餐、异常、自定义等；04§5.1统一照护表单只单选feeding=喂食／walking=遛狗／cleaning=清扫笼子，不新增同义动作字段，也不删除其他既有事件或授权特殊照护执行细则。 |
+| F-BOARD-008 | `boarding_event_type` | C | Enum | 原时间轴事件类型继续含喂食、饮水、排泄、遛宠、玩耍、休息、清洁、特殊照护（含代喂药）、媒体、加餐、异常、自定义等；04§5.1统一照护表单只单选feeding=喂食／walking=遛狗／cleaning=清扫笼子，不新增同义动作字段，也不删除其他既有事件；04§5.4特殊照护统一包含代喂药，原事件类型与原时间轴复用，不设独立药品订单／喂药快捷动作。 |
 | F-BOARD-009 | `occurred_at` | C | Datetime | 实际发生时间；统一照护录入必须选择并确认，允许真实历史补录、不录未来已完成动作，时间轴按此倒序，不由照片或录入时间代替。 |
 | F-BOARD-010 | `recorded_at` | C | Datetime | 系统录入时间；补录时不得冒充真实发生时间。 |
-| F-BOARD-011 | `boarding_event_content` | S | Text/Struct | 动态正文 / 结构化动作内容。 |
-| F-BOARD-012 | `boarding_event_media_refs` | S | Ref[] | 与该宠物／该次事件关联的真实图片／视频；统一照护照片选填、无每日配额、不跨宠自动复用，缺图不阻止保存真实照护，沿用媒体权限。 |
-| F-BOARD-013 | `boarding_event_created_by_staff_id` | S | ID | 录入该动态的店员。 |
+| F-BOARD-011 | `boarding_event_content` | S | Text/Struct | 动态正文／结构化动作内容；04§5.4特殊照护记录本次真实执行内容，异常记录具体观察及已采取处理，不要求疾病诊断。不以保存要求／接收决定替代真实执行，不包含系统／AI生成的用药方案；内部内容仍受F-BOARD-025控制。 |
+| F-BOARD-012 | `boarding_event_media_refs` | S | Ref[] | 与该宠物／该次事件关联的真实图片／视频；统一照护及04§5.4特殊照护／异常照片均选填、无每日配额、不跨宠自动复用，缺图不阻止保存真实记录，沿用媒体权限。健康／疫苗资料照片另归F-BOARD-032，不伪造执行事件。 |
+| F-BOARD-013 | `boarding_event_created_by_staff_id` | S | ID | 录入该动态的店员；04§5.4特殊照护实际执行人另用F-BOARD-036，不用补录者冒充执行者。 |
 | F-BOARD-014 | `notify_customer` | C | Bool | 是否主动提醒顾客，不决定F-BOARD-025可见性；false不隐藏顾客可见动态，内部记录即使勾选也不能发给顾客。异常通知原默认规则保留，通知／已读不关闭处理待办。 |
 | F-BOARD-015 | `boarding_feed_execution_status` | C | Enum | `pending / waiting_feed / fed / abnormal_pending / canceled` 对应语义；付款状态必须另记。 |
 | F-BOARD-016 | `fed_at` | C | Datetime | 实际投喂发生时间。只在实际执行成功时写入。 |
@@ -398,16 +398,22 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 | F-BOARD-020 | `boarding_profile_snapshot` | S | Struct | 本次寄养资料，按F-PET-018～027等已确认寄养字段带入；临时修改只影响当前寄养，明确同步且有原字段维护权才回写长期档案。不是第二个Pet，不含可由员工代改的当前食品品牌或跨店授权。当前加餐必须读取本次有效资料，不能只读长期档案旧值。 |
 | F-BOARD-021 | `boarding_belongings` | S | Text/Struct | 选填随带物品文字及真实媒体引用；不强制逐件建档，不自动成为销售／库存对象，不因入住就默认向顾客或其他门店公开。 |
 | F-BOARD-022 | `boarding_admission_check_status` | S | Enum | not_checked／no_obvious_abnormality／abnormal／unable_to_check，默认未检查；入住前必须真实三选一，异常／无法检查须说明及沟通后接收决定，不强填洗美六项、不表示医学检查。 |
-| F-BOARD-023 | `boarding_admission_notes` | S | Text | 入住异常／无法检查的必要说明，以及与宠物主人沟通后本店接收或不接收决定的说明，复用同一核对记录及原审计关联；不接收不创建有效入住。 |
-| F-BOARD-024 | `boarding_admission_decision` | S | Enum | accepted／declined；本店员工核对后的真实接收／不接收决定，未完成为空，不默认接收。不代替疫苗等尚未确定准入政策，也不是老板审批或有效入住本身。 |
+| F-BOARD-023 | `boarding_admission_notes` | S | Text | 入住异常／无法检查的必要说明，以及与宠物主人沟通后本店接收或不接收决定的说明；04§5.4主人提供的本次健康资料文字／核对备注复用本值，不强制无异常时伪填病情。资料状态031、选填照片032分别记录；不接收不创建有效入住。 |
+| F-BOARD-024 | `boarding_admission_decision` | S | Enum | accepted／declined；本店员工核对后的真实接收／不接收决定，未完成为空，不默认接收。疫苗资料可不上传、缺资料不自动拒绝的人工决定按04§5.4，缺必需检查仍不得入住；不是老板审批或有效入住本身，也不代表医学准入判断。 |
 | F-BOARD-025 | `boarding_event_visibility` | S | Enum | customer_visible／store_internal，由明确所属入口／表单确定，不从notify_customer推断。store_internal不进入顾客API、动态数量、缩略图、时间轴或消息；customer_visible关闭提醒仍可查看。 |
 | F-BOARD-026 | `boarding_abnormal_handling_status` | S | Enum | pending／handled，关联原寄养异常；实际处理并有F-BOARD-027结果后，员工明确标已处理。消息发送／顾客已读／普通照护保存／跨天不自动关闭；操作者、时间及变更复用F-AUD，不等于寄养已结束。 |
 | F-BOARD-027 | `boarding_abnormal_handling_result` | S | Text | 异常已处理时必填的真实处理结果；不是医学判断，处理人与时间留痕，不以通知状态代替。 |
 | F-BOARD-028 | `boarding_profile_unverified_fields` | S | Ref[] | 本次仍待核实的寄养资料字段注册号列表，与F-BOARD-020配合；未知不填假餐数／无过敏／允许零食。F-PET-026未核实不判允许，本次加餐不拿长期旧授权绕过，矛盾须核实、不伪造安全结论。 |
 | F-BOARD-029 | `boarding_billable_nights` | S | Int | 04§5.2结算计费晚数，由服务端按Asia/Shanghai每日03:00统计check_in_at<截点≤actual_checkout_at的非负整数；每晚收一天，0晚无寄养费。入住截点排除、离店截点包含；不同于F-BOARD-006日序，不按24小时向上取整或录入／预计离店算。未实际离店的试算须明确是预计值，不冒充最终计费／实收，也不自动扣款或免单；逐宠乘本次F-ORD-008日价得基础金额，合并结算不改本宠晚数；日价更正／离店后金额调整按04§5.2第14～18项，不改变实际晚数；挂单提醒／催款等未决规则不得由本字段补定。 |
 | F-BOARD-030 | `boarding_checkout_confirmed_at` | S | Datetime | 服务端接受本批结算应收确认、同次记录该宠实际离店的业务确认时间，复用本批原订单／明细和审计关联；不是新的一步确认接走。不同于F-BOARD-005真实离店与F-ORD-023财务settled_at；未付款仍可有本值而无财务settled_at，后续收款不重写。操作者／前后值复用F-AUD，不生成虚假付款或第二账本。 |
+| F-BOARD-031 | `boarding_health_material_status` | S | Enum | 04§5.4本次疫苗／健康资料状态provided／not_provided／unverified（已提供／未提供／待核实），人工如实记录，不预填已提供；provided不代表核实通过或已完成疫苗。缺资料不自动拒绝，必要入住检查仍须完成。 |
+| F-BOARD-032 | `boarding_health_material_refs` | S | Ref[] | 本次接宠时主人提供的健康／疫苗资料选填照片引用；空数组合法，说明复用F-BOARD-023，不借用随带物品或创建第二宠物档案，不因上传即认定疫苗有效或公开／跨店共享。 |
+| F-BOARD-033 | `boarding_special_care_acceptance` | S | Enum | 本次寄养对应特殊照护要求（含代喂药）的门店接收决定accepted／declined；未确认时为空，不默认接受，不因长期用药有值自动接收。具体接收哪些要求在F-BOARD-020内原F-PET-025本次文字要求中明确；拒绝相应特殊照护不等于自动拒绝整笔入住，不表示已执行或医学授权。 |
+| F-BOARD-034 | `boarding_abnormal_contact_status` | S | Enum | 关联原寄养异常事件的真实主人联系状态contacted／not_reached（已联系／暂未联系上）；未记录时为空，不默认已联系或主人同意，不等于F-BOARD-026已处理。后续更新前后状态用原审计保留，不公开内部联络信息。 |
+| F-BOARD-035 | `boarding_abnormal_contact_result` | S | Text | 原寄养异常的真实沟通结果、主人明确表达的决定及未联系上的事实说明；与F-BOARD-034关联原F-BOARD-007，不凭电话／通知／已读生成同意，不把结果文本保存当作异常关闭；内部沟通备注不自动向顾客或跨店公开。 |
+| F-BOARD-036 | `boarding_event_performed_by_staff_id` | S | ID | 04§5.4特殊照护（含代喂药）事件的真实执行人，关联本宠原寄养事件；与F-BOARD-013录入人分开，不能将补录者默认写成执行者。实际执行时间复用F-BOARD-009，录入时间010、内容011、选填媒体012；不另建喂药业务对象或医疗方案。 |
 
-04§5.1确认本店同一pet_id最多一笔未结束有效寄养，多宠每只独立boarding_id／位置／时间；结合原预约、Customer／Pet、F-CORE-010幂等请求及审计防重复／并发，不以昵称或手机号自动合并，多宠一起结算按04§5.2、不能合并各宠入住事实。统一照护复用F-BOARD-007～013，不新建care_event同义字段；普通喂食不创建商品交易／扣库存或推进F-BOARD-015，加餐仍回原商品单确认并只写一次F-BOARD-018动态。04§5.2已确认03:00过夜计数与实际离店结算，延期／提前离店据实重算、0晚无寄养费；复用F-CORE-009与实际入住／离店，计费晚数F-BOARD-029，不用预计／录入时间或F-BOARD-006。日价复用F-ORD-008在入住时逐宠设置、本次保存，基础明细F-ORD-009＝本宠日价×本宠F-BOARD-029，同店同客多宠可一起结算并汇总F-ORD-010；不另造boarding_daily_rate同义字段。04§5.2第14～18项已确认：离店确认前可留痕更正整次正日价，不分段／不自动跟随门店涨价；免费走最终应收调0及明确免单，0晚费用仍为0。已离店未付只调原本批最终应收，不重写日价／晚数／基础快照／离店；已收款／免单不直接改账。挂单提醒／催款、特殊交接与离店时间等历史更正、已结算独立更正流程、疫苗及特殊照护等仍待DEC-STAFF-05／06。
+04§5.1确认本店同一pet_id最多一笔未结束有效寄养，多宠每只独立boarding_id／位置／时间；结合原预约、Customer／Pet、F-CORE-010幂等请求及审计防重复／并发，不以昵称或手机号自动合并，多宠一起结算按04§5.2、不能合并各宠入住事实。统一照护复用F-BOARD-007～013，不新建care_event同义字段；普通喂食不创建商品交易／扣库存或推进F-BOARD-015，加餐仍回原商品单确认并只写一次F-BOARD-018动态。04§5.2已确认03:00过夜计数与实际离店结算，延期／提前离店据实重算、0晚无寄养费；复用F-CORE-009与实际入住／离店，计费晚数F-BOARD-029，不用预计／录入时间或F-BOARD-006。日价复用F-ORD-008在入住时逐宠设置、本次保存，基础明细F-ORD-009＝本宠日价×本宠F-BOARD-029，同店同客多宠可一起结算并汇总F-ORD-010；不另造boarding_daily_rate同义字段。04§5.2第14～18项已确认：离店确认前可留痕更正整次正日价，不分段／不自动跟随门店涨价；免费走最终应收调0及明确免单，0晚费用仍为0。已离店未付只调原本批最终应收，不重写日价／晚数／基础快照／离店；已收款／免单不直接改账。挂单提醒／催款、特殊交接与离店时间等历史更正、已结算独立更正流程、健康资料／特殊照护及异常沟通按04§5.4已定，医疗处置／紧急升级等仍待DEC-STAFF-05／06。
 
 寄养分批离店按04§5.2分别结算，复用F-ORD-001／005／029／030关联本批原寄养明细，F-ORD-009／010／014／015、F-PAY及免单记录只对应本批有效范围；其余在住明细不被标已结算，已结算明细不重新入账。F-BOARD-005／029按每宠真实时间与晚数保留，不新增同义分批账本或覆盖其他宠物；挂单提醒／催款、优惠／退款分摊等未确认规则不由字段存在而解锁。
 
