@@ -115,6 +115,9 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "fixed_booking_interval": "retired",
         "hard_slot_capacity": "retired",
         "slot_reservation": "retired",
+        "appointment_rejection_reason_required": "false",
+        "appointment_reschedule_reason_required": "false",
+        "appointment_other_reason_text_required": "false",
     }.items():
         if metadata(appointment).get(key) != expected:
             add(results, "error", "appointment.manual_model", Path("docs/03a-customer-appointment.md"), f"{key} must be {expected}")
@@ -132,6 +135,59 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     # Check the confirmed subsection, not the staff document's still-mixed overall status.
     staff_path = Path("docs/04-staff-miniapp.md")
     staff = current_text[staff_path.as_posix()]
+    appointment_staff = staff.split("### 3.7 ", 1)[-1].split("\n## 4.", 1)[0]
+    appointment_staff_meta = dict(META_RE.findall(appointment_staff)) if "### 3.7 " in staff else {}
+    for key, expected in {
+        "status": "confirmed",
+        "status_scope": "appointment_staff_handling_and_confirmation_reminders_only",
+        "appointment_workbench_scope": "all_current_store_actionable_requests_including_future_arrival_dates",
+        "appointment_customer_response_waiting": "excluded_from_store_confirmation_queue",
+        "appointment_record_entry": "业务/预约管理",
+        "appointment_query_groups": "[待处理, 已确认待到店, 历史记录]",
+        "appointment_query_filters": "date_and_wash_groom_boarding_type",
+        "appointment_query_groups_are_states": "false",
+        "appointment_pending_sort": "requested_arrival_time_ascending_then_submission_time_ascending",
+        "appointment_rejection_reason_required": "false",
+        "appointment_reschedule_reason_required": "false",
+        "appointment_other_reason_text_required": "false",
+        "appointment_operator_display": "internal_actor_and_time_customer_store_and_result_only",
+        "appointment_handler_roles": "[merchant_owner, active_store_staff]",
+        "appointment_known_reminder_acknowledgement": "explicit_read_and_continue_before_confirmation",
+        "appointment_reminder_auto_rejection": "excluded",
+        "appointment_shared_check_unavailable_label": "共享提醒未完成核验",
+        "appointment_shared_check_unavailable_policy": "manual_check_then_continue_with_record_no_safe_default",
+        "appointment_identity_conflict_effect": "block_shared_query_no_staff_merge_or_authorization_bypass",
+        "appointment_manual_continue_scope": "appointment_business_only_not_shared_data_access",
+        "appointment_confirmation_creates_service": "false",
+        "appointment_new_customer_reminder_extension": "excluded_pending_separate_confirmation",
+    }.items():
+        if appointment_staff_meta.get(key) != expected:
+            add(results, "error", "appointment.staff_handling", staff_path, f"section 3.7 {key} must be {expected}")
+
+    reminder_section = staff.split("#### 6.5.1 ", 1)[-1].split("\n## 7.", 1)[0]
+    reminder_meta = dict(META_RE.findall(reminder_section)) if "#### 6.5.1 " in staff else {}
+    for key, expected in {
+        "status": "mixed",
+        "confirmed_scope": "reminder_triggers_separate_dialog_and_appointment_acknowledgement_manual_continuation_in_section_3_7",
+        "pending_scope": "new_customer_acknowledgement_and_failure_continuation_repeated_reminder_frequency_and_other_unconfirmed_business_effects",
+        "reminder_triggers": "[新增顾客, 确认预约]",
+        "reminder_presentation": "separate_dialog",
+        "reminder_content": "[宠物注意事项, 风险提示]",
+    }.items():
+        if reminder_meta.get(key) != expected:
+            add(results, "error", "appointment.reminder_scope", staff_path, f"section 6.5.1 {key} must be {expected}")
+
+    for field_id, field_name in {
+        "F-APPT-014": "store_response_reason",
+        "F-APPT-029": "appointment_service_item_snapshot",
+        "F-APPT-030": "appointment_reminder_acknowledged_at",
+        "F-APPT-031": "appointment_shared_reminder_check_incomplete",
+        "F-APPT-032": "appointment_reminder_manual_continue_at",
+    }.items():
+        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
+        cells = [cell.strip() for cell in row.split("|")]
+        if len(cells) < 4 or cells[2] != f"`{field_name}`" or cells[3] not in {"C", "S"}:
+            add(results, "error", "appointment.field_mapping", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must remain active as {field_name}")
     catalog = staff.split("#### 3.0.8", 1)[-1].split("#### 3.0.9", 1)[0]
     catalog_meta = dict(META_RE.findall(catalog)) if "#### 3.0.8" in staff else {}
     for key, expected in {
