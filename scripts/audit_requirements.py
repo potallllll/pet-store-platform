@@ -264,7 +264,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "boarding_abnormal_close": "staff_confirms_actual_handling_with_result",
         "boarding_checkout_due_policy": "remind_only_no_auto_end_renew_or_fee",
         "boarding_billing_and_collection": "confirmed_in_section_5_2",
-        "boarding_actual_checkout": "billing_endpoint_confirmed_handover_pending",
+        "boarding_actual_checkout": "confirmed_with_checkout_receivable_independent_of_payment",
         "boarding_vaccination_admission": "pending",
         "boarding_special_care_execution": "pending",
         "boarding_shift_handover": "pending",
@@ -276,14 +276,14 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     billing_meta = dict(META_RE.findall(boarding_billing)) if "### 5.2 " in staff else {}
     for key, expected in {
         "status": "confirmed",
-        "status_scope": "boarding_overnight_count_rate_and_combined_settlement_only",
+        "status_scope": "boarding_admission_pricing_checkout_departure_and_basic_hold_rules_only",
         "boarding_billing_unit": "overnight",
         "boarding_billing_timezone": "Asia/Shanghai",
         "boarding_billing_cutoff": "03:00:00",
         "boarding_billing_interval": "check_in_exclusive_actual_checkout_inclusive",
         "boarding_billable_days": "count_daily_cutoffs_in_actual_stay",
         "boarding_no_overnight_fee": "zero",
-        "boarding_collection_timing": "actual_departure",
+        "boarding_collection_timing": "at_or_after_actual_departure_no_prepayment",
         "boarding_extension_early_departure": "recalculate_from_actual_stay",
         "boarding_expected_time_billing_effect": "none",
         "boarding_billing_auto_charge": "excluded",
@@ -296,8 +296,20 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "boarding_combined_settlement": "allowed_same_merchant_same_customer",
         "boarding_combined_amount": "sum_selected_boarding_item_base_amounts_before_existing_discounts_adjustments",
         "boarding_partial_departure_settlement": "separate_at_each_actual_departure",
-        "boarding_settlement_items": "departing_unsettled_boarding_items_only",
+        "boarding_settlement_items": "current_departing_unconfirmed_items_then_original_unpaid_batch",
         "boarding_remaining_pets": "keep_boarding_unsettled_without_prepayment",
+        "boarding_departure_trigger": "confirm_current_checkout_receivable",
+        "boarding_separate_departure_confirmation": "excluded",
+        "boarding_checkout_payment_dependency": "none",
+        "boarding_actual_checkout_default": "current_server_time",
+        "boarding_actual_checkout_edit": "actual_past_time_with_previous_values_and_audit",
+        "boarding_actual_checkout_validation": "check_in_lte_actual_checkout_lte_server_now",
+        "boarding_billing_stop": "actual_checkout_at_even_if_unpaid",
+        "boarding_unpaid_departure_state": "departed_pending_settlement",
+        "boarding_hold_trigger": "staff_manual_after_checkout_receivable_confirmed",
+        "boarding_hold_reason_required": "true",
+        "boarding_hold_auto_release": "paid_or_explicit_waiver",
+        "boarding_belongings_checkout": "show_recorded_items_no_mandatory_checks_photos_or_signature",
     }.items():
         if billing_meta.get(key) != expected:
             add(results, "error", "boarding.billing_rules", staff_path, f"section 5.2 {key} must be {expected}")
@@ -307,6 +319,8 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "F-ORD-009": "item_original_amount",
         "F-ORD-010": "original_receivable_amount",
         "F-ORD-029": "boarding_id",
+        "F-ORD-034": "order_on_hold",
+        "F-ORD-035": "order_held_at",
         "F-BOARD-019": "boarding_location_label",
         "F-BOARD-020": "boarding_profile_snapshot",
         "F-BOARD-021": "boarding_belongings",
@@ -318,6 +332,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "F-BOARD-027": "boarding_abnormal_handling_result",
         "F-BOARD-028": "boarding_profile_unverified_fields",
         "F-BOARD-029": "boarding_billable_nights",
+        "F-BOARD-030": "boarding_checkout_confirmed_at",
     }.items():
         row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
         cells = [cell.strip() for cell in row.split("|")]

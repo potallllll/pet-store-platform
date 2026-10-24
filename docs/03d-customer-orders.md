@@ -1,8 +1,8 @@
 # 03D 客户端「我的订单」模块
 
 > status: mixed
-> confirmed_scope: current_order_rules_wash_groom_care_twelve_boarding_sixteen_overnight_billing_per_stay_rates_combined_settlement_and_offline_financial_ledger
-> pending_scope: interruption_client_label_other_state_recovery_remaining_mixed_business_checkout_except_same_pet_wash_groom_care_add_on_partial_refund_allocation_ledger_corrections_and_remaining_boarding_rate_changes_boarding_credit_and_handover
+> confirmed_scope: current_order_rules_wash_groom_care_twelve_boarding_sixteen_pricing_checkout_departure_unpaid_hold_and_offline_financial_ledger
+> pending_scope: interruption_client_label_other_state_recovery_remaining_mixed_business_checkout_except_same_pet_wash_groom_care_add_on_partial_refund_allocation_ledger_corrections_and_remaining_boarding_rate_changes_boarding_followup_reminders_special_handover_and_corrections
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -185,9 +185,11 @@ V1.0 只保留三个分类：
 
 寄养过程中可能发生延住、提前离店、加项或费用调整，因此正式结算前显示“当前金额 / 预计金额”，完成结算后显示最终实付金额。
 
-入住与日常照护16项按04§5.1已确认：实际到店后门店明确确认入住、单宠只一笔有效在住；多宠各自boarding_id／位置／时间，不能把一宠状态或预计时间覆盖另一宠。实际入住／预计离店与预约计划时间分开，预计到点不自动完成、续住或加费。计费／收款按04§5.2已确认：北京时间每天03:00截点，计入实际入住之后至实际离店之内（含离店时刻）的截点，每晚收一天；恰好03:00入住不立即计，恰好03:00离店计刚结束的一晚，未跨点为0晚、不收寄养费。实际离店时按真实天数结算，延期／提前离店据实重算，不按24小时向上取整或预计天数，不擅加保底／小时费或延期罚金。实际离店时间不同于补录时间，财务仍只作线下交易账本；0晚不自动已收款／免单或结束寄养，最终应收0仍明确确认免单。日价由本店老板／有效员工在入住时逐宠填写并保留本次明细，不取全店统一价、Pet永久价或把其他宠物单价覆盖本宠。同店同客多宠可一起结算，每宠日价×自己的实际晚数，逐宠保留boarding_id／pet_id、真实时间、日价、晚数与基础金额后汇总；一次支付不重复记多份收入，不自动关闭所有宠物。复用原F-ORD-008／009／010与F-BOARD-029，不造第二账本或跨顾客／跨店合并，不开放洗美／商品／加餐混单。入住后日价更正、寄养挂账、离店交付／状态操作及已结算更正继续待决，提前离店不自动退款。
+入住与日常照护16项按04§5.1已确认：实际到店后门店明确确认入住、单宠只一笔有效在住；多宠各自boarding_id／位置／时间，不能把一宠状态或预计时间覆盖另一宠。实际入住／预计离店与预约计划时间分开，预计到点不自动完成、续住或加费。计费／收款按04§5.2已确认：北京时间每天03:00截点，计入实际入住之后至实际离店之内（含离店时刻）的截点，每晚收一天；恰好03:00入住不立即计，恰好03:00离店计刚结束的一晚，未跨点为0晚、不收寄养费。实际离店时按真实天数结算，延期／提前离店据实重算，不按24小时向上取整或预计天数，不擅加保底／小时费或延期罚金。实际离店时间不同于补录时间，财务仍只作线下交易账本；0晚不自动已收款／免单或结束寄养，最终应收0仍明确确认免单。日价由本店老板／有效员工在入住时逐宠填写并保留本次明细，不取全店统一价、Pet永久价或把其他宠物单价覆盖本宠。同店同客多宠可一起结算，每宠日价×自己的实际晚数，逐宠保留boarding_id／pet_id、真实时间、日价、晚数与基础金额后汇总；一次支付不重复记多份收入，不自动关闭所有宠物。复用原F-ORD-008／009／010与F-BOARD-029，不造第二账本或跨顾客／跨店合并，不开放洗美／商品／加餐混单。入住后日价更正、挂单提醒／催款、特殊交接／历史更正及已结算更正继续待决，提前离店不自动退款。
 
 分批离店结算按04§5.2第9项：本批实际离店宠物按各自日价／实际晚数结算，不等全部离店、不预收余下宠物。同批多宠可一起结算，各批关联原寄养及明细／真实付款或免单；已结算明细不能再次收费，不把仍含在住宠物的整单标全部已结算。本人查看各宠真实在住／离店及对应结算事实，不能因一批付款使全部显示完成；本批优惠／调价／支付沿用原规则，不新增单宠任意部分付款或跨批退款分摊。洗美／独立护理不按宠分次付款的规则不变。
+
+04§5.2第10～13项明确结算术语：员工在结算页确认本批应收及真实离店时间，同次记录本批宠物已离店，不另设确认离店／确认接走，不以付清或免单为离店前提。实际离店默认当前服务端时间，可填真实过去时间，check_in_at≤actual_checkout_at≤服务端当前时间，原值／操作者／录入时间留痕。F-BOARD-030是本次业务费用确认时间，不是F-ORD-023财务settled_at；未实际收款／明确免单不写财务已结算、实收或资金流水、不扣余额。已离店未收款先待结算，手动挂单原因必填，固定入口业务／订单与收银／挂单；顾客看已离店／待结算及真实应收，不看内部原因／催款备注。实际离店即截止本次03:00计数，后续补收款不多计晚数、重复收入或改离店；原本批付清／明确免单自动解除挂单、历史保留，零应收仍须明确免单。原结算前最终应收调价规则保持，不能借挂账自动加费或覆盖原日价／晚数；原商品超时取消不套用。随带物品展示提醒、不强制照片／签字／逐件勾选。催款、特殊交接／已确认后的历史更正仍待对应DEC。
 
 本次寄养资料单独保存，临时修改只影响此次；饮食及零食授权未知须标待核实，不凭长期旧允许值放行当前加餐。普通照护记录统一选择喂食／遛狗／清扫笼子、实际时间、选填照片后确认，只写本宠一次真实事件、不代替商品加餐原单执行或产生销售。顾客可见动态和内部备注明确区分，通知开关不决定可见性；内部内容、计数及媒体不泄露，消息已读不关闭寄养异常。
 
