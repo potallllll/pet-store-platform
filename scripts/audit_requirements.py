@@ -196,7 +196,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         if detail_meta.get(key) != expected:
             add(results, "error", "wash_groom.confirmed_details", staff_path, f"section 4.4 {key} must be {expected}")
 
-    care = staff.split("### 4.5 ", 1)[-1].split("\n## 5.", 1)[0]
+    care = staff.split("### 4.5 ", 1)[-1].split("\n### 4.6 ", 1)[0].split("\n## 5.", 1)[0]
     care_meta = dict(META_RE.findall(care)) if "### 4.5 " in staff else {}
     for key, expected in {
         "status": "confirmed",
@@ -228,6 +228,48 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     }.items():
         if care_meta.get(key) != expected:
             add(results, "error", "care.confirmed_rules", staff_path, f"section 4.5 {key} must be {expected}")
+
+    hold = staff.split("### 4.6 ", 1)[-1].split("\n## 5.", 1)[0]
+    hold_meta = dict(META_RE.findall(hold)) if "### 4.6 " in staff else {}
+    for key, expected in {
+        "status": "confirmed",
+        "status_scope": "held_consumption_order_query_collection_and_manual_revocation_only",
+        "hold_business_scope": "[wash_groom, care, boarding]",
+        "hold_entry": "业务/订单与收银/挂单",
+        "hold_trigger": "staff_manual_after_business_completion_and_receivable_confirmed",
+        "hold_reason_required": "true",
+        "hold_cross_day_visibility": "retain_until_cleared_in_business_list",
+        "hold_workbench_history": "no_daily_reinsertion_of_historical_debt",
+        "hold_default_sort": "order_held_at_ascending",
+        "hold_filters": "business_type_and_active_or_cleared",
+        "hold_search": "customer_contact_or_pet_nickname_or_order_number_within_current_merchant",
+        "hold_boarding_scope": "original_checkout_batch_only",
+        "hold_collection_channel": "store_manual_contact_system_records_only",
+        "hold_automatic_collection_notice": "excluded_sms_and_wechat",
+        "hold_cross_day_effect": "no_late_fee_or_auto_order_cancellation",
+        "hold_collection_note_required": "false",
+        "hold_partial_repayment": "excluded",
+        "hold_checkout_max_payment_methods": "2",
+        "hold_auto_release": "actual_full_collection_or_explicit_waiver",
+        "hold_manual_revocation": "allowed_while_active_and_unsettled",
+        "hold_revocation_effect": "pending_settlement_preserve_receivable_order_and_history",
+        "hold_internal_notes_visibility": "current_store_only_not_customer_or_cross_store",
+        "hold_business_state_effect": "none_no_service_reopen_or_boarding_reactivation",
+        "hold_concurrency": "original_scope_state_version_and_idempotency",
+    }.items():
+        if hold_meta.get(key) != expected:
+            add(results, "error", "hold.confirmed_rules", staff_path, f"section 4.6 {key} must be {expected}")
+
+    for field_id, field_name in {
+        "F-ORD-034": "order_on_hold",
+        "F-ORD-035": "order_held_at",
+        "F-ORD-036": "order_collection_note",
+        "F-ORD-037": "order_collection_contacted_at",
+    }.items():
+        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
+        cells = [cell.strip() for cell in row.split("|")]
+        if len(cells) < 4 or cells[2] != f"`{field_name}`" or cells[3] not in {"C", "S"}:
+            add(results, "error", "hold.field_mapping", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must remain active as {field_name}")
 
     boarding = staff.split("### 5.1 ", 1)[-1].split("\n### 5.2 ", 1)[0]
     boarding_meta = dict(META_RE.findall(boarding)) if "### 5.1 " in staff else {}
