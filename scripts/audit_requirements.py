@@ -305,7 +305,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "home_feeding_signature_or_customer_acceptance": "excluded",
         "home_feeding_completion_evidence": "actual_service_end_then_staff_confirmation_with_actor_and_time",
         "home_feeding_completion_financial_effect": "no_automatic_collection_or_store_revenue",
-        "home_feeding_remaining_decisions": "[DEC-FEED-01, DEC-FEED-02, DEC-FEED-03]",
+        "home_feeding_remaining_decisions": "[DEC-FEED-01, DEC-FEED-02]",
     }.items():
         if home_meta.get(key) != expected:
             add(results, "error", "home_feeding.basic_coordination", home_path, f"section 9 {key} must be {expected}")
@@ -317,7 +317,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "home_feeding_authority": "03j_section_9",
         "home_feeding_query_groups": "[待对接, 进行中, 历史记录]",
         "home_feeding_progress_actions": "[开始对接, 确认安排, 开始服务, 完成]",
-        "home_feeding_remaining_decisions": "[DEC-FEED-01, DEC-FEED-02, DEC-FEED-03]",
+        "home_feeding_remaining_decisions": "[DEC-FEED-01, DEC-FEED-02]",
     }.items():
         if home_staff_meta.get(key) != expected:
             add(results, "error", "home_feeding.staff_scope", staff_path, f"section 3.9 {key} must be {expected}")
@@ -328,15 +328,15 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
         if f"`{logical_name}` | S |" not in row:
             add(results, "error", "home_feeding.coordination_field", Path("docs/FIELD-REGISTRY.md"), f"missing confirmed {field_id} / {logical_name}")
-    for field_id in ("F-FEED-024", "F-FEED-025", "F-FEED-026", "F-FEED-027"):
+    for field_id in ("F-FEED-024", "F-FEED-025"):
         row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
         if len(row.split("|")) < 5 or row.split("|")[3].strip() != "P":
             add(results, "error", "home_feeding.pending_scope", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must remain pending")
-    if metadata(current_text[home_path.as_posix()]).get("blocked_by") != "[DEC-FEED-01, DEC-FEED-02, DEC-FEED-03]":
-        add(results, "error", "home_feeding.remaining_decisions", home_path, "unconfirmed cancellation, timeout and continuity decisions must remain blocked")
+    if metadata(current_text[home_path.as_posix()]).get("blocked_by") != "[DEC-FEED-01, DEC-FEED-02]":
+        add(results, "error", "home_feeding.remaining_decisions", home_path, "remaining coordination amendments and internal exception details must remain blocked")
 
     cancellation = current_text[home_path.as_posix()].split("### 9.1 ", 1)[-1].split("\n### 9.2 ", 1)[0]
-    rerouting = current_text[home_path.as_posix()].split("### 9.2 ", 1)[-1].split("\n## 10.", 1)[0]
+    rerouting = current_text[home_path.as_posix()].split("### 9.2 ", 1)[-1].split("\n### 9.3 ", 1)[0].split("\n## 10.", 1)[0]
     for section, expected_meta, code in (
         (cancellation, {
             "status": "confirmed",
@@ -372,7 +372,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         for key, expected in expected_meta.items():
             if actual.get(key) != expected:
                 add(results, "error", code, home_path, f"{key} must be {expected}")
-    exception_staff = staff.split("#### 3.9.1 ", 1)[-1].split("\n## 4.", 1)[0] if "#### 3.9.1 " in staff else ""
+    exception_staff = staff.split("#### 3.9.1 ", 1)[-1].split("\n#### 3.9.2 ", 1)[0].split("\n## 4.", 1)[0] if "#### 3.9.1 " in staff else ""
     for key, expected in {
         "status": "confirmed",
         "status_scope": "home_feeding_cancellation_and_disabled_store_reassignment",
@@ -391,6 +391,43 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
         if f"`{logical_name}` | S |" not in row:
             add(results, "error", "home_feeding.assignment_field", Path("docs/FIELD-REGISTRY.md"), f"missing {field_id} / {logical_name}")
+
+    expiry_section = current_text[home_path.as_posix()].split("### 9.3 ", 1)[-1].split("\n## 10.", 1)[0]
+    expiry_meta = dict(META_RE.findall(expiry_section))
+    for key, expected in {
+        "status": "confirmed",
+        "status_scope": "home_feeding_acceptance_cutoff_expiry_and_public_exposure_eight_rules",
+        "dec_feed_03_status": "confirmed",
+        "home_feeding_cutoff_timezone": "Asia/Shanghai",
+        "home_feeding_cutoff_source": "first_service_date_and_earliest_first_visit_window_start",
+        "home_feeding_cutoff_advance_hours": "0",
+        "home_feeding_accept_time_condition": "server_now_strictly_before_accept_deadline",
+        "home_feeding_same_day_publication": "allowed_if_first_visit_is_future",
+        "home_feeding_expiry_scope": "nonterminal_request_without_effective_acceptor_at_cutoff",
+        "home_feeding_expired_status": "expired",
+        "home_feeding_accepted_auto_expiry": "excluded",
+        "home_feeding_service_end_auto_completion": "excluded",
+        "home_feeding_reopen_time_condition": "server_now_strictly_before_accept_deadline",
+        "home_feeding_expired_revival": "excluded_new_request_required",
+        "home_feeding_public_recommendation_scope": "valid_open_unaccepted_requests_before_cutoff_only",
+        "home_feeding_old_share_link": "latest_real_state_read_only_when_not_accepting",
+        "home_feeding_history_deletion_on_expiry": "false",
+    }.items():
+        if expiry_meta.get(key) != expected:
+            add(results, "error", "home_feeding.expiry_rules", home_path, f"section 9.3 {key} must be {expected}")
+    expiry_staff = staff.split("#### 3.9.2 ", 1)[-1].split("\n## 4.", 1)[0] if "#### 3.9.2 " in staff else ""
+    for key, expected in {
+        "status": "confirmed",
+        "status_scope": "home_feeding_acceptance_expiry_eight_rules",
+        "home_feeding_expiry_authority": "03j_section_9_3",
+        "dec_feed_03_status": "confirmed",
+    }.items():
+        if dict(META_RE.findall(expiry_staff)).get(key) != expected:
+            add(results, "error", "home_feeding.staff_expiry", staff_path, f"section 3.9.2 {key} must be {expected}")
+    for field_id, logical_name in {"F-FEED-026": "accept_deadline", "F-FEED-027": "public_expires_at"}.items():
+        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
+        if f"`{logical_name}` | S |" not in row:
+            add(results, "error", "home_feeding.confirmed_cutoff_field", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must now be confirmed S")
 
     reminder_section = staff.split("#### 6.5.1 ", 1)[-1].split("\n## 7.", 1)[0]
     reminder_meta = dict(META_RE.findall(reminder_section)) if "#### 6.5.1 " in staff else {}
@@ -798,6 +835,8 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
             add(results, "error", "wallet.confirmed_rules", wallet_path, f"{key} must be {expected}")
 
     for path, text in current_text.items():
+        if "DEC-FEED-03" in metadata(text).get("blocked_by", ""):
+            add(results, "error", "home_feeding.closed_cutoff_blocker", Path(path), "confirmed DEC-FEED-03 must not remain blocked")
         if "blocked_by:" in text.split("\n## ", 1)[0] and "DEC-APPT-01" in metadata(text).get("blocked_by", ""):
             add(results, "error", "appointment.stale_blocker", Path(path), "closed DEC-APPT-01 remains in blocked_by")
 
