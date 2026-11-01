@@ -135,7 +135,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     # Check the confirmed subsection, not the staff document's still-mixed overall status.
     staff_path = Path("docs/04-staff-miniapp.md")
     staff = current_text[staff_path.as_posix()]
-    appointment_staff = staff.split("### 3.7 ", 1)[-1].split("\n## 4.", 1)[0]
+    appointment_staff = staff.split("### 3.7 ", 1)[-1].split("\n### 3.8 ", 1)[0].split("\n## 4.", 1)[0]
     appointment_staff_meta = dict(META_RE.findall(appointment_staff)) if "### 3.7 " in staff else {}
     for key, expected in {
         "status": "confirmed",
@@ -163,6 +163,50 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     }.items():
         if appointment_staff_meta.get(key) != expected:
             add(results, "error", "appointment.staff_handling", staff_path, f"section 3.7 {key} must be {expected}")
+
+    goods_section = staff.split("### 3.8 ", 1)[-1].split("\n## 4.", 1)[0]
+    goods_meta = dict(META_RE.findall(goods_section)) if "### 3.8 " in staff else {}
+    for key, expected in {
+        "status": "confirmed",
+        "status_scope": "ordinary_product_request_handling_and_boarding_feed_routing_only",
+        "goods_request_entry": "业务/商品处理/商品需求",
+        "goods_request_query_groups": "[待处理, 待付款, 历史记录]",
+        "goods_request_query_groups_are_states": "false",
+        "goods_request_pending_sort": "submission_time_ascending",
+        "goods_request_unsettled_sort": "hold_expiry_ascending_never_auto_cancel_last",
+        "goods_request_search": "current_store_customer_contact_order_id_product_name_only",
+        "goods_request_scenarios": "ordinary_purchase_and_boarding_feed_on_original_order",
+        "goods_request_shortage_actions": "reduce_quantity_or_remove_items_before_settlement",
+        "goods_request_empty_result": "cancel_not_empty_order_or_waived_sale",
+        "goods_request_quantity_change_reason_required": "false",
+        "goods_request_item_removal_reason_required": "false",
+        "goods_request_manual_cancellation_reason_required": "false",
+        "goods_request_reason_optional_scope": "ordinary_requests_before_settlement_only",
+        "goods_request_price_adjustment_and_refund_reasons": "preserve_existing_required_rules",
+        "goods_request_preparation_step": "excluded",
+        "goods_request_delivery_confirmation_step": "excluded",
+        "goods_request_sale_completion": "actual_payment_recorded_or_explicit_waiver",
+        "goods_request_sale_completion_proves_collection": "false",
+        "goods_request_cross_request_checkout_merge": "excluded",
+        "goods_request_same_cart_multi_item": "one_original_request",
+        "goods_request_inventory_and_timeout": "preserve_03e_reservation_and_default_24_hours",
+        "goods_request_boarding_feed_execution": "separate_actual_execution_per_03e_section_17",
+    }.items():
+        if goods_meta.get(key) != expected:
+            add(results, "error", "goods.staff_handling", staff_path, f"section 3.8 {key} must be {expected}")
+
+    products_path = Path("docs/03e-customer-products.md")
+    products = current_text[products_path.as_posix()]
+    for required in (
+        "### 7.1 店员查询与办理边界（已确认）",
+        "不同购买需求分别处理、分别结算",
+        "全部数量归零取消原需求并保留历史",
+        "普通商品需求在结算前修改数量、移除商品或人工取消，原因选填",
+        "交易完成、不证明顾客已取走",
+        "第17.8节加餐取消／异常后续处理原因",
+    ):
+        if required not in products:
+            add(results, "error", "goods.client_contract", products_path, f"missing confirmed product contract: {required}")
 
     reminder_section = staff.split("#### 6.5.1 ", 1)[-1].split("\n## 7.", 1)[0]
     reminder_meta = dict(META_RE.findall(reminder_section)) if "#### 6.5.1 " in staff else {}

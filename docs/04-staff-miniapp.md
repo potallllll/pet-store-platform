@@ -2,7 +2,7 @@
 
 > status: mixed
 > status_scope: staff_requirements
-> confirmed_scope: sections_3_0_3_2_3_7_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
+> confirmed_scope: sections_3_0_3_2_3_7_3_8_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
 > pending_scope: all_other_staff_proposals_and_cross_store_risk_details
 > change_policy: record_required
 > development_readiness: blocked
@@ -12,7 +12,7 @@
 
 ## 1. 文件边界
 
-本文件已确认范围为§3.0导航与功能归属、§3.2工作台分组／开单入口、§3.7预约管理及确认提醒、§4.1开单基础、§4.3／4.4洗美明确确认范围、§4.5护理12项流程、§4.6挂单查询／补收与撤销、§5.1寄养入住／日常照护16项、§5.2过夜计费／实际离店结算、§5.4健康资料／特殊照护及异常沟通、§6.1投诉回应基线及§6.5跨端职责；各节明确未决细节除外。其余跨店风险、寄养§5.3剩余流程及其他待决事项不在确认范围，不能据本文件声明整端可正式实现。
+本文件已确认范围为§3.0导航与功能归属、§3.2工作台分组／开单入口、§3.7预约管理及确认提醒、§3.8普通商品需求处理8项、§4.1开单基础、§4.3／4.4洗美明确确认范围、§4.5护理12项流程、§4.6挂单查询／补收与撤销、§5.1寄养入住／日常照护16项、§5.2过夜计费／实际离店结算、§5.4健康资料／特殊照护及异常沟通、§6.1投诉回应基线及§6.5跨端职责；各节明确未决细节除外。其余跨店风险、寄养§5.3剩余流程及其他待决事项不在确认范围，不能据本文件声明整端可正式实现。
 
 本轮洗美以§4.3／4.4为准：五态、多宠一单、六项检查／复检、照片可选、未结算重开原因选填、完成或中止费用明确后结算、手动挂单且原因必填、改0后明确确认免单。财务仅记录线下交易、可即时或工作结束后录入，不接外部收银／支付系统；预约和服务仍及时操作。全部消费最多两种支付方式，退款老板／有效员工均可办理、无需审批，消费先扣本金再扣赠送，退款按原付款渠道／原账户退回，确认记账自动联动余额／流水／适用库存。护理12项按§4.5、寄养入住／日常照护16项按§5.1；寄养过夜计费／实际离店结算及日价更正边界按§5.2，挂单查询／人工联系按§4.6，特殊交接等其余寄养流程、未决混合业务及账本更正仍待决，不重启已取消能力，详见03d§1.1／12。
 
@@ -490,6 +490,46 @@
 
 确认预约仍不等于实际到店、开始服务、寄养入住或收款；到店后沿原开单／检查／入住动作办理。字段复用F-APPT-014／018／022／029、原查询F-CRISK-010（确实发生时）及F-AUD；阅读和选择继续的唯一字段见FIELD-REGISTRY§6，不制造第二预约对象或伪造查询。新增顾客阅读／失败接续、重复提醒频率按§6.5.1已确认，其他未决风险业务影响仍待对应DEC，不整体关闭DEC-STAFF-03或DEC-RISK-01。
 
+### 3.8 已确认：普通商品需求处理8项
+
+> status: confirmed
+> status_scope: ordinary_product_request_handling_and_boarding_feed_routing_only
+> confirmed_by: user
+> confirmed_on: 2026-11-01
+> goods_request_entry: 业务/商品处理/商品需求
+> goods_request_query_groups: [待处理, 待付款, 历史记录]
+> goods_request_query_groups_are_states: false
+> goods_request_pending_sort: submission_time_ascending
+> goods_request_unsettled_sort: hold_expiry_ascending_never_auto_cancel_last
+> goods_request_search: current_store_customer_contact_order_id_product_name_only
+> goods_request_scenarios: ordinary_purchase_and_boarding_feed_on_original_order
+> goods_request_shortage_actions: reduce_quantity_or_remove_items_before_settlement
+> goods_request_empty_result: cancel_not_empty_order_or_waived_sale
+> goods_request_quantity_change_reason_required: false
+> goods_request_item_removal_reason_required: false
+> goods_request_manual_cancellation_reason_required: false
+> goods_request_reason_optional_scope: ordinary_requests_before_settlement_only
+> goods_request_price_adjustment_and_refund_reasons: preserve_existing_required_rules
+> goods_request_preparation_step: excluded
+> goods_request_delivery_confirmation_step: excluded
+> goods_request_sale_completion: actual_payment_recorded_or_explicit_waiver
+> goods_request_sale_completion_proves_collection: false
+> goods_request_cross_request_checkout_merge: excluded
+> goods_request_same_cart_multi_item: one_original_request
+> goods_request_inventory_and_timeout: preserve_03e_reservation_and_default_24_hours
+> goods_request_boarding_feed_execution: separate_actual_execution_per_03e_section_17
+
+1. **查询分组**：“业务 → 商品处理 → 商品需求”分待处理、待付款、历史记录，分别查询待门店处理的需求、已确认但尚未结算的需求及其余历史；它们是查询条件，不新增底层状态、不因切组创建订单／取消／收款。奖励收货、奖励自提仍按§3.2及03k独立分类，不混普通销售库存。寄养加餐商品已结算后，实际待投喂／异常事项仍按03e§17保留，不因进入交易历史而消失。
+2. **排序**：待处理按原需求提交时间早到晚；待付款按保留截止时间近到远，“不自动取消”排在有截止时间之后。跨天仍需办理的有效事项继续按§3.2显示，不能只查今天新建；不把排序当成延期或重置保留期。
+3. **搜索范围**：按本店顾客联系方式（手机号／微信号）、订单号、商品名称查找；服务端限制本店且为当前员工有权查看的记录，不跨店搜顾客，不借搜索触发跨店风险查询。
+4. **普通购买与寄养加餐分清**：显示真实业务场景，来源渠道仍独立。加餐的商品确认／库存／记账复用原需求，实际投喂从原关联“待执行加餐”办理，不另造投喂订单。收款／免单不代表已投喂，仍须有效在住、主人授权、饮食限制及实际执行校验；异常／取消沿03e§17处理。
+5. **缺货处理**：结算前可减量或移除缺货项，剩余有效商品可继续确认；全部数量归零时取消原需求，保留原始申请及处理历史，不造空商品订单或零元免单成交。已确认订单修改按03e重新校验／调整原SKU预占，释放不再需要的预占，不重复占库；结算成功后不通过改量／移除改写历史。
+6. **普通需求原因选填**：结算前改数量、移除项或人工取消普通商品需求，原因均选填；前端、API／DTO、服务端及持久化不得因未填阻断，有填保留真实说明，无填不编造缺货等理由。实际操作人、服务端时间、原始／当前内容及状态仍留痕；不放宽调价、退款或03e§17.8加餐取消／异常后续处理的原有原因要求，不取消系统超时原因记录。
+7. **交易与实物交接分开**：普通商品不新增独立备货或确认交付步骤，真实收款记账或明确确认免单后按03e完成销售、一次出库及券处理。客户端“已完成”只表示商品交易完成，不记录或推断顾客已取走；实物在线下交接。奖励自提核销及加餐实际投喂不能套用本条跳过。
+8. **需求不合并结算**：不同购买需求分别处理，同一顾客两次提交暂不合并结算；同一次购物车多个商品仍是一笔原需求／原订单，不拆成重复订单。不是寄养多宠合并结算或同宠洗美加护理原单加项，不扩展其他混单许可。
+
+复用原订单／明细／SKU、F-ORD-006／007／031原数量与快照、F-PROD-025保留截止、F-CORE-013原提交创建时间、F-ORD-032金额版本及F-AUD。选填原因复用F-AUD-009，字段是否必填按实际业务动作判断，不新建全局取消原因必填规则；查询组不是持久化的新状态。库存仍按03e确认自动预占、默认24小时保留、未结算取消／超时释放、收款／明确免单一次出库，重试与并发不重复。其余库存维护／手机Web分工、加餐执行异常未决边界、部分退款分配与账本更正仍按原DEC，不宣布整端解阻。
+
 ## 4. 宠物服务开单、洗护／美容与护理已确认流程
 
 ### 4.1 已确认的开单基础与尚待确认的流程细节
@@ -928,7 +968,7 @@
 |---|---|---|---|
 | 客户申请预约 | 预约而非服务订单 | 等待门店人工确认/接受新时间 | 确认时注意事项／风险独立弹窗见§6.5.1；营业／关闭及版本按03a§11，工作台／查询分组、内部处理人、拒绝／改期原因选填及预约阅读／提醒不可用选择继续按§3.7已确认；新增顾客及新老顾客共同提醒／去重规则按§6.5.1已确认，不恢复时段容量拦截 |
 | 洗护/美容完成 | 服务记录与结果 | 普通结果、N组对比、消息 | 步骤映射、发布与更正权限 |
-| 客户购买/加餐 | 统一商品购买需求 | 待处理/付款/执行分离 | 经办与收款权限、占库冲突、执行异常处理 |
+| 客户购买/加餐 | 统一商品购买需求 | 待处理/付款/执行分离 | §3.8普通商品8项及02§4员工资格已定；库存沿03e、执行沿03e§17，其余异常及未决分工不扩展 |
 | 客户公开投诉门店 / 食品 | 投诉记录 | 用户反馈已公开 / 等待回应 | 门店投诉由店员端正式回应；食品投诉由后台发现问题后客服邮件联系厂家，后续回应映射待决；不得由门店自行判定成立 |
 | 喂养有效接单 | publisher_store_id绑定需求 | 等待绑定门店对接 | 具体权限/迁移/时限，沿用DEC-FEED相关阻塞 |
 | 总仓发货到门店 | 平台奖励兑换单 | 到店后待自提 | 收货/核销由哪些店员可做、凭证核验方式；不赋予总仓权限 |
