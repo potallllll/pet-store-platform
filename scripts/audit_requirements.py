@@ -280,7 +280,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
             add(results, "error", "reward.shipping_truth", Path(rel), "shipping must not imply arrival")
 
     home_path = Path("docs/03j-customer-home-feeding-marketplace.md")
-    home_section = current_text[home_path.as_posix()].split("## 9. ", 1)[-1].split("\n## 10.", 1)[0]
+    home_section = current_text[home_path.as_posix()].split("## 9. ", 1)[-1].split("\n### 9.1 ", 1)[0].split("\n## 10.", 1)[0]
     home_meta = dict(META_RE.findall(home_section))
     for key, expected in {
         "status": "confirmed",
@@ -309,7 +309,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     }.items():
         if home_meta.get(key) != expected:
             add(results, "error", "home_feeding.basic_coordination", home_path, f"section 9 {key} must be {expected}")
-    home_staff = staff.split("### 3.9 ", 1)[-1].split("\n## 4.", 1)[0] if "### 3.9 " in staff else ""
+    home_staff = staff.split("### 3.9 ", 1)[-1].split("\n#### 3.9.1 ", 1)[0].split("\n## 4.", 1)[0] if "### 3.9 " in staff else ""
     home_staff_meta = dict(META_RE.findall(home_staff))
     for key, expected in {
         "status": "confirmed",
@@ -334,6 +334,63 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
             add(results, "error", "home_feeding.pending_scope", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must remain pending")
     if metadata(current_text[home_path.as_posix()]).get("blocked_by") != "[DEC-FEED-01, DEC-FEED-02, DEC-FEED-03]":
         add(results, "error", "home_feeding.remaining_decisions", home_path, "unconfirmed cancellation, timeout and continuity decisions must remain blocked")
+
+    cancellation = current_text[home_path.as_posix()].split("### 9.1 ", 1)[-1].split("\n### 9.2 ", 1)[0]
+    rerouting = current_text[home_path.as_posix()].split("### 9.2 ", 1)[-1].split("\n## 10.", 1)[0]
+    for section, expected_meta, code in (
+        (cancellation, {
+            "status": "confirmed",
+            "status_scope": "home_feeding_cancellation_exit_reopening_and_no_response_timer",
+            "home_feeding_unaccepted_edit_cancel": "publisher_direct_without_store_approval",
+            "home_feeding_accepted_content_change": "contact_current_store_no_direct_edit",
+            "home_feeding_acceptor_exit": "manual_store_coordination_no_online_approval_request",
+            "home_feeding_cancel_roles": "[merchant_owner, active_store_staff]",
+            "home_feeding_cancel_reason_required": "false",
+            "home_feeding_reopen": "explicit_store_action_after_acceptor_exit_and_publisher_still_needs_service",
+            "home_feeding_started_cancellation": "canceled_with_early_end_label_preserve_actual_service",
+            "home_feeding_started_request_reopen": "excluded",
+            "home_feeding_response_deadline": "none",
+            "home_feeding_automatic_chasing": "excluded",
+            "home_feeding_timeout_auto_cancel": "false",
+        }, "home_feeding.cancellation"),
+        (rerouting, {
+            "status": "confirmed",
+            "status_scope": "home_feeding_temporary_rest_and_disabled_store_automatic_reassignment",
+            "home_feeding_temporary_rest_effect": "no_effect_on_feature_operations",
+            "home_feeding_disabled_store_effect": "automatic_reassignment_of_unfinished_requests",
+            "home_feeding_reassignment_anchor": "original_publisher_store_effective_location",
+            "home_feeding_reassignment_candidates": "other_active_platform_stores_with_usable_location",
+            "home_feeding_reassignment_scope": "original_unfinished_request_acceptance_and_coordination_todo",
+            "home_feeding_reassignment_preserve": "original_publisher_store_acceptor_round_progress_and_history",
+            "home_feeding_current_responsible_store": "current_coordination_store_id",
+            "home_feeding_reassignment_access": "current_assignee_necessary_request_scope_only",
+            "home_feeding_reassignment_no_candidate": "preserve_request_and_pending_platform_exception",
+            "home_feeding_reassignment_notification": "notify_participants_and_new_store_after_success",
+        }, "home_feeding.reassignment"),
+    ):
+        actual = dict(META_RE.findall(section))
+        for key, expected in expected_meta.items():
+            if actual.get(key) != expected:
+                add(results, "error", code, home_path, f"{key} must be {expected}")
+    exception_staff = staff.split("#### 3.9.1 ", 1)[-1].split("\n## 4.", 1)[0] if "#### 3.9.1 " in staff else ""
+    for key, expected in {
+        "status": "confirmed",
+        "status_scope": "home_feeding_cancellation_and_disabled_store_reassignment",
+        "home_feeding_exception_authority": "03j_sections_9_1_and_9_2",
+        "home_feeding_temporary_rest_effect": "no_effect_on_feature_operations",
+        "home_feeding_reassignment_anchor": "original_publisher_store_effective_location",
+        "home_feeding_current_responsible_store": "current_coordination_store_id",
+    }.items():
+        if dict(META_RE.findall(exception_staff)).get(key) != expected:
+            add(results, "error", "home_feeding.staff_exceptions", staff_path, f"section 3.9.1 {key} must be {expected}")
+    for field_id, logical_name in {
+        "F-FEED-030": "current_coordination_store_id",
+        "F-FEED-031": "coordination_assignment_version",
+        "F-FEED-032": "acceptance_exited_at",
+    }.items():
+        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
+        if f"`{logical_name}` | S |" not in row:
+            add(results, "error", "home_feeding.assignment_field", Path("docs/FIELD-REGISTRY.md"), f"missing {field_id} / {logical_name}")
 
     reminder_section = staff.split("#### 6.5.1 ", 1)[-1].split("\n## 7.", 1)[0]
     reminder_meta = dict(META_RE.findall(reminder_section)) if "#### 6.5.1 " in staff else {}
@@ -745,6 +802,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
             add(results, "error", "appointment.stale_blocker", Path(path), "closed DEC-APPT-01 remains in blocked_by")
 
     prohibited = {
+        "接单后只向发布时绑定门店生成待办": "current coordination store receives the task after automatic disabled-store reassignment",
         "实际投喂确认成功后才": "the independent boarding snack execution workflow was retired",
         "待投喂 / 投喂请求处理中": "snack purchases use ordinary goods states",
         "17.8": "the old snack execution cancellation section was retired",
