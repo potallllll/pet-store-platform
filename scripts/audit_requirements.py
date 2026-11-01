@@ -244,6 +244,41 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         if f"| {acceptance_id} | retired | not_started | not_run | not_reviewed |" not in tracker:
             add(results, "error", "goods.retired_acceptance_scope", Path("docs/execution/customer-delivery-tracker.md"), f"{acceptance_id} must remain retired, not passed")
 
+    reward_path = Path("docs/03k-customer-loyalty-points.md")
+    rewards = current_text[reward_path.as_posix()]
+    reward_section = rewards.split("## 8. ", 1)[-1].split("\n### 8.1 ", 1)[0]
+    reward_meta = dict(META_RE.findall(reward_section)) if "## 8. " in rewards else {}
+    for key, expected in {
+        "status": "confirmed",
+        "status_scope": "physical_reward_shipment_and_manual_pickup_without_receipt_or_credential",
+        "reward_store_receipt_confirmation": "retired",
+        "reward_store_receipt_todo": "excluded",
+        "reward_pickup_credential": "retired",
+        "reward_pickup_scan_or_code_required": "false",
+        "reward_pickup_confirmation": "manual_after_actual_handover",
+        "reward_pickup_roles": "[merchant_owner, active_store_staff]",
+        "reward_pickup_store_scope": "selected_pickup_store_only",
+        "reward_pickup_start_state": "warehouse_shipped_and_not_canceled",
+        "reward_arrival_auto_inference": "excluded",
+        "reward_arrival_auto_notification": "excluded",
+        "reward_fulfillment_states": "[待总仓发货, 已发往门店, 已领取, 已取消]",
+    }.items():
+        if reward_meta.get(key) != expected:
+            add(results, "error", "reward.simplified_pickup", reward_path, f"section 8 {key} must be {expected}")
+    if dict(META_RE.findall(workbench_section)).get("goods_processing_categories") != "[商品需求, 奖励自提]":
+        add(results, "error", "reward.processing_categories", staff_path, "receipt category must stay retired")
+    for field_id in ("F-RWD-021", "F-RWD-022"):
+        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
+        if len(row.split("|")) < 5 or row.split("|")[3].strip() != "D":
+            add(results, "error", "reward.retired_receipt_or_credential", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must stay D")
+    for rel, required in {
+        "docs/03k-customer-loyalty-points.md": "已发往门店不表示已经到货或现在即可领取",
+        "docs/03f-customer-messages.md": "发货不宣称已到货或可立即领取",
+        "docs/03i-customer-screen-blueprint.md": "不凭发货／预计日期推断已到货",
+    }.items():
+        if required not in current_text[rel]:
+            add(results, "error", "reward.shipping_truth", Path(rel), "shipping must not imply arrival")
+
     reminder_section = staff.split("#### 6.5.1 ", 1)[-1].split("\n## 7.", 1)[0]
     reminder_meta = dict(META_RE.findall(reminder_section)) if "#### 6.5.1 " in staff else {}
     for key, expected in {

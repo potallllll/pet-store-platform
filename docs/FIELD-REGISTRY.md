@@ -898,18 +898,20 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-RWD-014 | `pickup_store_id` | C | ID | 用户选择的领取 / 使用门店。不得因切店改变。 |
 | F-RWD-015 | `redemption_points_cost` | S | Int | 本次实际消耗积分。 |
 | F-RWD-016 | `points_processing_status` | S | Enum | 兑换处理中 / 已扣成功 / 返还处理中 / 已返还等积分处理结果；与履约状态分开。 |
-| F-RWD-017 | `fulfillment_status` | C | Enum | 待总仓发货 / 已发往门店 / 门店已收货待自提 / 已领取 / 已取消。 |
+| F-RWD-017 | `fulfillment_status` | C | Enum | 待总仓发货／已发往门店／已领取／已取消。取消门店已收货待自提阶段，不凭发货／预计日期推断到货或自动记领取；实际交付后所选店员工手动登记已领取，规则见03k§8。 |
 | F-RWD-018 | `redemption_created_at` | S | Datetime | 兑换时间。 |
 | F-RWD-019 | `fulfillment_task_id` | S | ID | 总仓到门店的实物履约任务。 |
 | F-RWD-020 | `warehouse_shipped_at` | S | Datetime | Platform Super Admin 确认总仓发货时间。 |
-| F-RWD-021 | `store_received_at` | S | Datetime | 指定领取门店实际收货时间。 |
-| F-RWD-022 | `pickup_credential` | S | Text/Struct | 用户本人自提核验凭证 / 指引；不得成为其他门店越权核销凭证。 |
+| F-RWD-021 | `store_received_at` | D | Datetime | 2026-11-01退役：门店到货确认取消，保留永久ID／逻辑名供追溯，不再采集、写入或作为领取前置条件，不以发货时间补造到货时间。 |
+| F-RWD-022 | `pickup_credential` | D | Text/Struct | 2026-11-01退役：取消顾客领取凭证，不再生成／要求领取码、二维码、扫码验码或凭证核验指引，保留永久ID／逻辑名供追溯。 |
 | F-RWD-023 | `picked_up_at` | S | Datetime | 实际领取时间。 |
-| F-RWD-024 | `pickup_verified_by_staff_id` | S | ID | 指定门店实际核销人员。 |
+| F-RWD-024 | `pickup_verified_by_staff_id` | S | ID | 所选领取门店实际交付后点击已领取的老板／有效员工；保留原逻辑名，verified不表示校验顾客领取凭证。与F-RWD-023实际领取时间、F-RWD-013原单、F-RWD-014所选店及F-AUD关联，不新造同义经办字段。 |
 | F-RWD-025 | `canceled_at` | S | Datetime | 已确认取消成立时间；取消权限本身仍受 DEC-POINTS-01 阻塞。 |
 | F-RWD-026 | `points_refund_ledger_id` | S | ID | 取消后积分补偿流水；“已取消”不等于“积分已返还”。 |
 | F-RWD-027 | `pickup_deadline` | P | Datetime | DEC-POINTS-02 未确认，自提期限不得提前写死。 |
 | F-RWD-028 | `replacement_pickup_store_id` | P | ID | 是否允许改领取门店待 DEC-POINTS-02；确认前不得实现。 |
+
+03k§8取消门店到货确认与领取凭证，F-RWD-021／022退役，不继续作为API／DTO／数据库必填项或领取状态门槛。F-RWD-017从真实已发往门店在实际交付后转换已领取；不新增到货时间、待自提状态或自动到货通知。F-RWD-023／024及原F-AUD保存实际领取／经办／门店／服务端操作事实，重试与有效取消竞态校验原单最新状态／幂等，不能因免凭证跨店登记或重复发放，不改普通商品库存／钱包。原取消／期限／停店改店待决规则保持。
 
 ---
 
