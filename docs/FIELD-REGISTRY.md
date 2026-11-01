@@ -5,7 +5,7 @@
 > pending_scope: entries_marked_P
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: [DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01, DEC-FOOD-HEAT-01, DEC-FEED-01, DEC-FEED-02, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-STAFF-01, DEC-STAFF-02, DEC-STAFF-03, DEC-STAFF-04, DEC-STAFF-05, DEC-STAFF-06, DEC-STAFF-07, DEC-STAFF-08]
+> blocked_by: [DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01, DEC-FOOD-HEAT-01, DEC-FEED-02, DEC-POINTS-01, DEC-POINTS-02, DEC-LAUNCH-01, DEC-STAFF-01, DEC-STAFF-02, DEC-STAFF-03, DEC-STAFF-04, DEC-STAFF-05, DEC-STAFF-06, DEC-STAFF-07, DEC-STAFF-08]
 > version: V1.0
 > registry_owner: project_requirements
 > canonical_logical_field_source: true
@@ -843,28 +843,29 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-FEED-016 | `daily_budget` | C | Money | 每日预算。V1 不代表平台托管资金。 |
 | F-FEED-017 | `feeding_requirements` | C | Text | 喂养要求。 |
 | F-FEED-018 | `special_notes` | C | Text | 特殊注意事项，选填。 |
-| F-FEED-019 | `home_feeding_status` | S | Enum | 原待接单／已接单待门店对接／门店对接中／已确认／服务中／已完成／已取消保留；03j§9.3新增expired=已过期，仅截止时无有效接单者的未终止需求适用。客户端过期独立显示，不把已有效接单记录因日期到点设过期／取消／完成。 |
+| F-FEED-019 | `home_feeding_status` | S | Enum | 当前待接单／待门店确认（承接已接单待门店对接）／已确认／已撤销（原已取消语义）／expired已过期。已确认只表撮合确认，不表实际服务执行；旧门店对接中／服务中／已完成状态退役，仅留原历史，不新写或据日期生成。 |
 | F-FEED-020 | `accepted_user_id` | S | ID | 当前有效接单者 Platform User；首个有效请求原子锁定。 |
 | F-FEED-021 | `accepted_at` | S | Datetime | 当前轮有效接单成立时间。 |
-| F-FEED-022 | `acceptance_round` | S | Int | 接单取消后重新开放时区分新旧轮次；旧轮次迟到请求不得污染新轮次。 |
+| F-FEED-022 | `acceptance_round` | D | Int | 2026-11-01退役：退出／重新开放链路取消，不再创建新接单轮次。保留永久ID／逻辑名及既有历史，不再写入或作为新流程API／DTO／持久化必填依赖。 |
 | F-FEED-023 | `share_deep_link` | S | Text | 微信聊天/群分享后进入对应需求详情的深链。 |
-| F-FEED-024 | `store_coordination_status` | P | Enum | 仅供未确认的额外内部对接细状态，继续待DEC-FEED-02，不冻结或实现独立枚举。03j§9已确认四步直接复用F-FEED-019原home_feeding_status，不以本字段阻塞已确认基本操作，也不建立第二状态机。 |
-| F-FEED-025 | `publisher_cancel_deadline` | P | Datetime | 未确认的额外时间截止，继续P，不据此给03j§9.1已确认取消增加小时限制；未接单发布者直接取消、接单后门店协调规则已确认，不照搬预约6小时。 |
-| F-FEED-026 | `accept_deadline` | S | Datetime | 03j§9.3已确认唯一接单／重新开放截止，取首次约定上门起始（开始日期＋当日最早时段起始，Asia/Shanghai），不提前小时数。服务端now必须严格小于本值；等于／超过即拒绝。已有有效接单不因本值到期结束，合法待接单修改可重算留痕，过期不可改日期复活。 |
-| F-FEED-027 | `public_expires_at` | S | Datetime | 03j§9.3本需求当前轮公开招募推荐／可接单列表曝光退出时点，初始为F-FEED-026，提前有效接单／取消等按真实事件提前收口；合法重新开放按剩余截止重算且原值历史保留。保留原名，不表示旧分享只读链接禁访／记录删除或精确地址公开期限。 |
-| F-FEED-028 | `store_coordination_note` | S | Text | 03j§9门店人工对接的选填沟通备注，关联原F-FEED-001及当前有效F-FEED-022轮次，不覆盖发布者F-FEED-018要求。操作人／录入时间及前后值复用F-AUD，更新保留历史；不自动公开给分享页或双方用户，不因未填阻断四步操作。 |
-| F-FEED-029 | `store_coordination_media_refs` | S | Ref[] | 03j§9选填沟通照片等原授权媒体引用，关联原需求／轮次，遵守媒体及本店权限；不强制录音／截图／聊天记录／逐次打卡，不自动公开给双方或公开页，不复用F-FEED-007宠物照片冒充执行证据。 |
+| F-FEED-024 | `store_coordination_status` | D | Enum | 2026-11-01退役：内部对接细状态与四步服务跟踪取消。保留永久ID／逻辑名及既有历史，不再写入或作为新流程API／DTO／持久化必填依赖。 |
+| F-FEED-025 | `publisher_cancel_deadline` | D | Datetime | 2026-11-01退役：需求方仅发布／撤销，不新增固定撤销截止字段。保留永久ID／逻辑名及既有历史，不再写入或作为新流程API／DTO／持久化必填依赖。 |
+| F-FEED-026 | `accept_deadline` | S | Datetime | 首次约定上门起始（日期＋首日最早时段起点，Asia/Shanghai）为唯一接单截止，不提前小时数。now严格小于才可用户接单，门店确认不复用此截止；已有有效接单不按日期终止。发布后无APP编辑／重新开放，线下协商不改本值，旧过期不复活。 |
+| F-FEED-027 | `public_expires_at` | S | Datetime | 当前公开招募曝光退出时点，初始取F-FEED-026，提前接单／撤销按真实事件收口并留历史。无APP重新开放／编辑重算；不是旧分享禁访、记录删除或双方联系资料公开时间。 |
+| F-FEED-028 | `store_coordination_note` | D | Text | 2026-11-01退役：协商线下完成，APP不维护沟通备注表单。保留永久ID／逻辑名及既有历史，不再写入或作为新流程API／DTO／持久化必填依赖。 |
+| F-FEED-029 | `store_coordination_media_refs` | D | Ref[] | 2026-11-01退役：协商线下完成，APP不维护沟通照片／媒体表单。保留永久ID／逻辑名及既有历史，不再写入或作为新流程API／DTO／持久化必填依赖。 |
 | F-FEED-030 | `current_coordination_store_id` | S | ID | 本上门喂养需求当前唯一负责对接Store，初始等于F-FEED-003；账号停用按03j§9.2系统自动改派最近有效店，不改变原发布门店或接单人。待办、业务操作及必要资料权限按本值与F-FEED-031校验，不是用户全局current_store_id，也不转移商户Customer／资产。 |
-| F-FEED-031 | `coordination_assignment_version` | S | Int | 当前负责店版本；初始1，每次成功系统接续递增，门店操作、接单、取消／重新开放及迁移须校验最新值。F-AUD记录原新门店／原因／系统时间／迁移事件，旧店或旧版本不继续取数操作，迁移重试不重复待办或通知。 |
-| F-FEED-032 | `acceptance_exited_at` | S | Datetime | 当前接单轮次由门店协调并登记退出的服务端时间；F-FEED-020当前有效接单者清空，原接单者／轮次／退出操作者及选填原因保留在原业务历史／F-AUD。未开始的需求回门店对接中等待明确重新开放，不自动放开；新轮清当前值但旧轮历史保留，不用于服务开始后伪装未开始退出。 |
+| F-FEED-031 | `coordination_assignment_version` | S | Int | 当前负责店版本，初始1，成功系统接续递增；确认／撤销／接单／迁移及联系方式取用校验最新值。联系资料另要求F-FEED-035等于本值，旧店确认不自动给新店；原新店／原因／系统时间用F-AUD保留，重试不重复待办／通知。 |
+| F-FEED-032 | `acceptance_exited_at` | D | Datetime | 2026-11-01退役：APP不增加独立接单退出／重新开放操作。保留永久ID／逻辑名及既有历史，不再写入或作为新流程API／DTO／持久化必填依赖。 |
+| F-FEED-033 | `home_feeding_store_confirmed_at` | S | Datetime | 当前记录最近一次门店明确确认成功的服务端时间，不是用户接单／服务开始／完成时间；历史各版用F-AUD保留，不因打开页面或自动转店伪造确认。 |
+| F-FEED-034 | `home_feeding_store_confirmed_by_staff_id` | S | ID | 执行确认的当前店老板／有效员工，关联原需求／当前负责店及F-FEED-035；本店统一资格不等于老板审批，旧店经办历史不覆盖。 |
+| F-FEED-035 | `home_feeding_store_confirmed_assignment_version` | S | Int | 本次门店确认对应F-FEED-031版本。仅当前店且本值等于当前负责版本、确认时间／人真实成立、需求未撤销／过期时可读双方联系资料；迁移保留旧确认历史但新店须再次确认，不凭业务状态“已确认”放行。 |
 
-03j§9／04§3.9八项已确认：绑定店老板／有效员工手动开始对接→确认安排→开始服务→完成，复用F-FEED-019门店对接中／已确认／服务中／已完成；查询组不新增状态。待对接排序复用F-FEED-021当前有效接单时间，原F-FEED-001／003／020／022及F-AUD校验对象／租户／当前轮次／状态／请求防重，保留实际人／服务端操作时间／前后值。完成确认时间不伪造每次上门发生事实，日期经过不自动完成。精确地址F-FEED-015及必要联系方式沿原接单后合法必要授权，不因店员有业务资格而公开／跨店开放；完成不自动记收款／余额／门店营业额。取消／退出／重新开放及不设固定响应时限已按03j§9.1确认，临时休息不影响运行、停用自动接续按§9.2；F-FEED-024／025剩余内部细状态／额外未确认时间约束仍按原DEC；026／027已在03j§9.3确认，不据其阻塞已确认范围。
+03j§9门店仅确认／撤销，需求方仅发布／撤销，用户自主接单保留；任何协商修改与实际服务在线下，不创建APP修改／重开／开始／完成／协商备注媒体。业务操作、待办和联系资料权限以原需求、F-FEED-030／031及有效接单者校验；F-FEED-022／024／025／028／029／032退役，不再作为状态机或新请求必填项。
 
----
+双方联系方式由publisher_user_id／accepted_user_id关联原有合法授权联系资料（如F-AUTH-001 verified_mobile），角色上下文区分双方，不新增publisher_phone／acceptor_phone同义存储，不复制外店Customer、不伪造缺失资料。仅当前店老板／有效员工在真实确认且F-FEED-035匹配当前版本后可读；确认前店家、参与双方互读、公开／分享／消息／导出／缓存均不得越权返回。撤销／失权关闭新读取；精确地址仍按原必要授权，不因确认对用户公开。
 
-03j§9.1取消选填原因复用F-AUD-009，不因通用DTO／数据库必填而阻断；已开始后取消的“服务开始后提前结束”提示取本轮真实服务中及取消历史，不造新底层状态或假记完整完成。F-FEED-028／029按创建时负责Store／版本的原业务及审计上下文保留，不因F-FEED-030变化把原店内部备注／照片自动给新店或覆盖；新店只写自己本需求的沟通记录。转店展示原需求必要事实／状态工作历史，不返回原始审计；账号停用迁移不是03h跨店风险查询，不耗其查询额度，不自动生成新店Customer或转资产。原店地址位置取已生效F-STORE-003，停用事件距离起点快照／候选选择及结果用原F-AUD留痕；地理接口和结构化坐标后续技术契约收口，不另造长期临时字段或假定位。
-
-03j§9.3不新增同义截止字段，复用F-FEED-008／010确定F-FEED-026，实际过期／曝光事件及原新值用F-AUD记录，过期任务处理时间不冒充截止起点。F-FEED-019 expired为真实过期，F-FEED-020有效接单成立时不被日期任务覆盖；推荐只展示未到截止的待接单记录，旧分享仍读真实只读状态及原权限。过期／完成／取消保留历史，过期后新需求独立新ID；迁移／重新开放不重置首访截止、不复活expired。
+账号停用按原发布店有效位置自动接续，原需求／接单人／发布信息／历史保留；新店需再次确认，旧版记录与原始审计保留但不向普通员工开放原始日志或其他门店数据。此例外不创建新店Customer、不转钱包／相册或改全局当前门店，临时休息不迁移。确认只记撮合事实，不生成服务开始／完成或财务；无有效接单到F-FEED-026截止过期，旧分享只读无双方联系资料。DEC-FEED-01／03已确认，02仅余地理技术／异常界面。
 
 ## 16. 平台积分、签到、积分商城与兑换履约（POINTS / REWARD）
 
@@ -1235,7 +1236,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 - `F-RISK-018`：问题热度具体数值范围 / 公式受 `DEC-FOOD-HEAT-01` 阻塞；
 - `F-REV-016`～`017`：跨店审核结果可见范围 / 有效期按对应风险业务 DEC 确认；
 - `F-CRISK-001`～`007`：跨门店顾客客观风险事件的完整提交／审核与自动业务影响受 `DEC-RISK-01` 阻塞；`F-CRISK-008`～`050`只落实已确认的申诉、查询额度、授权撤回、身份冲突、保存期限和到期处置，不代表事件提交权限或其他自动业务影响已确认；新老顾客的新增／预约阅读和查询不可用继续按04§3.7／6.5.1，不开放共享取数；
-- `F-FEED-024`／`025`：额外内部细状态及未确认额外时间约束继续待决；F-FEED-026／027已在03j§9.3确认，DEC-FEED-03关闭，不再作为P字段或截止阻塞；
+- `F-FEED-022`／`024`／`025`／`028`／`029`／`032`已退役；F-FEED-026／027及033～035为已确认范围。上门喂养仅DEC-FEED-02的地理技术／异常界面剩余，不从D字段恢复旧操作；
 - `F-RWD-027`～`028`：积分自提期限 / 改领取门店，受 `DEC-POINTS-02` 阻塞；
 - 启动广告具体秒数默认值/范围受 `DEC-LAUNCH-01` 阻塞；字段存在但不能写死运营常数；
 - 工作台其他细节／二级菜单、其余混合业务、部分退款分配、账本更正／冲正、护理额外通知／挂单等剩余细节、寄养§5.3剩余流程及待办流转等未决字段仍受DEC-STAFF-01～08约束。统一资格／记录可见性／取消提成／返聘、项目生命周期／旧预约例外、洗美两批、护理12项及寄养入住／基础照护16项及§5.2过夜计费／实际离店结算、全部消费不限幅调价／明确免单／最多两种支付及线下交易账本已定；消费退款无需老板审批，消费先扣本金再扣赠送，退款按原付款渠道／原账户退回，确认后自动联动资产／适用库存。外部支付通道及其失败恢复不在V1范围，不恢复退役审批字段或据此解锁其他流程。

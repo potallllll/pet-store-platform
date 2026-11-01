@@ -280,154 +280,95 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
             add(results, "error", "reward.shipping_truth", Path(rel), "shipping must not imply arrival")
 
     home_path = Path("docs/03j-customer-home-feeding-marketplace.md")
-    home_section = current_text[home_path.as_posix()].split("## 9. ", 1)[-1].split("\n### 9.1 ", 1)[0].split("\n## 10.", 1)[0]
-    home_meta = dict(META_RE.findall(home_section))
-    for key, expected in {
-        "status": "confirmed",
-        "status_scope": "store_coordination_eight_basic_rules_only",
-        "home_feeding_staff_entry": "业务/上门喂养",
-        "home_feeding_workbench_trigger": "valid_user_acceptance_requiring_bound_store_coordination",
-        "home_feeding_query_groups": "[待对接, 进行中, 历史记录]",
-        "home_feeding_query_groups_are_states": "false",
-        "home_feeding_pending_sort": "current_acceptance_time_ascending",
-        "home_feeding_handler_roles": "[merchant_owner, active_store_staff]",
-        "home_feeding_owner_approval_required": "false",
-        "home_feeding_original_handler_restriction": "false",
-        "home_feeding_private_detail_access": "original_authorization_and_necessary_scope_only",
-        "home_feeding_contact_method": "manual_phone_or_wechat",
-        "home_feeding_coordination_note_required": "false",
-        "home_feeding_media_required": "false",
-        "home_feeding_progress_actions": "[开始对接, 确认安排, 开始服务, 完成]",
-        "home_feeding_progress_mode": "manual_on_original_request",
-        "home_feeding_auto_complete": "false",
-        "home_feeding_per_visit_checkin": "excluded",
-        "home_feeding_location_checkin": "excluded",
-        "home_feeding_signature_or_customer_acceptance": "excluded",
-        "home_feeding_completion_evidence": "actual_service_end_then_staff_confirmation_with_actor_and_time",
-        "home_feeding_completion_financial_effect": "no_automatic_collection_or_store_revenue",
-        "home_feeding_remaining_decisions": "[DEC-FEED-01, DEC-FEED-02]",
-    }.items():
-        if home_meta.get(key) != expected:
-            add(results, "error", "home_feeding.basic_coordination", home_path, f"section 9 {key} must be {expected}")
-    home_staff = staff.split("### 3.9 ", 1)[-1].split("\n#### 3.9.1 ", 1)[0].split("\n## 4.", 1)[0] if "### 3.9 " in staff else ""
-    home_staff_meta = dict(META_RE.findall(home_staff))
-    for key, expected in {
-        "status": "confirmed",
-        "status_scope": "home_feeding_store_coordination_eight_basic_rules_only",
-        "home_feeding_authority": "03j_section_9",
-        "home_feeding_query_groups": "[待对接, 进行中, 历史记录]",
-        "home_feeding_progress_actions": "[开始对接, 确认安排, 开始服务, 完成]",
-        "home_feeding_remaining_decisions": "[DEC-FEED-01, DEC-FEED-02]",
-    }.items():
-        if home_staff_meta.get(key) != expected:
-            add(results, "error", "home_feeding.staff_scope", staff_path, f"section 3.9 {key} must be {expected}")
-    for field_id, logical_name in {
-        "F-FEED-028": "store_coordination_note",
-        "F-FEED-029": "store_coordination_media_refs",
-    }.items():
-        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
-        if f"`{logical_name}` | S |" not in row:
-            add(results, "error", "home_feeding.coordination_field", Path("docs/FIELD-REGISTRY.md"), f"missing confirmed {field_id} / {logical_name}")
-    for field_id in ("F-FEED-024", "F-FEED-025"):
-        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
-        if len(row.split("|")) < 5 or row.split("|")[3].strip() != "P":
-            add(results, "error", "home_feeding.pending_scope", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must remain pending")
-    if metadata(current_text[home_path.as_posix()]).get("blocked_by") != "[DEC-FEED-01, DEC-FEED-02]":
-        add(results, "error", "home_feeding.remaining_decisions", home_path, "remaining coordination amendments and internal exception details must remain blocked")
-
-    cancellation = current_text[home_path.as_posix()].split("### 9.1 ", 1)[-1].split("\n### 9.2 ", 1)[0]
-    rerouting = current_text[home_path.as_posix()].split("### 9.2 ", 1)[-1].split("\n### 9.3 ", 1)[0].split("\n## 10.", 1)[0]
-    for section, expected_meta, code in (
-        (cancellation, {
+    home = current_text[home_path.as_posix()]
+    sections = {
+        "simple": home.split("## 9. ", 1)[-1].split("\n### 9.1 ", 1)[0],
+        "route": home.split("### 9.2 ", 1)[-1].split("\n### 9.3 ", 1)[0],
+        "expiry": home.split("### 9.3 ", 1)[-1].split("\n## 10.", 1)[0],
+        "staff": staff.split("### 3.9 ", 1)[-1].split("\n## 4.", 1)[0],
+    }
+    expected_sections = {
+        "simple": {
             "status": "confirmed",
-            "status_scope": "home_feeding_cancellation_exit_reopening_and_no_response_timer",
-            "home_feeding_unaccepted_edit_cancel": "publisher_direct_without_store_approval",
-            "home_feeding_accepted_content_change": "contact_current_store_no_direct_edit",
-            "home_feeding_acceptor_exit": "manual_store_coordination_no_online_approval_request",
-            "home_feeding_cancel_roles": "[merchant_owner, active_store_staff]",
-            "home_feeding_cancel_reason_required": "false",
-            "home_feeding_reopen": "explicit_store_action_after_acceptor_exit_and_publisher_still_needs_service",
-            "home_feeding_started_cancellation": "canceled_with_early_end_label_preserve_actual_service",
-            "home_feeding_started_request_reopen": "excluded",
+            "status_scope": "home_feeding_simple_matching_and_store_only_contact_release",
+            "home_feeding_requester_actions": "[发布, 撤销]",
+            "home_feeding_store_actions": "[确认, 撤销]",
+            "home_feeding_user_self_acceptance": "retained",
+            "home_feeding_changes": "offline_store_coordination_only",
+            "home_feeding_post_publication_edit": "excluded",
+            "home_feeding_progress_tracking": "retired",
+            "home_feeding_reopen": "excluded",
+            "home_feeding_contact_release_trigger": "explicit_current_store_confirmation_with_effective_acceptor",
+            "home_feeding_contact_viewers": "current_confirmed_store_owner_and_active_staff_only",
+            "home_feeding_contact_mutual_user_visibility": "false",
+            "home_feeding_contact_preconfirmation_visibility": "false",
+            "home_feeding_contact_after_cancellation_visibility": "false",
+            "home_feeding_confirmation_assignment_binding": "required",
+            "home_feeding_store_owner_approval": "false",
             "home_feeding_response_deadline": "none",
             "home_feeding_automatic_chasing": "excluded",
-            "home_feeding_timeout_auto_cancel": "false",
-        }, "home_feeding.cancellation"),
-        (rerouting, {
+            "home_feeding_auto_complete_service": "excluded",
+            "home_feeding_dec_feed_01_status": "confirmed",
+        },
+        "route": {
             "status": "confirmed",
-            "status_scope": "home_feeding_temporary_rest_and_disabled_store_automatic_reassignment",
+            "status_scope": "home_feeding_disabled_store_reassignment_with_confirmation_bound_contacts",
             "home_feeding_temporary_rest_effect": "no_effect_on_feature_operations",
-            "home_feeding_disabled_store_effect": "automatic_reassignment_of_unfinished_requests",
             "home_feeding_reassignment_anchor": "original_publisher_store_effective_location",
             "home_feeding_reassignment_candidates": "other_active_platform_stores_with_usable_location",
-            "home_feeding_reassignment_scope": "original_unfinished_request_acceptance_and_coordination_todo",
-            "home_feeding_reassignment_preserve": "original_publisher_store_acceptor_round_progress_and_history",
-            "home_feeding_current_responsible_store": "current_coordination_store_id",
-            "home_feeding_reassignment_access": "current_assignee_necessary_request_scope_only",
+            "home_feeding_reassignment_preserve": "original_request_acceptor_and_history",
+            "home_feeding_reassignment_contact_reset": "new_assignment_requires_store_confirmation",
             "home_feeding_reassignment_no_candidate": "preserve_request_and_pending_platform_exception",
-            "home_feeding_reassignment_notification": "notify_participants_and_new_store_after_success",
-        }, "home_feeding.reassignment"),
-    ):
-        actual = dict(META_RE.findall(section))
-        for key, expected in expected_meta.items():
-            if actual.get(key) != expected:
-                add(results, "error", code, home_path, f"{key} must be {expected}")
-    exception_staff = staff.split("#### 3.9.1 ", 1)[-1].split("\n#### 3.9.2 ", 1)[0].split("\n## 4.", 1)[0] if "#### 3.9.1 " in staff else ""
-    for key, expected in {
-        "status": "confirmed",
-        "status_scope": "home_feeding_cancellation_and_disabled_store_reassignment",
-        "home_feeding_exception_authority": "03j_sections_9_1_and_9_2",
-        "home_feeding_temporary_rest_effect": "no_effect_on_feature_operations",
-        "home_feeding_reassignment_anchor": "original_publisher_store_effective_location",
-        "home_feeding_current_responsible_store": "current_coordination_store_id",
-    }.items():
-        if dict(META_RE.findall(exception_staff)).get(key) != expected:
-            add(results, "error", "home_feeding.staff_exceptions", staff_path, f"section 3.9.1 {key} must be {expected}")
+        },
+        "expiry": {
+            "status": "confirmed",
+            "status_scope": "home_feeding_first_visit_cutoff_and_expiry_for_simple_matching",
+            "dec_feed_03_status": "confirmed",
+            "home_feeding_cutoff_timezone": "Asia/Shanghai",
+            "home_feeding_cutoff_source": "first_service_date_and_earliest_first_visit_window_start",
+            "home_feeding_cutoff_advance_hours": "0",
+            "home_feeding_accept_time_condition": "server_now_strictly_before_accept_deadline",
+            "home_feeding_same_day_publication": "allowed_if_first_visit_is_future",
+            "home_feeding_expiry_scope": "unaccepted_nonterminal_request_at_cutoff",
+            "home_feeding_expired_status": "expired",
+            "home_feeding_accepted_auto_expiry": "excluded",
+            "home_feeding_expired_revival": "excluded_new_request_required",
+            "home_feeding_public_recommendation_scope": "valid_open_unaccepted_requests_before_cutoff_only",
+            "home_feeding_old_share_link": "latest_real_state_read_only_no_participant_contacts",
+        },
+        "staff": {
+            "status": "confirmed",
+            "status_scope": "home_feeding_store_confirm_cancel_and_store_only_contacts",
+            "home_feeding_authority": "03j_sections_8_and_9",
+            "home_feeding_store_actions": "[确认, 撤销]",
+            "home_feeding_query_groups": "[待确认, 已确认, 历史记录]",
+            "home_feeding_contacts": "current_store_only_after_confirmation",
+            "home_feeding_progress_tracking": "retired",
+        },
+    }
+    for section_name, expected in expected_sections.items():
+        actual = dict(META_RE.findall(sections[section_name]))
+        for key, value in expected.items():
+            if actual.get(key) != value:
+                add(results, "error", f"home_feeding.{section_name}", home_path if section_name != "staff" else staff_path, f"{key} must be {value}")
+    for field_id in ("F-FEED-022", "F-FEED-024", "F-FEED-025", "F-FEED-028", "F-FEED-029", "F-FEED-032"):
+        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
+        if len(row.split("|")) < 5 or row.split("|")[3].strip() != "D":
+            add(results, "error", "home_feeding.retired_workflow_field", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must stay D")
     for field_id, logical_name in {
+        "F-FEED-026": "accept_deadline",
+        "F-FEED-027": "public_expires_at",
         "F-FEED-030": "current_coordination_store_id",
         "F-FEED-031": "coordination_assignment_version",
-        "F-FEED-032": "acceptance_exited_at",
+        "F-FEED-033": "home_feeding_store_confirmed_at",
+        "F-FEED-034": "home_feeding_store_confirmed_by_staff_id",
+        "F-FEED-035": "home_feeding_store_confirmed_assignment_version",
     }.items():
         row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
         if f"`{logical_name}` | S |" not in row:
-            add(results, "error", "home_feeding.assignment_field", Path("docs/FIELD-REGISTRY.md"), f"missing {field_id} / {logical_name}")
-
-    expiry_section = current_text[home_path.as_posix()].split("### 9.3 ", 1)[-1].split("\n## 10.", 1)[0]
-    expiry_meta = dict(META_RE.findall(expiry_section))
-    for key, expected in {
-        "status": "confirmed",
-        "status_scope": "home_feeding_acceptance_cutoff_expiry_and_public_exposure_eight_rules",
-        "dec_feed_03_status": "confirmed",
-        "home_feeding_cutoff_timezone": "Asia/Shanghai",
-        "home_feeding_cutoff_source": "first_service_date_and_earliest_first_visit_window_start",
-        "home_feeding_cutoff_advance_hours": "0",
-        "home_feeding_accept_time_condition": "server_now_strictly_before_accept_deadline",
-        "home_feeding_same_day_publication": "allowed_if_first_visit_is_future",
-        "home_feeding_expiry_scope": "nonterminal_request_without_effective_acceptor_at_cutoff",
-        "home_feeding_expired_status": "expired",
-        "home_feeding_accepted_auto_expiry": "excluded",
-        "home_feeding_service_end_auto_completion": "excluded",
-        "home_feeding_reopen_time_condition": "server_now_strictly_before_accept_deadline",
-        "home_feeding_expired_revival": "excluded_new_request_required",
-        "home_feeding_public_recommendation_scope": "valid_open_unaccepted_requests_before_cutoff_only",
-        "home_feeding_old_share_link": "latest_real_state_read_only_when_not_accepting",
-        "home_feeding_history_deletion_on_expiry": "false",
-    }.items():
-        if expiry_meta.get(key) != expected:
-            add(results, "error", "home_feeding.expiry_rules", home_path, f"section 9.3 {key} must be {expected}")
-    expiry_staff = staff.split("#### 3.9.2 ", 1)[-1].split("\n## 4.", 1)[0] if "#### 3.9.2 " in staff else ""
-    for key, expected in {
-        "status": "confirmed",
-        "status_scope": "home_feeding_acceptance_expiry_eight_rules",
-        "home_feeding_expiry_authority": "03j_section_9_3",
-        "dec_feed_03_status": "confirmed",
-    }.items():
-        if dict(META_RE.findall(expiry_staff)).get(key) != expected:
-            add(results, "error", "home_feeding.staff_expiry", staff_path, f"section 3.9.2 {key} must be {expected}")
-    for field_id, logical_name in {"F-FEED-026": "accept_deadline", "F-FEED-027": "public_expires_at"}.items():
-        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
-        if f"`{logical_name}` | S |" not in row:
-            add(results, "error", "home_feeding.confirmed_cutoff_field", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must now be confirmed S")
+            add(results, "error", "home_feeding.confirmed_field", Path("docs/FIELD-REGISTRY.md"), f"{field_id} / {logical_name} must be confirmed S")
+    if metadata(home).get("blocked_by") != "[DEC-FEED-02]":
+        add(results, "error", "home_feeding.remaining_decision", home_path, "only geography and exceptional platform handling detail remains pending")
 
     reminder_section = staff.split("#### 6.5.1 ", 1)[-1].split("\n## 7.", 1)[0]
     reminder_meta = dict(META_RE.findall(reminder_section)) if "#### 6.5.1 " in staff else {}
@@ -835,6 +776,8 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
             add(results, "error", "wallet.confirmed_rules", wallet_path, f"{key} must be {expected}")
 
     for path, text in current_text.items():
+        if "DEC-FEED-01" in metadata(text).get("blocked_by", ""):
+            add(results, "error", "home_feeding.closed_operation_blocker", Path(path), "confirmed simplification decision DEC-FEED-01 must not remain blocked")
         if "DEC-FEED-03" in metadata(text).get("blocked_by", ""):
             add(results, "error", "home_feeding.closed_cutoff_blocker", Path(path), "confirmed DEC-FEED-03 must not remain blocked")
         if "blocked_by:" in text.split("\n## ", 1)[0] and "DEC-APPT-01" in metadata(text).get("blocked_by", ""):
