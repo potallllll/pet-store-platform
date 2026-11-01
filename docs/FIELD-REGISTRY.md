@@ -18,7 +18,7 @@
 
 - 同一含义被不同模块写成 `user_id / uid / member_user_id`；
 - `Merchant / Store`、`User / Customer` 被混为一个字段；
-- `订单状态 / 付款状态 / 投喂执行状态` 被一个 `status` 覆盖；
+- `订单状态 / 付款状态` 被一个 `status` 覆盖；退役的加餐执行状态不得重新启用；
 - `平台积分 / 商户余额`、`曝光广告 / 激励广告权益` 被错误共用字段；
 - 前端直接读取完整 Pet / Customer 实体，导致越权或字段泄露；
 - 后续 AI / 新人临时创造新字段，造成接口与数据调取漂移。
@@ -53,7 +53,7 @@
 - ID 统一使用 `_id` 结尾；多个 ID 使用 `_ids`。
 - 时间点统一使用 `_at`；自然日使用 `_date`；日期范围使用 `_start_date / _end_date`。
 - 布尔语义优先 `is_* / *_enabled / *_allowed`。
-- 状态必须带业务前缀，例如 `order_status`、`payment_status`、`boarding_feed_execution_status`，禁止跨域只写一个含义不明的 `status`。
+- 状态必须带业务前缀，例如 `order_status`、`payment_status`、`home_feeding_status`，禁止跨域只写一个含义不明的 `status`。
 - 金额必须表达含义，例如 `original_receivable_amount`、`paid_amount`、`refund_amount`，禁止只写 `amount` 后依赖上下文猜测。
 
 ### 2.3 状态标记
@@ -396,10 +396,10 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 | F-BOARD-012 | `boarding_event_media_refs` | S | Ref[] | 与该宠物／该次事件关联的真实图片／视频；统一照护及04§5.4特殊照护／异常照片均选填、无每日配额、不跨宠自动复用，缺图不阻止保存真实记录，沿用媒体权限。健康／疫苗资料照片另归F-BOARD-032，不伪造执行事件。 |
 | F-BOARD-013 | `boarding_event_created_by_staff_id` | S | ID | 录入该动态的店员；04§5.4特殊照护实际执行人另用F-BOARD-036，不用补录者冒充执行者。 |
 | F-BOARD-014 | `notify_customer` | C | Bool | 是否主动提醒顾客，不决定F-BOARD-025可见性；false不隐藏顾客可见动态，内部记录即使勾选也不能发给顾客。异常通知原默认规则保留，通知／已读不关闭处理待办。 |
-| F-BOARD-015 | `boarding_feed_execution_status` | C | Enum | `pending / waiting_feed / fed / abnormal_pending / canceled` 对应语义；付款状态必须另记。 |
-| F-BOARD-016 | `fed_at` | C | Datetime | 实际投喂发生时间。只在实际执行成功时写入。 |
-| F-BOARD-017 | `fed_by_staff_id` | C | ID | 实际执行投喂并确认的店员。 |
-| F-BOARD-018 | `feed_timeline_event_id` | S | ID | 投喂成功后唯一关联的寄养动态，重复确认不得产生第二条。 |
+| F-BOARD-015 | `boarding_feed_execution_status` | D | Enum | 2026-11-01退役：取消商品加餐独立投喂执行流程。保留永久注册号／逻辑名供追溯，不创建新字段／API或继续写入；真实照护需要时使用F-BOARD-007～013另记，不以付款推断喂食。 |
+| F-BOARD-016 | `fed_at` | D | Datetime | 2026-11-01退役：取消商品加餐独立投喂执行流程。保留永久注册号／逻辑名供追溯，不创建新字段／API或继续写入；真实照护需要时使用F-BOARD-007～013另记，不以付款推断喂食。 |
+| F-BOARD-017 | `fed_by_staff_id` | D | ID | 2026-11-01退役：取消商品加餐独立投喂执行流程。保留永久注册号／逻辑名供追溯，不创建新字段／API或继续写入；真实照护需要时使用F-BOARD-007～013另记，不以付款推断喂食。 |
+| F-BOARD-018 | `feed_timeline_event_id` | D | ID | 2026-11-01退役：取消商品加餐独立投喂执行流程。保留永久注册号／逻辑名供追溯，不创建新字段／API或继续写入；真实照护需要时使用F-BOARD-007～013另记，不以付款推断喂食。 |
 | F-BOARD-019 | `boarding_location_label` | S | Text | 本次寄养位置的选填简单文字，如A01笼位／客厅散养；同店相同位置已有在住宠物只提醒，不代表房型／房价／笼位库存或硬容量。 |
 | F-BOARD-020 | `boarding_profile_snapshot` | S | Struct | 本次寄养资料，按F-PET-018～027等已确认寄养字段带入；临时修改只影响当前寄养，明确同步且有原字段维护权才回写长期档案。不是第二个Pet，不含可由员工代改的当前食品品牌或跨店授权。当前加餐必须读取本次有效资料，不能只读长期档案旧值。 |
 | F-BOARD-021 | `boarding_belongings` | S | Text/Struct | 选填随带物品文字及真实媒体引用；不强制逐件建档，不自动成为销售／库存对象，不因入住就默认向顾客或其他门店公开。 |
@@ -419,7 +419,7 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 | F-BOARD-035 | `boarding_abnormal_contact_result` | S | Text | 原寄养异常的真实沟通结果、主人明确表达的决定及未联系上的事实说明；与F-BOARD-034关联原F-BOARD-007，不凭电话／通知／已读生成同意，不把结果文本保存当作异常关闭；内部沟通备注不自动向顾客或跨店公开。 |
 | F-BOARD-036 | `boarding_event_performed_by_staff_id` | S | ID | 04§5.4特殊照护（含代喂药）事件的真实执行人，关联本宠原寄养事件；与F-BOARD-013录入人分开，不能将补录者默认写成执行者。实际执行时间复用F-BOARD-009，录入时间010、内容011、选填媒体012；不另建喂药业务对象或医疗方案。 |
 
-04§5.1确认本店同一pet_id最多一笔未结束有效寄养，多宠每只独立boarding_id／位置／时间；结合原预约、Customer／Pet、F-CORE-010幂等请求及审计防重复／并发，不以昵称或手机号自动合并，多宠一起结算按04§5.2、不能合并各宠入住事实。统一照护复用F-BOARD-007～013，不新建care_event同义字段；普通喂食不创建商品交易／扣库存或推进F-BOARD-015，加餐仍回原商品单确认并只写一次F-BOARD-018动态。04§5.2已确认03:00过夜计数与实际离店结算，延期／提前离店据实重算、0晚无寄养费；复用F-CORE-009与实际入住／离店，计费晚数F-BOARD-029，不用预计／录入时间或F-BOARD-006。日价复用F-ORD-008在入住时逐宠设置、本次保存，基础明细F-ORD-009＝本宠日价×本宠F-BOARD-029，同店同客多宠可一起结算并汇总F-ORD-010；不另造boarding_daily_rate同义字段。04§5.2第14～18项已确认：离店确认前可留痕更正整次正日价，不分段／不自动跟随门店涨价；免费走最终应收调0及明确免单，0晚费用仍为0。已离店未付只调原本批最终应收，不重写日价／晚数／基础快照／离店；已收款／免单不直接改账。挂单查询／人工联系及撤销按04§4.6，健康资料／特殊照护及异常沟通按04§5.4已定；特殊交接与离店时间等历史更正、已结算独立更正流程仍待决，医疗处置／紧急升级等仍待DEC-STAFF-05／06。
+04§5.1确认本店同一pet_id最多一笔未结束有效寄养，多宠每只独立boarding_id／位置／时间；结合原预约、Customer／Pet、F-CORE-010幂等请求及审计防重复／并发，不以昵称或手机号自动合并，多宠一起结算按04§5.2、不能合并各宠入住事实。统一照护复用F-BOARD-007～013，不新建care_event同义字段；加餐商品按普通销售，真实喂食需要时从原照护表单另记，不生成销售／扣库存／扣余额，不要求先收款；F-BOARD-015～018已退役，不再作为现行执行依赖。04§5.2已确认03:00过夜计数与实际离店结算，延期／提前离店据实重算、0晚无寄养费；复用F-CORE-009与实际入住／离店，计费晚数F-BOARD-029，不用预计／录入时间或F-BOARD-006。日价复用F-ORD-008在入住时逐宠设置、本次保存，基础明细F-ORD-009＝本宠日价×本宠F-BOARD-029，同店同客多宠可一起结算并汇总F-ORD-010；不另造boarding_daily_rate同义字段。04§5.2第14～18项已确认：离店确认前可留痕更正整次正日价，不分段／不自动跟随门店涨价；免费走最终应收调0及明确免单，0晚费用仍为0。已离店未付只调原本批最终应收，不重写日价／晚数／基础快照／离店；已收款／免单不直接改账。挂单查询／人工联系及撤销按04§4.6，健康资料／特殊照护及异常沟通按04§5.4已定；特殊交接与离店时间等历史更正、已结算独立更正流程仍待决，医疗处置／紧急升级等仍待DEC-STAFF-05／06。
 
 寄养分批离店按04§5.2分别结算，复用F-ORD-001／005／029／030关联本批原寄养明细，F-ORD-009／010／014／015、F-PAY及免单记录只对应本批有效范围；其余在住明细不被标已结算，已结算明细不重新入账。F-BOARD-005／029按每宠真实时间与晚数保留，不新增同义分批账本或覆盖其他宠物；挂单查询／人工联系及撤销按04§4.6；优惠／退款分摊等未确认规则不由字段存在而解锁。
 
@@ -539,7 +539,7 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 
 04§3.8商品需求查询分组不新增持久化状态。待处理排序复用F-CORE-013原需求created_at（不是后续确认／修改时间），待付款排序复用F-PROD-025及原保留配置，“不自动取消”排后，不为排序另造截止或重置期限。搜索用本店原Customer联系方式、F-ORD-001及F-PROD-004；来源渠道／业务场景复用F-ORD-027／028，不能混用或跨店取数。
 
-普通商品结算前减量／移除／人工取消用原F-ORD-006／007／031保留申请与现状，F-ORD-032及原状态校验调整原SKU预占。选填说明复用F-AUD-009，未填可空，不在数据库或通用DTO把所有取消都设为原因必填；实际人／时间／前后值仍用原F-AUD。调价／退款及03e§17.8加餐特殊处理原因要求不放宽。全部归零是取消，不是空单或免单成交。F-ORD-004普通商品已完成只表示交易完成，不生成顾客已取走／实物交付字段；不同需求不合并结算，同购物车多项仍复用原订单，不增加第二账本或修改奖励／加餐执行字段。
+普通商品结算前减量／移除／人工取消用原F-ORD-006／007／031保留申请与现状，F-ORD-032及原状态校验调整原SKU预占。选填说明复用F-AUD-009，未填可空，不在数据库或通用DTO把所有取消都设为原因必填；实际人／时间／前后值仍用原F-AUD。加餐商品同样适用，调价／退款原因要求不放宽。全部归零是取消，不是空单或免单成交。F-ORD-004普通商品已完成只表示交易完成，不生成顾客已取走／实物交付字段；不同需求不合并结算，同购物车多项仍复用原订单，不增加第二账本或修改平台奖励字段；退役的加餐执行字段不再启用。
 
 ---
 
@@ -551,7 +551,7 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 |---|---|---:|---|---|
 | F-ORD-001 | `order_id` | S | ID | 正式服务 / 商品订单标识。预约不使用该 ID。 |
 | F-ORD-002 | `order_type` | S | Enum | 服务 / 商品；服务可进一步由 `service_type` 区分。 |
-| F-ORD-003 | `order_status` | S | Enum | 订单业务状态。不得与 `payment_status`、`boarding_feed_execution_status` 共用。 |
+| F-ORD-003 | `order_status` | S | Enum | 订单业务状态。不得与`payment_status`共用；加餐商品不再有独立投喂执行状态。 |
 | F-ORD-004 | `customer_visible_status` | C | Enum | 客户端聚合后的业务状态。 |
 | F-ORD-005 | `order_item_id` | S | ID | 商品或服务订单明细。 |
 | F-ORD-006 | `requested_quantity` | S | Int | 客户原始购买需求数量。 |
@@ -1073,9 +1073,9 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 | `balance` | `available_balance / principal_balance / bonus_balance` | 防止本金、赠送与总余额混写。 |
 | `points` | `points_balance / points_delta / awarded_points / points_cost` | 平台积分的余额、变动、签到奖励、兑换成本含义不同。 |
 | `amount` | 使用具体金额字段 | 原始应收、最终应收、实付、退款、调价不能混为一个值。 |
-| `status`（跨域 API） | 使用业务前缀状态字段 | `order_status / payment_status / boarding_feed_execution_status / fulfillment_status` 含义完全不同。 |
+| `status`（跨域 API） | 使用业务前缀状态字段 | `order_status / payment_status / home_feeding_status / fulfillment_status` 含义完全不同。 |
 | `pay_status` | `payment_status` | 与订单业务状态分离。 |
-| `feed_status` | `boarding_feed_execution_status` 或 `home_feeding_status` | 寄养加餐与上门喂养是两个不同业务。 |
+| `feed_status` | 上门喂养使用`home_feeding_status`；寄养照护使用原事件字段 | 商品加餐无独立执行状态，不映射到退役F-BOARD-015。 |
 | `order_source` | `source_channel` | 来源渠道全局统一。 |
 | `boarding_feed` 作为渠道 | `business_scenario = boarding_feed` | 业务场景不得覆盖渠道 `mini_program`。 |
 | `ad_status` | `reward_status / load_status / launch_ad_load_status` | 激励权益、首页曝光广告、启动广告状态机不同。 |
@@ -1083,7 +1083,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 | `owner_store_id`（顾问权益） | `owner_type=store` + `owner_id=store_id` | Feature Entitlement 使用通用 owner 结构，Merchant 只作购买关联。 |
 | 仅凭 `pet_id` 直接返回完整 Pet | 按业务最小视图返回 | `pet_id` 只是对象标识；投诉、宠物安全档案或其他模块均不得据此读取完整 PetProfile。 |
 | `occurred_at = recorded_at` | 分别保存 | 寄养补录必须按真实发生时间排序。 |
-| `paid = fed` | `payment_status` + `boarding_feed_execution_status` | 已收款不等于已投喂。 |
+| `paid = fed` | 商品交易用`payment_status`，真实喂食另记寄养照护 | 收款不自动生成照护，不再映射退役的加餐执行状态。 |
 | `canceled = points_refunded` | `fulfillment_status` + `points_processing_status` | 积分兑换取消不等于积分补偿已到账。 |
 
 ---

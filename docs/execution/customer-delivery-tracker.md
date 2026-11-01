@@ -3,6 +3,7 @@
 > document_type: delivery_tracker
 > status: pending
 > status_scope: implementation_and_review_evidence
+> retired_acceptance_ids: [C-BOARDING-03, C-BOARDING-04, C-BOARDING-05]
 > change_policy: record_required
 > development_readiness: blocked
 > blocked_by: [DEC-EXEC-01, DEC-EXEC-02]
@@ -14,7 +15,7 @@
 
 ## 1. 职责
 
-本表是交付状态，不是产品业务确认状态。建立于2026-09-15，当前基线86个ID来自[03i§14.1唯一索引](../03i-customer-screen-blueprint.md#141-唯一验收-id-索引)，不复制其场景含义，也不表示DeepSeek已经生成或交付代码。
+本表是交付状态，不是产品业务确认状态。建立于2026-09-15，当前注册表保留86个ID（其中C-BOARDING-03／04／05已于2026-11-01退役，当前有效83个）来自[03i§14.1唯一索引](../03i-customer-screen-blueprint.md#141-唯一验收-id-索引)，不复制其场景含义，也不表示DeepSeek已经生成或交付代码。
 
 后续按实际需求SHA重新对齐ID集合，新增ID不能遗漏，既有ID不能静默删除。全量初始状态统一为尚未实现/未测试/未审查；先前H5演示不计生产实现证据。代码仓库未确定前，不填写虚构路径或通过记录。
 
@@ -26,7 +27,7 @@
 - dependency_assessment: unassessed | clear | blocked
 - blocked_by: G0分析后写实际决策ID列表；依赖未分析时写unassessed，不用空列表冒充无阻塞。
 - evidence_ref: 可访问的交付报告，必须能定位code_sha、对应测试子项和实际结果；无证据写not_provided。
-- scope: unassigned | current_batch | later_batch；later_batch不是删除需求或已验收。
+- scope: unassigned | current_batch | later_batch | retired；later_batch不是删除需求或已验收。retired仅用于03i明确退役的验收ID，保留历史行、不实现、不计入当前有效分母，未执行状态不改为passed。
 
 G0必须分析每个ID涉及的已确认/待决子场景。一个组合ID内任一适用子场景未跑、失败或阻塞，该ID不能整体标passed。无依赖分析不得进入实现。详细模块无独立C-ID的要求仍需在批次报告通过章节与测试子项映射，不因本表没有专门行而省略。
 
@@ -54,9 +55,9 @@ G0必须分析每个ID涉及的已确认/待决子场景。一个组合ID内任�
 | C-HOME-AD-06 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
 | C-BOARDING-01 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
 | C-BOARDING-02 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
-| C-BOARDING-03 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
-| C-BOARDING-04 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
-| C-BOARDING-05 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-BOARDING-03 | retired | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-BOARDING-04 | retired | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
+| C-BOARDING-05 | retired | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
 | C-RISK-01 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
 | C-COMPLAINT-01 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |
 | C-COMPLAINT-02 | unassigned | not_started | not_run | not_reviewed | unassessed | unassessed | not_provided |

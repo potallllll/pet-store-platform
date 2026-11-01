@@ -166,9 +166,12 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
 
     goods_section = staff.split("### 3.8 ", 1)[-1].split("\n## 4.", 1)[0]
     goods_meta = dict(META_RE.findall(goods_section)) if "### 3.8 " in staff else {}
+    workbench_section = staff.split("### 3.2 ", 1)[-1].split("\n### 3.3 ", 1)[0]
+    if dict(META_RE.findall(workbench_section)).get("active_services_order") != "[今日洗美, 在住寄养, 其他服务]":
+        add(results, "error", "goods.workbench_no_execution", staff_path, "workbench must not restore the retired snack execution group")
     for key, expected in {
         "status": "confirmed",
-        "status_scope": "ordinary_product_request_handling_and_boarding_feed_routing_only",
+        "status_scope": "product_request_handling_including_boarding_snack_sales_only",
         "goods_request_entry": "业务/商品处理/商品需求",
         "goods_request_query_groups": "[待处理, 待付款, 历史记录]",
         "goods_request_query_groups_are_states": "false",
@@ -181,7 +184,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "goods_request_quantity_change_reason_required": "false",
         "goods_request_item_removal_reason_required": "false",
         "goods_request_manual_cancellation_reason_required": "false",
-        "goods_request_reason_optional_scope": "ordinary_requests_before_settlement_only",
+        "goods_request_reason_optional_scope": "all_goods_requests_including_boarding_snacks_before_settlement",
         "goods_request_price_adjustment_and_refund_reasons": "preserve_existing_required_rules",
         "goods_request_preparation_step": "excluded",
         "goods_request_delivery_confirmation_step": "excluded",
@@ -190,7 +193,9 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "goods_request_cross_request_checkout_merge": "excluded",
         "goods_request_same_cart_multi_item": "one_original_request",
         "goods_request_inventory_and_timeout": "preserve_03e_reservation_and_default_24_hours",
-        "goods_request_boarding_feed_execution": "separate_actual_execution_per_03e_section_17",
+        "goods_request_boarding_feed_execution": "retired_ordinary_sale_optional_separate_care",
+        "goods_request_auto_care_event": "false",
+        "goods_request_care_requires_payment": "false",
     }.items():
         if goods_meta.get(key) != expected:
             add(results, "error", "goods.staff_handling", staff_path, f"section 3.8 {key} must be {expected}")
@@ -201,12 +206,43 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "### 7.1 店员查询与办理边界（已确认）",
         "不同购买需求分别处理、分别结算",
         "全部数量归零取消原需求并保留历史",
-        "普通商品需求在结算前修改数量、移除商品或人工取消，原因选填",
+        "普通商品需求（含加餐商品）在结算前修改数量、移除商品或人工取消，原因选填",
         "交易完成、不证明顾客已取走",
-        "第17.8节加餐取消／异常后续处理原因",
+        "收款不是记录喂食的前置条件",
     ):
         if required not in products:
             add(results, "error", "goods.client_contract", products_path, f"missing confirmed product contract: {required}")
+
+    snack_section = products.split("## 17. ", 1)[-1].split("\n## 18.", 1)[0]
+    snack_meta = dict(META_RE.findall(snack_section)) if "## 17. " in products else {}
+    for key, expected in {
+        "status": "confirmed",
+        "status_scope": "boarding_snack_purchase_as_ordinary_goods_sale",
+        "boarding_snack_sale_model": "ordinary_product_request_and_sale",
+        "boarding_snack_execution_workflow": "retired",
+        "boarding_snack_execution_todo": "excluded",
+        "boarding_snack_fed_confirmation": "excluded",
+        "boarding_snack_auto_care_event": "false",
+        "boarding_snack_care_record": "optional_separate_manual_boarding_care",
+        "boarding_snack_payment_prerequisite_for_care": "excluded",
+        "boarding_snack_pending_execution_submission_lock": "retired",
+    }.items():
+        if snack_meta.get(key) != expected:
+            add(results, "error", "goods.snack_simplification", products_path, f"section 17 {key} must be {expected}")
+
+    registry = current_text["docs/FIELD-REGISTRY.md"]
+    for field_id in ("F-BOARD-015", "F-BOARD-016", "F-BOARD-017", "F-BOARD-018"):
+        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
+        if len(row.split("|")) < 5 or row.split("|")[3].strip() != "D":
+            add(results, "error", "goods.retired_execution_field", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must stay D")
+    expected_retired = "[C-BOARDING-03, C-BOARDING-04, C-BOARDING-05]"
+    for rel in ("docs/03i-customer-screen-blueprint.md", "docs/execution/customer-delivery-tracker.md"):
+        if metadata(current_text[rel]).get("retired_acceptance_ids") != expected_retired:
+            add(results, "error", "goods.retired_acceptance_ids", Path(rel), "retired snack execution acceptance IDs must remain explicit")
+    tracker = current_text["docs/execution/customer-delivery-tracker.md"]
+    for acceptance_id in ("C-BOARDING-03", "C-BOARDING-04", "C-BOARDING-05"):
+        if f"| {acceptance_id} | retired | not_started | not_run | not_reviewed |" not in tracker:
+            add(results, "error", "goods.retired_acceptance_scope", Path("docs/execution/customer-delivery-tracker.md"), f"{acceptance_id} must remain retired, not passed")
 
     reminder_section = staff.split("#### 6.5.1 ", 1)[-1].split("\n## 7.", 1)[0]
     reminder_meta = dict(META_RE.findall(reminder_section)) if "#### 6.5.1 " in staff else {}
@@ -618,6 +654,10 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
             add(results, "error", "appointment.stale_blocker", Path(path), "closed DEC-APPT-01 remains in blocked_by")
 
     prohibited = {
+        "实际投喂确认成功后才": "the independent boarding snack execution workflow was retired",
+        "待投喂 / 投喂请求处理中": "snack purchases use ordinary goods states",
+        "17.8": "the old snack execution cancellation section was retired",
+        "原加餐仍核对当前寄养、结算、授权及真实执行": "care records no longer require prior goods settlement",
         "申请不占位、确认原子占位": "appointment hard-slot reservations were retired; use manual confirmation",
         "客户不能自由输入预约时间，只能选择门店开放的预约时段": "fixed booking intervals were retired",
         "时段名额以后端提交时实时校验为准": "hard slot capacity must not control current appointments",
