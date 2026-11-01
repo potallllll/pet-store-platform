@@ -672,13 +672,13 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-CMP-010 | `content_review_status` | S | Enum | pending / approved / rejected / needs_revision 等基础内容审核状态。 |
 | F-CMP-011 | `complaint_published_at` | S | Datetime | 基础审核通过后公开时间。 |
 | F-CMP-012 | `complaint_workflow_status` | S | Enum | 提交、等待回应、补证、待裁决等流程状态；不得替代平台结论。 |
-| F-CMP-013 | `business_response_status` | S | Enum | pending / responded / overdue。 |
+| F-CMP-013 | `business_response_status` | S | Enum | pending / responded / overdue；首次正式回应受理成功即responded，与补证流程同次更新，不清除F-CMP-018历史逾期，不代表已解决或平台结论。 |
 | F-CMP-014 | `response_due_at` | C | Datetime | 基础审核通过、投诉对象正确且完成有效通知后由平台生成的7天正式回应截止。04§6.1.1工作台争议卡片／业务列表／详情顶部唯一取本值重点展示，并按服务端当前时间派生真实剩余时间；不新增第二deadline或持久化倒计时，不随打开／换员工／通知重试重置。无值不伪填7天／逾期，不扩展食品多主体待决期限。 |
-| F-CMP-015 | `response_position` | C | Enum | 认可 / 部分认可 / 不认可 / 无法确认。 |
-| F-CMP-016 | `business_response_text` | C | Text | 商家正式回应正文。 |
-| F-CMP-017 | `business_responded_at` | S | Datetime | 首个正式回应时间。 |
+| F-CMP-015 | `response_position` | C | Enum | 认可 / 部分认可 / 不认可 / 无法确认；首次正式回应必填，成功后原值保留，不覆盖编辑／删除，不作为追加说明字段。 |
+| F-CMP-016 | `business_response_text` | C | Text | 首次正式回应必填正文；无回应草稿，成功后原文保留，不覆盖／删除。后续说明用F-EVD-007追加，不建第二可覆盖正文，原附件关联保留。 |
+| F-CMP-017 | `business_responded_at` | S | Datetime | 服务端首个成功正式回应时间，与已回应／补证流程及F-CMP-019同次记录；不因补充、换员工、重复／并发或通知重试重置。 |
 | F-CMP-018 | `business_response_overdue_at` | S | Datetime | 商家逾期未回应成立时间；不等于投诉成立。 |
-| F-CMP-019 | `evidence_window_ends_at` | C | Datetime | 商家首个正式回应后双方 3 天补证截止。 |
+| F-CMP-019 | `evidence_window_ends_at` | C | Datetime | 服务端首个成功正式回应后双方共用的3天补证截止；回应成功自动转补证，04§6.1.2卡片／列表／详情重点展示本值及真实剩余时间，不新造期限。追加／并发／重试不重置；平台要求额外材料期限另记，不改本值。 |
 | F-CMP-020 | `complaint_decision_status` | C | Enum | `established / partially_established / insufficient_evidence / not_supported`。 |
 | F-CMP-021 | `complaint_resolution_status` | S | Enum | unresolved / resolved；与事实结论分离。 |
 | F-CMP-022 | `complaint_resolved_at` | S | Datetime | 实际解决时间。 |
@@ -697,16 +697,16 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
-| F-EVD-001 | `complaint_evidence_id` | S | ID | 单条投诉证据。 |
+| F-EVD-001 | `complaint_evidence_id` | S | ID | 单条投诉证据／追加说明稳定标识；每次明确追加形成独立记录并关联原投诉，同一请求重试不重复，不覆盖原正式回应。 |
 | F-EVD-002 | `evidence_complaint_id` | C | ID | 所属投诉。 |
 | F-EVD-003 | `evidence_type` | S | Enum | text / image / video / chat / order / receipt / platform_record / regulatory / test_report 等。 |
 | F-EVD-004 | `evidence_submitter_type` | S | Enum | complainant / business / third_party / platform。 |
-| F-EVD-005 | `evidence_submitter_id` | S | ID | 提交者稳定标识。 |
+| F-EVD-005 | `evidence_submitter_id` | S | ID | 实际提交者稳定标识；门店补充为当前争议门店老板／任一有效员工，不限原经办人，服务端校验本店任职资格并审计，不自动授予原始审计读取权。 |
 | F-EVD-006 | `evidence_asset_ref` | S | Ref | 图片 / 视频 / 文件资源。 |
-| F-EVD-007 | `evidence_text` | S | Text | 文本证言 / 说明。 |
+| F-EVD-007 | `evidence_text` | S | Text | 文本证言／说明，含3天有效窗口内追加的门店说明；文字补充不强制媒体，不回写F-CMP-015／016，不改原回应和截止；内容审核／公开脱敏边界不变。 |
 | F-EVD-008 | `is_business_invited_witness` | C | Bool | 第三方是否由被投诉商家邀请，审核端必须可见。 |
 | F-EVD-009 | `evidence_relationship_type` | S | Enum/Text | 亲历、交易关系、旁观者、一般体验等与事件关系。 |
-| F-EVD-010 | `evidence_submitted_at` | S | Datetime | 证据提交时间。 |
+| F-EVD-010 | `evidence_submitted_at` | S | Datetime | 本条证据／追加说明实际提交时间，服务端记录并保留，不用它改写首次回应时间或重新启动3天窗口。 |
 | F-EVD-011 | `evidence_weight_level` | P | Enum | 证据等级 / 权重模型受 DEC-EVIDENCE-01 阻塞，不得自行做投票分数。 |
 
 ### 14.4 食品集中反馈信号（RISK）
