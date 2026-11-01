@@ -679,12 +679,12 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-CMP-017 | `business_responded_at` | S | Datetime | 服务端首个成功正式回应时间，与已回应／补证流程及F-CMP-019同次记录；不因补充、换员工、重复／并发或通知重试重置。 |
 | F-CMP-018 | `business_response_overdue_at` | S | Datetime | 商家逾期未回应成立时间；不等于投诉成立。 |
 | F-CMP-019 | `evidence_window_ends_at` | C | Datetime | 服务端首个成功正式回应后双方共用的3天补证截止；回应成功自动转补证，04§6.1.2重点展示。03h§7.1常规第三方邀请提交／追加也沿用本值，到期关提交仍可读公开内容，不另造邀请／佐证3天期限；晚收到／验证／重复邀请／追加／并发／通知重试不重置。平台要求额外材料期限另记，不改本值。 |
-| F-CMP-020 | `complaint_decision_status` | C | Enum | `established / partially_established / insufficient_evidence / not_supported`。 |
-| F-CMP-021 | `complaint_resolution_status` | S | Enum | unresolved / resolved；与事实结论分离。 |
-| F-CMP-022 | `complaint_resolved_at` | S | Datetime | 实际解决时间。 |
+| F-CMP-020 | `complaint_decision_status` | C | Enum | `established / partially_established / insufficient_evidence / not_supported`；事实最终裁决只由平台有权流程产生，与F-CMP-021解决情况独立，不以回应／退款／顾客意见或平台确认解决自动代写。 |
+| F-CMP-021 | `complaint_resolution_status` | S | Enum | unresolved / resolved；03h§6.1只允许平台有权人员明确确认后标记resolved。门店／顾客只提交处理情况和意见，不能直接写入或以同意／退款／已读／时间经过自动结案；不复用F-CMP-020事实结论，未确认的恢复／更正规则仍待决。 |
+| F-CMP-022 | `complaint_resolved_at` | S | Datetime | 实际解决时间，不是平台确认操作时间或顾客反馈时间；不得由退款／点击／消息时间自动代填。平台确认人、操作时间、前后值及请求复用F-AUD并关联原投诉；实际时间填报／更正规则后续确认。 |
 | F-CMP-023 | `complaint_appeal_status` | S | Enum | none / pending / decided 等申诉状态。 |
-| F-CMP-024 | `platform_reviewer_user_id` | S | ID | 作出平台事实裁决的审核员。 |
-| F-CMP-025 | `platform_decided_at` | S | Datetime | 平台裁决时间。 |
+| F-CMP-024 | `platform_reviewer_user_id` | S | ID | 作出平台事实裁决的审核员；不因另一平台人员确认已解决而覆盖，该解决确认操作者沿原F-AUD关联，不冒充事实裁决人。 |
+| F-CMP-025 | `platform_decided_at` | S | Datetime | 平台事实裁决时间，不是解决确认操作时间或实际解决时间；解决确认不自动覆盖本值。 |
 | F-CMP-026 | `decision_reason` | C | Text | 裁决理由与关键依据。 |
 | F-CMP-027 | `complaint_claim_id` | S | ID | 投诉中一个可独立判断的事实点。 |
 | F-CMP-028 | `complaint_claim_text` | S | Text | 事实点内容。 |

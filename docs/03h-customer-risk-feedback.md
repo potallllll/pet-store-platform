@@ -293,7 +293,7 @@ AI 可以用于内容分类、摘要、重复检测和风险提示，但 V1.0 �
 
 ## 6. 是否解决与公开排序
 
-`resolution_status` 与 `decision_status` 独立。
+`complaint_resolution_status`（F-CMP-021，是否已解决）与 `complaint_decision_status`（F-CMP-020，事实结论）独立。文中的resolution_status／decision_status仅为业务简称，对外字段仍按FIELD-REGISTRY。
 
 因此允许：
 
@@ -315,6 +315,30 @@ AI 可以用于内容分类、摘要、重复检测和风险提示，但 V1.0 �
 已解决记录必须明显显示“已解决”，避免被误认为仍处于未处理争议。
 
 投诉人撤回、内容违规下架、平台裁决改变等场景保留审计历史；具体公开呈现可在后续 UI 细化，但不得通过普通修改无痕删除历史。
+
+### 6.1 已确认：事实裁决与解决确认均归平台
+
+> status: confirmed
+> status_scope: platform_only_fact_decision_and_resolution_confirmation_authority
+> confirmed_by: user
+> confirmed_on: 2026-11-02
+> complaint_fact_decision_authority: platform_only
+> complaint_resolution_confirmation_authority: platform_only
+> store_and_complainant_actions: submit_processing_facts_materials_and_opinions_only
+> store_can_mark_resolved: false
+> complainant_can_mark_resolved: false
+> party_feedback_changes_resolution_status: false
+> resolution_status_field: complaint_resolution_status
+> fact_decision_status_field: complaint_decision_status
+> resolution_confirmation_requires_explicit_platform_action: true
+> resolution_and_fact_decision_independent: true
+> remaining_pending_scope: processing_submission_forms_review_criteria_platform_role_permission_mapping_resolution_time_corrections_and_appeals
+
+- **最终权限**：投诉是否成立仍由§5规定的平台有权审核人员作出事实裁决；是否已解决也必须由平台有权人员在平台管理流程明确确认。争议门店（含本店老板／有效员工）及本案投诉人只能提交处理情况、材料和意见，不能直接结案、标记resolved或改写平台结论；顾客反馈“已处理好”不直接变成平台已确认解决。
+- **服务端执行**：客户端／店员端不提供可直接写入已解决的确认结案动作；直接API、伪造角色或提交含resolved的材料同样不能改变该状态。平台端也须校验有权身份、原投诉和最新状态，成功确认后才更新F-CMP-021并生成对应状态消息／公开展示；失败不得提前显示已解决，同次请求重试不重复状态事件或通知。具体平台角色／权限键及后台界面仍由阶段05／08收口，不新增角色或把门店统一业务权限扩成平台权限。
+- **双方意见与平台确认分开**：门店或投诉人提交回应／补证／处理意见，或双方意见一致，均不能自动代替平台确认；退款记账、消息已读、时间经过、平台已经给出成立／不支持等事实结论也不自动标记已解决。补充材料仍走原有对象、权限和有效窗口，本次不批准补证结束后无限追加或另建处理订单。
+- **独立结果与历史**：平台确认已解决只改变解决情况，不自动改写是否成立、首个正式回应、历史逾期或原补证截止，不代表撤回、下架或删除公开投诉。事实裁决也不自动替代解决确认；长期公开、已解决明显标识及原排序按本节既有规则执行，不新建一个混用事实结论的“已结案”总状态。
+- **记录与范围**：确认操作者、服务端操作时间、前后值和幂等请求复用F-AUD并关联原complaint_id；原始审计读取权限不扩大。F-CMP-022仍为实际解决时间，不用平台点击／操作时间或顾客反馈时间自动代填，实际时间填写与更正规则后续确认。本节只确定最终权限及双方仅可提交意见的边界；处理说明／媒体的表单与必填要求、申请平台核验的具体流程、双方分歧核验标准、确认理由表单、误标恢复及申诉期限仍待确认，不能据此默认实现。
 
 ---
 
