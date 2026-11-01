@@ -673,7 +673,7 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-CMP-011 | `complaint_published_at` | S | Datetime | 基础审核通过后公开时间。 |
 | F-CMP-012 | `complaint_workflow_status` | S | Enum | 提交、等待回应、补证、待裁决等流程状态；不得替代平台结论。 |
 | F-CMP-013 | `business_response_status` | S | Enum | pending / responded / overdue。 |
-| F-CMP-014 | `response_due_at` | C | Datetime | 基础审核通过且完成有效通知后计算的 7 天正式回应截止。 |
+| F-CMP-014 | `response_due_at` | C | Datetime | 基础审核通过、投诉对象正确且完成有效通知后由平台生成的7天正式回应截止。04§6.1.1工作台争议卡片／业务列表／详情顶部唯一取本值重点展示，并按服务端当前时间派生真实剩余时间；不新增第二deadline或持久化倒计时，不随打开／换员工／通知重试重置。无值不伪填7天／逾期，不扩展食品多主体待决期限。 |
 | F-CMP-015 | `response_position` | C | Enum | 认可 / 部分认可 / 不认可 / 无法确认。 |
 | F-CMP-016 | `business_response_text` | C | Text | 商家正式回应正文。 |
 | F-CMP-017 | `business_responded_at` | S | Datetime | 首个正式回应时间。 |
