@@ -230,6 +230,8 @@
 
 平台主动要求补材料形成的额外期限必须单独记录；不能静默修改原 3 天规则。
 
+§6.2的“提交处理情况”是实际处理进展：平台尚未确认解决时可在原补证期后追加，但不重开原补证窗口、不把裁决异议当普通补证重新受理。门店正式回应、原争议证据及第三方佐证仍分别执行原门槛与截止，不因处理进展入口放宽。
+
 ---
 
 ## 5. 平台裁决
@@ -332,13 +334,47 @@ AI 可以用于内容分类、摘要、重复检测和风险提示，但 V1.0 �
 > fact_decision_status_field: complaint_decision_status
 > resolution_confirmation_requires_explicit_platform_action: true
 > resolution_and_fact_decision_independent: true
-> remaining_pending_scope: processing_submission_forms_review_criteria_platform_role_permission_mapping_resolution_time_corrections_and_appeals
+> remaining_pending_scope: platform_review_criteria_role_permission_mapping_resolution_time_post_resolution_changes_and_appeals
+> processing_progress_authority: section_6_2
 
 - **最终权限**：投诉是否成立仍由§5规定的平台有权审核人员作出事实裁决；是否已解决也必须由平台有权人员在平台管理流程明确确认。争议门店（含本店老板／有效员工）及本案投诉人只能提交处理情况、材料和意见，不能直接结案、标记resolved或改写平台结论；顾客反馈“已处理好”不直接变成平台已确认解决。
 - **服务端执行**：客户端／店员端不提供可直接写入已解决的确认结案动作；直接API、伪造角色或提交含resolved的材料同样不能改变该状态。平台端也须校验有权身份、原投诉和最新状态，成功确认后才更新F-CMP-021并生成对应状态消息／公开展示；失败不得提前显示已解决，同次请求重试不重复状态事件或通知。具体平台角色／权限键及后台界面仍由阶段05／08收口，不新增角色或把门店统一业务权限扩成平台权限。
-- **双方意见与平台确认分开**：门店或投诉人提交回应／补证／处理意见，或双方意见一致，均不能自动代替平台确认；退款记账、消息已读、时间经过、平台已经给出成立／不支持等事实结论也不自动标记已解决。补充材料仍走原有对象、权限和有效窗口，本次不批准补证结束后无限追加或另建处理订单。
+- **双方意见与平台确认分开**：门店或投诉人提交回应／补证／处理意见，或双方意见一致，均不能自动代替平台确认；退款记账、消息已读、时间经过、平台已经给出成立／不支持等事实结论也不自动标记已解决。原争议补证仍走既有对象、权限和有效窗口；§6.2的实际处理进展在平台尚未确认解决时可在原3天期后追加，但不重新举证、重开补证期或另建处理订单。
 - **独立结果与历史**：平台确认已解决只改变解决情况，不自动改写是否成立、首个正式回应、历史逾期或原补证截止，不代表撤回、下架或删除公开投诉。事实裁决也不自动替代解决确认；长期公开、已解决明显标识及原排序按本节既有规则执行，不新建一个混用事实结论的“已结案”总状态。
-- **记录与范围**：确认操作者、服务端操作时间、前后值和幂等请求复用F-AUD并关联原complaint_id；原始审计读取权限不扩大。F-CMP-022仍为实际解决时间，不用平台点击／操作时间或顾客反馈时间自动代填，实际时间填写与更正规则后续确认。本节只确定最终权限及双方仅可提交意见的边界；处理说明／媒体的表单与必填要求、申请平台核验的具体流程、双方分歧核验标准、确认理由表单、误标恢复及申诉期限仍待确认，不能据此默认实现。
+- **记录与范围**：确认操作者、服务端操作时间、前后值和幂等请求复用F-AUD并关联原complaint_id；原始审计读取权限不扩大。F-CMP-022仍为实际解决时间，不用平台点击／操作时间或顾客反馈时间自动代填，实际时间填写与更正规则后续确认。处理情况入口、说明必填／媒体选填、追加历史、补证期后实际进展与未审材料可见性按§6.2已确认；申请平台核验的额外流程、平台核验标准／角色权限、确认理由、实际解决时间与误标更正、已解决后的新进展及申诉细分仍待确认，不据本节默认实现。
+
+### 6.2 已确认：提交处理情况5项
+
+> status: confirmed
+> status_scope: processing_progress_entry_inputs_append_history_window_and_visibility
+> confirmed_by: user
+> confirmed_on: 2026-11-02
+> entry_location: original_complaint_detail
+> entry_label: 提交处理情况
+> submission_actors: [disputed_store_owner, disputed_store_active_staff, original_complainant]
+> original_handler_required: false
+> owner_approval_required: false
+> required_input: evidence_text
+> media_required: false
+> refund_receipt_or_signature_required: false
+> record_mutation_policy: append_only_preserve_original
+> record_business_purpose: handling_progress
+> after_original_evidence_deadline: allow_actual_progress_while_platform_has_not_confirmed_resolved
+> original_evidence_deadline_reset: false
+> unpublished_material_readers: [actual_submitter_with_current_access, authorized_platform]
+> public_content_policy: platform_reviewed_and_redacted_copy_only
+> submission_changes_decision_resolution_or_finances: false
+> remaining_pending_scope: platform_review_criteria_role_permission_mapping_resolution_time_post_resolution_changes_and_appeals
+
+1. **入口与人员**：在原争议详情提供“提交处理情况”。争议门店的老板／所有账号及任职关系有效的员工，以及本案投诉人均可提交，不限原经办人、不需老板审批；服务端继续校验当前身份、本店／原投诉归属及原对象访问权。不是任意门店或围观顾客可提交，第三方佐证邀请也不授予此入口资格；不另建处理订单、客服或聊天系统。
+2. **内容**：简短处理说明必填，图片／视频选填，不强制退款凭证或签字。可如实说明联系、补做、线下退款等实际进展，不新增复杂分类、退款操作或强制选择实际处理时间。复用F-EVD-007／006，记录实际提交人及服务端提交时间；文字写“已处理好”仍只是材料，不自动成为平台确认解决或实际解决时间。
+3. **追加历史**：每次明确提交独立留痕，保留原文、附件、实际提交人和时间。写错通过另行追加更正，不覆盖或删除原记录，不冒充其他员工／顾客发言；更正记录本身也遵守本节资格及可见性。复用F-EVD-001／002／004／005／010及审计，同次请求重试／响应丢失后查询原结果，不重复建记录或把成功改报失败。
+4. **处理进展与原补证期分开**：平台尚未确认已解决时，原3天补证期结束后仍可追加实际处理进展，例如第5天完成线下退款；原投诉访问限制仍有效。该记录使用handling_progress用途，不计为重开原争议补证、不修改原evidence_window_ends_at或事实裁决。已作事实裁决但尚未解决的后续处理也沿本节；对原事实结论的异议仍走申诉，不能把新争议证据或翻案主张伪装成处理进展绕过原窗口。服务端按最新解决状态校验；平台已确认resolved后，本次不开放新提交／更正，也不自动恢复未解决，后续规则另定。已成功提交的历史及其访问边界保留，不因稍后确认解决被删除或自动公开。
+5. **材料可见性**：未审核／未公开的原文与附件只允许实际提交者（仍具当前合法访问资格）及平台有权人员查看；对方、同店其他员工、非该条作者的老板和公众不因店内管理／邀请权限获得原件。公开部分由平台审核、脱敏后，以独立公开文本／资源引用展示；原件不因公开副本生效而开放，不从原文或原附件回填公开接口。公开读取还须满足原投诉当前公开／可见权限，父投诉下架或不可公开时不能仅凭副本标记继续对外展示，参与者读取仍按原对象权限。列表／详情／附件地址／分享／消息／缓存／导出及审计材料关联读取执行同一边界，老板可看本店审计操作事实也不因此取得他人未公开材料；员工仍不能读取原始系统审计。此规则仅适用于本节处理情况，不把投诉原始证据或第三方佐证原件的其他待决权限整体解阻。
+
+字段复用既有F-EVD记录，新增F-EVD-015 evidence_business_purpose区分complaint_evidence与handling_progress，不能由客户端标记自行绕过窗口；提交后用途及原投诉／作者归属不改。F-EVD-016 handling_progress_is_public由平台审核／脱敏并发布后置为真，017／018只存公开文本／脱敏媒体引用；未准备好公开副本时不得公开或回退原件。具体平台审核标准、角色权限及完整退回／下架恢复流程仍待后续，提交成功不等于审核通过／已公开。处理情况的提交时间不等于真实退款、实际解决或平台确认时间。
+
+提交处理情况不等于首个正式回应，不开启／重置7天回应或3天补证，不清除历史逾期，不自动改写事实结论或已解决状态；也不直接产生退款、余额扣增、财务流水、库存或其他交易。真实线下收退款仍按原账本规则单独记账，避免因同时记录处理说明而重复记账。本节不补齐食品多主体门店归属／回应映射，也不解阻证据权重及其他未确认政策，原投诉合法访问和对应DEC继续适用。
 
 ---
 
