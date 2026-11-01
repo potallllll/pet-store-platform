@@ -164,7 +164,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         if appointment_staff_meta.get(key) != expected:
             add(results, "error", "appointment.staff_handling", staff_path, f"section 3.7 {key} must be {expected}")
 
-    goods_section = staff.split("### 3.8 ", 1)[-1].split("\n## 4.", 1)[0]
+    goods_section = staff.split("### 3.8 ", 1)[-1].split("\n### 3.9 ", 1)[0].split("\n## 4.", 1)[0]
     goods_meta = dict(META_RE.findall(goods_section)) if "### 3.8 " in staff else {}
     workbench_section = staff.split("### 3.2 ", 1)[-1].split("\n### 3.3 ", 1)[0]
     if dict(META_RE.findall(workbench_section)).get("active_services_order") != "[今日洗美, 在住寄养, 其他服务]":
@@ -278,6 +278,62 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     }.items():
         if required not in current_text[rel]:
             add(results, "error", "reward.shipping_truth", Path(rel), "shipping must not imply arrival")
+
+    home_path = Path("docs/03j-customer-home-feeding-marketplace.md")
+    home_section = current_text[home_path.as_posix()].split("## 9. ", 1)[-1].split("\n## 10.", 1)[0]
+    home_meta = dict(META_RE.findall(home_section))
+    for key, expected in {
+        "status": "confirmed",
+        "status_scope": "store_coordination_eight_basic_rules_only",
+        "home_feeding_staff_entry": "业务/上门喂养",
+        "home_feeding_workbench_trigger": "valid_user_acceptance_requiring_bound_store_coordination",
+        "home_feeding_query_groups": "[待对接, 进行中, 历史记录]",
+        "home_feeding_query_groups_are_states": "false",
+        "home_feeding_pending_sort": "current_acceptance_time_ascending",
+        "home_feeding_handler_roles": "[merchant_owner, active_store_staff]",
+        "home_feeding_owner_approval_required": "false",
+        "home_feeding_original_handler_restriction": "false",
+        "home_feeding_private_detail_access": "original_authorization_and_necessary_scope_only",
+        "home_feeding_contact_method": "manual_phone_or_wechat",
+        "home_feeding_coordination_note_required": "false",
+        "home_feeding_media_required": "false",
+        "home_feeding_progress_actions": "[开始对接, 确认安排, 开始服务, 完成]",
+        "home_feeding_progress_mode": "manual_on_original_request",
+        "home_feeding_auto_complete": "false",
+        "home_feeding_per_visit_checkin": "excluded",
+        "home_feeding_location_checkin": "excluded",
+        "home_feeding_signature_or_customer_acceptance": "excluded",
+        "home_feeding_completion_evidence": "actual_service_end_then_staff_confirmation_with_actor_and_time",
+        "home_feeding_completion_financial_effect": "no_automatic_collection_or_store_revenue",
+        "home_feeding_remaining_decisions": "[DEC-FEED-01, DEC-FEED-02, DEC-FEED-03]",
+    }.items():
+        if home_meta.get(key) != expected:
+            add(results, "error", "home_feeding.basic_coordination", home_path, f"section 9 {key} must be {expected}")
+    home_staff = staff.split("### 3.9 ", 1)[-1].split("\n## 4.", 1)[0] if "### 3.9 " in staff else ""
+    home_staff_meta = dict(META_RE.findall(home_staff))
+    for key, expected in {
+        "status": "confirmed",
+        "status_scope": "home_feeding_store_coordination_eight_basic_rules_only",
+        "home_feeding_authority": "03j_section_9",
+        "home_feeding_query_groups": "[待对接, 进行中, 历史记录]",
+        "home_feeding_progress_actions": "[开始对接, 确认安排, 开始服务, 完成]",
+        "home_feeding_remaining_decisions": "[DEC-FEED-01, DEC-FEED-02, DEC-FEED-03]",
+    }.items():
+        if home_staff_meta.get(key) != expected:
+            add(results, "error", "home_feeding.staff_scope", staff_path, f"section 3.9 {key} must be {expected}")
+    for field_id, logical_name in {
+        "F-FEED-028": "store_coordination_note",
+        "F-FEED-029": "store_coordination_media_refs",
+    }.items():
+        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
+        if f"`{logical_name}` | S |" not in row:
+            add(results, "error", "home_feeding.coordination_field", Path("docs/FIELD-REGISTRY.md"), f"missing confirmed {field_id} / {logical_name}")
+    for field_id in ("F-FEED-024", "F-FEED-025", "F-FEED-026", "F-FEED-027"):
+        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
+        if len(row.split("|")) < 5 or row.split("|")[3].strip() != "P":
+            add(results, "error", "home_feeding.pending_scope", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must remain pending")
+    if metadata(current_text[home_path.as_posix()]).get("blocked_by") != "[DEC-FEED-01, DEC-FEED-02, DEC-FEED-03]":
+        add(results, "error", "home_feeding.remaining_decisions", home_path, "unconfirmed cancellation, timeout and continuity decisions must remain blocked")
 
     reminder_section = staff.split("#### 6.5.1 ", 1)[-1].split("\n## 7.", 1)[0]
     reminder_meta = dict(META_RE.findall(reminder_section)) if "#### 6.5.1 " in staff else {}
