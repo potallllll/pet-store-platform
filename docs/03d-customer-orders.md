@@ -1,7 +1,7 @@
 # 03D 客户端「我的订单」模块
 
 > status: mixed
-> confirmed_scope: completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_current_order_rules_wash_groom_care_twelve_boarding_sixteen_pricing_checkout_departure_unpaid_hold_and_offline_financial_ledger
+> confirmed_scope: care_notices_interruption_and_completed_amendments_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_current_order_rules_wash_groom_care_twelve_boarding_sixteen_pricing_checkout_departure_unpaid_hold_and_offline_financial_ledger
 > pending_scope: interruption_client_label_other_state_recovery_remaining_mixed_business_checkout_except_same_pet_wash_groom_care_add_on_partial_refund_allocation_ledger_corrections_and_remaining_boarding_rate_changes_boarding_followup_reminders_special_handover_and_corrections
 > status_scope: full_document
 > change_policy: record_required
@@ -127,9 +127,9 @@ V1.0 只保留三个分类：
 
 护理按04§4.5已确认12项执行，不开放顾客预约，也不新增订单Tab、底部菜单或独立AI报告。独立护理从门店工作台“到店开单 → 护理”创建，完整订单／历史在门店“业务 → 订单与收银”；顾客继续从本人的“我的订单 → 服务”及宠物服务记录读取同一真实订单，不复制一套护理账本。
 
-每宠独立进度，开单待开始、员工手动开始／完成；取消未开始、中止已开始，真实状态不可伪装完成。护理前仅需一次真实整体检查“未见明显异常／发现异常／无法检查”，默认未检查；异常或无法检查须说明及记录告知主人后的决定。完成前确认有无新增异常，有则说明；不强制完整洗美六项表，照片和普通过程备注选填。对本人显示真实项目、服务结果、护理注意事项，内部备注／评价／原审计不公开；没有素材不编造正常或AI结论。
+每宠独立进度，开单待开始、员工手动开始／完成；取消未开始、中止已开始，真实状态不可伪装完成。护理前仅需一次真实整体检查“未见明显异常／发现异常／无法检查”，默认未检查；异常或无法检查须说明及记录告知主人后的决定。完成前确认有无新增异常，有则说明；不强制完整洗美六项表，照片和普通过程备注选填。对本人显示真实项目、服务结果、护理注意事项，内部备注／评价／原审计不公开；没有素材不编造正常或AI结论。正常已完成护理可由本店老板／有效员工补照片、改普通说明，已结算亦可、无审批、原因选填，保留前后内容／人／时间，顾客默认最新，检查结论／实际时间／收费明细仍按原规则，不重开不改账。按04§4.5：开始普通通知，完成／重新完成重要通知，完成后补图／普通说明更正普通通知；均生成站内并尝试已授权可用微信，真实事件／补改保存一次一条、重试不重复。中止说明选填、无本次顾客过程／结果、不发中止消息，门店已保存真实记录留存；中止独立收费原因仍按原规则。短信暂未开放、护理无AI，同宠洗美护理加项仍走原洗美消息，不另发护理消息。
 
-正常完成后即发布本宠普通结果，不等收款；同客多宠一单、每宠独立记录、最后一起结算，不跨顾客合单或按宠分次付款。正常护理完成后才收款，中止按实际应收及原因结算、不自动按比例算；全未开始即全部取消不收费、不记免单成交。财务即时／工作结束后录入均按§1.1，未记账仍真实显示服务完成及未结算，不增线上支付。
+正常完成后即发布本宠普通结果，不等收款；同客多宠一单、每宠独立记录、最后一起结算，不跨顾客合单或按宠分次付款。正常护理完成后才收款，中止操作说明选填、收费仍按实际应收及独立收费原因结算、不自动按比例算；全未开始即全部取消不收费、不记免单成交。财务即时／工作结束后录入均按§1.1，未记账仍真实显示服务完成及未结算，不增线上支付。
 
 已完成未结算可重新处理、原因选填、操作留痕；顾客当前恢复服务中，旧普通结果留历史、不冒充当前最终，再次完成发布真实结果，已结算不重开或改历史金额。护理挂单／人工联系及撤销按04§4.6；护理的额外通知、其他状态恢复等剩余细则仍待04对应DEC，不把洗美额外通知整套套入。
 
