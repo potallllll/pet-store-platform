@@ -2,7 +2,7 @@
 
 > status: mixed
 > status_scope: staff_requirements
-> confirmed_scope: staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
+> confirmed_scope: staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
 > pending_scope: all_other_staff_proposals_and_cross_store_risk_details
 > change_policy: record_required
 > development_readiness: blocked
@@ -68,6 +68,21 @@
 > wash_groom_page_groups: [待接宠, 服务中, 待结算, 历史记录]
 > wash_groom_pickup_confirmation: excluded
 > wash_groom_create_entry: 洗美开单
+> wash_groom_active_lists_confirmed_on: 2026-11-02
+> wash_groom_waiting_scope: created_service_records_in_not_started_only
+> wash_groom_unconverted_appointment_entry: 业务/预约管理
+> wash_groom_waiting_sort: original_order_created_at_ascending
+> wash_groom_in_progress_sort: actual_service_started_at_ascending
+> wash_groom_pending_settlement_sort: original_order_created_at_ascending
+> wash_groom_active_lists_cross_day: retain_until_original_business_state_changes
+> wash_groom_active_lists_history_window: not_applied
+> wash_groom_active_lists_search_keys: [customer_contact_mobile]
+> wash_groom_active_lists_filters: [洗护／美容]
+> wash_groom_active_lists_columns: [开单时间, 顾客, 宠物, 服务项目, 服务状态, 结算状态, 最终应收]
+> wash_groom_active_lists_price_unknown_label: 待确认
+> wash_groom_active_lists_multi_pet_price_label: 整单应收
+> wash_groom_active_lists_action_entry: original_detail_only
+> wash_groom_list_one_click_complete_or_collect: excluded
 > wash_groom_history_confirmed_on: 2026-11-02
 > wash_groom_history_service_states: [completed, cancelled, interrupted]
 > wash_groom_history_settlement_required: false
@@ -85,14 +100,22 @@
 
 | 页面分组 | 已确认职责 |
 |---|---|
-| 待接宠 | 承接等待到店交接、服务前检查的洗护／美容事项 |
-| 服务中 | 展示正在洗护／美容的服务 |
-| 待结算 | 服务已正常结束或已中止、尚未完成结算的洗美订单；中止费用尚未明确时可进入原单查看／处理，但不放行收款。挂单仍关联原订单，不能当作已付款或另一张消费单。 |
+| 待接宠 | 仅已开单且尚未开始的洗护／美容服务，按原单开单时间从早到晚；尚未开单的预约从业务／预约管理办理，不自动混入本组。 |
+| 服务中 | 展示正在洗护／美容的服务，按各宠真实开始服务时间从早到晚。 |
+| 待结算 | 服务已正常结束或已中止、尚未完成结算的洗美原单，按开单时间从早到晚，未处理跨天保留、不受历史15天限制；费用未明确可查看处理但不收款。挂单仍关联原单，不是已付款或第二消费单。 |
 | 历史记录 | 查询已完成、已取消、已中止的洗护／美容服务，未结算亦可查；默认近15天，可按本店顾客手机号搜索及项目类型／服务状态／结算状态／日期筛选，展示原单最终应收。 |
 
 页面保留“洗美开单”按钮，复用§3.2已确认的洗美开单能力；工作台、到店开单中的洗美路径与本页不得分别创建独立流程或订单。
 
 页面分组不替代§4.3服务状态。洗美不设确认接走，不因完成或付款声明已接走；原待交付分组改为待结算，不保留同义入口。挂单统一在业务／订单与收银／挂单查看，复用原单；工作台只承接当日需处理提醒，不变成完整欠款目录。历史查询按下述已确认范围执行；其余未列状态／账本细节仍按DEC-STAFF-04／05，不创建隐藏接走接口。
+
+**待接宠／服务中／待结算列表（2026-11-02确认）**：
+
+1. **待接宠范围**：只有已开单、存在原order_id／service_record_id且服务当前not_started的洗护／美容，按原Order F-CORE-013 created_at升序；纯预约无论是否已确认，只要未开单仍从业务／预约管理办理。确认预约不自动建单或开始服务，原预约转开单／停用项例外、前检查与主人决定继续按原规则校验。
+2. **服务中排序**：真实in_progress服务按各自F-SVC-005 service_started_at升序，不用开单／预约／手机时间或列表打开时间替代；读取失败或缺真实时间如实提示，不伪造。多宠进度独立，一宠开始／完成不覆盖余宠，已完成重新处理仍按其原合法流程，不因列表分组另建服务对象。
+3. **待结算及跨天**：正常结束或已中止、尚未结算的原记录按原order.created_at升序。未处理跨天保留，三个办理列表均按当前真实状态查询，不按午夜清空或套用历史默认15天条件；历史15天只作用于历史入口。中止金额未明确仍可进原详情处理，收款须原服务结束／费用明确等前置条件；原挂单按§4.6办理，不因进入待结算自动挂单／免单／收款。已结算后按真实状态退出待结算，不因旧缓存继续占位。
+4. **搜索、筛选与列**：三个列表均按本店顾客手机号F-CUST-001搜索，支持洗护／美容类型筛选，组合当前分组状态生效；客户页／挂单／历史各自已确认的其他搜索筛选不变。列显示开单时间、顾客／宠物、服务项目、真实服务状态、原单结算状态和最终应收；唯一价格源F-ORD-014，不用参考价／实收替代，不另加列表实收。金额尚未明确时显示“待确认”，多宠一单标“整单应收”，不分摊逐宠或重复记收入；0应收不自动表示已免单或收款，内部备注／原始审计不公开。
+5. **统一操作入口**：点击进入同一原单／原宠物服务详情，再按对应流程检查、开始、完成或结算；三个列表不提供一键完成、一键收款，不能仅在列表改标签或跳过检查／费用确认。只查询、搜索、筛选、刷新不改变服务／金额／库存／余额／通知，切店或换条件后迟到响应不得串旧数据。多宠服务可能按各自状态在不同分组关联同一原订单，分组不复制订单、金额或交易；取消／中止仍不能恢复原服务。工作台仍只承接当天事项，独立护理／寄养不混入洗美分组，本规则不推导为其他业务列表的动作限制或新状态机。
 
 **历史记录查询（2026-11-02确认）**：
 
@@ -1409,7 +1432,7 @@
 | DEC-STAFF-01 | pending | 其他老板菜单、其余手机／Web分工及优先流程仍待确认。§3.0.8四类／表单校验／默认启用／恢复／旧预约例外和§3.0.9全部到店订单调价／免单已确认；护理仅门店开单、商品只关联已有SKU。门店资料平台审核页待阶段05 | 阶段04/05，页面范围；已确认子项不回退 |
 | DEC-STAFF-02 | pending | §4.1基础资料、洗美／护理同客多宠一单独立进度／一起结算、同宠洗美护理原单加项已定；§5.1寄养多宠各自独立入住／位置／时间已定，§5.2同店同客可一起结算、逐宠本次日价与实际晚数计算已定。新增顾客保存后提醒／失败直接继续及重复频率按§6.5.1已定；其他未决混单、复杂复用／绑定冲突仍待细化 | 阶段04/06，与03g核对；不扩大到商品／寄养混单或自动合并顾客 |
 | DEC-STAFF-03 | pending | 争议待办归属争议门店及§3.2.1三步流转／单卡去重／跨天保留已定；§3.7预约待处理／阅读确认／共享提醒不可用选择继续已定；§5.1寄养异常由员工实际处理并填写结果后明确关闭，已读／通知不关闭已定。食品风险初次归属／平台暂承接及同案同店不重复按03f§13.3已定，§13.3.1全店有效人员知悉／基本可见范围／无领取转交审批／移卡留历史已定；已派后改店／多店、其他待办归属、领取／转交／责任转移、多人处理及其余通知任务关系仍待决 | 阶段04/06/08；不回退寄养异常已确认范围 |
-| DEC-STAFF-04 | pending | §3.0.1洗美历史已完成／取消／中止均可查、未结算双入口同原单、默认15天／手机号／类型状态日期筛选与只显示整单最终应收已定； §4.3／4.4洗美及§4.5护理12项已定：独立护理五态、简短强制前检查／主人决定／完成前确认、照片备注选填、本人普通结果、未结算重开；同宠洗美加护理不降低洗美六项。洗美中止说明选填／顾客无过程／无中止通知已定；正常已完成的补图／普通文字更正含已结算已定：全店有效人员无审批、原因选填、历史保留／默认最新、不重开不改账不通知，AI由顾客选择；顾客精确标签、其他未列状态／内容更正、其他护理取消／更正事件消息、AI新素材再次分析版本契约等其余细节仍待决；护理开始普通／完成重要／补改普通、中止不通知及完成后补改权限按§4.5已定，取消／中止后不恢复原服务、包括误点都重新开单按§4.4已定，寄养不照搬 | 阶段04/06，与03/03i联动；不回退已确认洗美或护理规则 |
+| DEC-STAFF-04 | pending | §3.0.1另三列表的范围／升序排序、手机号及类型筛选、最终应收列／待确认／整单标签、跨天保留／不套历史15天、原详情办理／无列表一键完成收款五项已定；洗美历史已完成／取消／中止均可查、未结算双入口同原单、默认15天／手机号／类型状态日期筛选与只显示整单最终应收已定； §4.3／4.4洗美及§4.5护理12项已定：独立护理五态、简短强制前检查／主人决定／完成前确认、照片备注选填、本人普通结果、未结算重开；同宠洗美加护理不降低洗美六项。洗美中止说明选填／顾客无过程／无中止通知已定；正常已完成的补图／普通文字更正含已结算已定：全店有效人员无审批、原因选填、历史保留／默认最新、不重开不改账不通知，AI由顾客选择；顾客精确标签、其他未列状态／内容更正、其他护理取消／更正事件消息、AI新素材再次分析版本契约等其余细节仍待决；护理开始普通／完成重要／补改普通、中止不通知及完成后补改权限按§4.5已定，取消／中止后不恢复原服务、包括误点都重新开单按§4.4已定，寄养不照搬 | 阶段04/06，与03/03i联动；不回退已确认洗美或护理规则 |
 | DEC-STAFF-05 | pending | 洗美收费／挂单及护理正常完成后收费／中止实际费用／全未开始取消不收费／多宠一起结算已定；统一明确免单、最多两种支付、先本金后赠送、无老板审批且原路退款、自动资产联动不变。寄养§5.2过夜计数／实际离店结算、入住逐宠设置日价及同店同客多宠一起结算、分批接走分别结算已定，离店费用确认即离店、未付可手动挂单原因必填且按实际时间停计已定；第14～18项离店确认前留痕更正整次正日价、不分段／不自动涨价、免费走明确免单、离店未付只调最终应收及已结算不直接改账已定；§4.6挂单查询／人工联系、护理挂单及误挂撤销已定；其余未决类型结算时序、除同宠洗美护理加项外的未决混合业务、部分退款分配、账本更正／冲正等剩余细则仍待决；外部支付通道及失败恢复不在V1范围 | 阶段04/06/08；只记账、服务及时操作，不造收款／完成／退款，不扩展充值退款／任意改余额／积分权限 |
 | DEC-STAFF-06 | pending | §5.1寄养16项及用户第11项修正已定：实际到店确认、时间／单宠防重、多宠独立、简单位置、简短入住检查、本次资料／明确同步、饮食核实／随带物品、单表单三动作→时间→选填照片、逐宠无配额、可见性独立、异常明确处理、到期仅提醒。§5.2北京时间03:00过夜计数（入住排除／离店包含）、0晚无寄养费、实际离店结算、延期／提前离店据实重算已定。本店员工入住逐宠设置日价及同店同客多宠一起结算、分批接走分别结算且余宠不预收、逐宠计算再汇总、费用确认即离店而未付仍可挂单／实际时间停计／物品交还提醒已定。第14～18项日价更正／不分段／正日价及明确免单／离店后未付应收调整／已结算历史保护已定。挂单查询／人工联系及撤销按§4.6已定；特殊交接与离店时间等历史更正、已结算独立更正流程仍待决。§5.4健康资料／人工接收、特殊照护含代喂药／实际执行、异常沟通／实际处理与提前接走衔接已定。医疗处置／紧急升级、交接／责任转移及历史更正等剩余边界仍待决 | 阶段04/05/06/08；03a建议容量只提醒，加餐按普通销售、照护需要时另记，不恢复洗美硬名额 |
 | DEC-STAFF-07 | pending | 统一店员资格、停用恢复、删除仅移出、返聘新邀请关联原身份、工作记录／业绩／审计可见性及取消提成已确认；门店资料由老板提交、平台管理员审核及营业执照仅供本店老板／平台管理员使用、不向顾客公开已确认，其他未决业务动作与敏感字段视图仍待细化 | 阶段08，先由04提交动作清单 |
