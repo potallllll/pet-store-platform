@@ -370,7 +370,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     if metadata(home).get("blocked_by") != "[DEC-FEED-02]":
         add(results, "error", "home_feeding.remaining_decision", home_path, "only geography and exceptional platform handling detail remains pending")
 
-    reminder_section = staff.split("#### 6.5.1 ", 1)[-1].split("\n## 7.", 1)[0]
+    reminder_section = re.split(r"\n(?:#### |### |## )", staff.split("#### 6.5.1 ", 1)[-1], maxsplit=1)[0]
     reminder_meta = dict(META_RE.findall(reminder_section)) if "#### 6.5.1 " in staff else {}
     for key, expected in {
         "status": "mixed",

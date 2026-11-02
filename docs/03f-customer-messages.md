@@ -1,8 +1,8 @@
 # 03F 客户端「消息中心 + 微信通知」模块
 
 > status: mixed
-> confirmed_scope: existing_messages_wash_groom_result_version_completion_and_recompletion_notifications_and_sections_13_2_13_3_directions_food_risk_initial_store_routing_and_boarding_record_visibility_controls
-> pending_scope: sms_configuration_food_todo_remaining_lifecycle_fields_multi_store_or_reassignment_interruption_correction_care_and_hold_collection_notifications
+> confirmed_scope: existing_messages_wash_groom_result_version_completion_and_recompletion_notifications_and_sections_13_2_13_3_directions_food_risk_initial_store_routing_and_staff_acknowledgement_and_boarding_record_visibility_controls
+> pending_scope: sms_configuration_food_notice_reassignment_multi_store_realerts_corrections_platform_ui_interruption_correction_care_and_hold_collection_notifications
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -379,7 +379,8 @@ V1.0 按三档处理：
 > owner_notice_blocked_by_store_assignment: false
 > manufacturer_contact_blocked_by_store_assignment: false
 > dispatch_implies_store_liability: false
-> pending_scope: staff_responsibility_visible_fields_claim_transfer_completion_multi_store_reassignment_and_platform_ui
+> pending_scope: multi_store_reassignment_realerts_corrections_and_platform_ui
+> staff_acknowledgement_authority: section_13_3_1
 
 以下只确认原食品风险承接规则的初次归属，不改变§13.1主人提醒触发条件。§13.1给主人发出的食品品牌风险提醒与门店待办分开。已明确争议门店时，应另行形成该店独立待办，不能以主人收到消息代替门店承接；没有明确门店时按下述平台承接例外执行。
 
@@ -391,7 +392,34 @@ V1.0 按三档处理：
 
 平台承接复用原投诉，不新增另一套食品投诉／工单或“默认负责门店”。字段沿F-CMP-001／004，未明确时target_store_id可空；初次后补关联不改User当前门店、不新建Customer／迁移资产。门店仍仅获本待办有权查看的内容，不能借派发索取所有收到提醒主人的联系方式、宠物私有档案或未审原件。
 
-本节未确认店内责任人、可见字段、领取／转交／完成条件、已派后的改店／多店处理及平台具体界面，仍按DEC-STAFF-03／07及相关食品DEC收口。门店任务的技术结构后续先登记，不以Mock派发冒充已接通；不自动停卖、退款、认定质量责任或扩大短信频率。
+本店人员／基本查看范围及明确知悉后移出工作台按§13.3.1已确认，无领取／转交／审批；已派后改店／多店、重要更新再提醒、已知悉后的更正／恢复及平台具体界面仍按DEC-STAFF-03／07和相关食品DEC收口。基础知悉记录字段见FIELD-REGISTRY§14.4.1；剩余接口结构仍先登记，不以Mock冒充已接通，不自动停卖／退款、认定质量责任或扩大短信频率。
+
+### 13.3.1 已确认：食品风险门店知悉提醒
+
+> status: confirmed
+> status_scope: store_food_risk_notice_actors_visible_content_and_explicit_acknowledgement
+> confirmed_by: user
+> confirmed_on: 2026-11-02
+> notice_actors: [assigned_store_owner, assigned_store_active_staff]
+> claim_transfer_or_approval_required: false
+> visible_risk_content: brand_and_public_risk_content_and_current_platform_review_status
+> private_customer_pet_scope: existing_store_authorization_only
+> completion_action_label: 已知悉
+> completion_requires_explicit_action: true
+> note_required: false
+> contact_all_customers_or_upload_proof_required: false
+> acknowledgement_removes_workbench_notice: true
+> history_policy: retain
+> acknowledgement_changes_complaint_or_finances: false
+> remaining_pending_scope: reassignment_multi_store_material_updates_realerts_post_ack_corrections_and_platform_ui
+
+1. **人员**：该提醒所归属门店的老板和所有账号／任职关系有效的员工均可操作，不需领取、转交或审批，也不限原经办人。服务端校验当前身份、原提醒及其门店／原投诉关联；停用／移出本店／跨店或伪造归属不能确认。
+2. **查看**：展示品牌、当前仍允许公开的食品风险内容和平台当前核验状态，不能把未裁决投诉写成食品质量已成立。本店顾客／宠物资料仅按原本已有授权展示；没有合法关联就不猜对象、不返回所有收到主人提醒的人及其手机号、微信、私有宠物资料或未审原件。店员不能维护宠物当前食用品牌或厂家资料。列表／详情／附件／分享／缓存／直接接口均守同一权限，父投诉下架或内容不可公开时不沿旧链接泄露原文；相关异常呈现／后续处理细分另定。
+3. **完成**：门店查看提醒后明确点“已知悉”，服务端成功记录后该食品提醒移出工作台，保留原提醒、关联投诉、经办事实及历史；备注选填，不强制联系所有顾客、签字或上传证明，不增加录音／打卡或必须截图。仅打开／已读／消息送达不等于该动作。失败不假记知悉或提前移除；同次重试、多人并发确认只产生一个知悉结果，保留首次实际操作人／时间及选填备注，不重复通知或用后一次覆盖首次结果。重复派发通知不把同案同店已知悉记录重新变成待办。
+
+已知悉结果使用独立食品提醒记录，以原complaint_id＋assigned_store_id唯一关联；知悉时间／选填本店内部备注见F-RISK-021～025，经办人及前后值／请求复用F-AUD。备注和经办历史按本店原业务权限查看，不公开给顾客或跨店，不复用03h§6.2对外处理情况／公开副本字段。历史在原食品提醒／关联投诉上下文可追溯，具体列表位置／排序后续UI收口。
+
+“已知悉”只表示门店收到并了解本提醒，不表示食品安全、厂家已回应、投诉成立／不成立或已解决；不替门店正式回应，不修改7天／3天截止、投诉裁决／解决状态、品牌风险信号／热度，也不自动停卖、退款、变更余额／库存。反过来，消费争议卡移出、平台确认投诉已解决或通知已读也不自动写该提醒已知悉。未完成且仍需知悉的提醒跨天保留，不按午夜清空；新投诉仍按原触发与归属规则独立承接，不因同品牌旧提醒已知悉而永久忽略。原投诉重要更新如何再次提醒、已知悉后修改备注／恢复及已派后的改店／多店规则继续待确认，不默认复活旧提醒或新建重复任务。
 
 ## 14. V1.0 不实现
 
