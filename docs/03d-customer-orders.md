@@ -1,8 +1,8 @@
 # 03D 客户端「我的订单」模块
 
 > status: mixed
-> confirmed_scope: care_notices_interruption_and_completed_amendments_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_current_order_rules_wash_groom_care_twelve_boarding_sixteen_pricing_checkout_departure_unpaid_hold_and_offline_financial_ledger
-> pending_scope: interruption_client_label_other_state_recovery_remaining_mixed_business_checkout_except_same_pet_wash_groom_care_add_on_partial_refund_allocation_ledger_corrections_and_remaining_boarding_rate_changes_boarding_followup_reminders_special_handover_and_corrections
+> confirmed_scope: wash_groom_and_care_mistaken_cancel_interruption_recovery_five_rules_and_care_notices_interruption_and_completed_amendments_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_current_order_rules_wash_groom_care_twelve_boarding_sixteen_pricing_checkout_departure_unpaid_hold_and_offline_financial_ledger
+> pending_scope: interruption_client_label_actual_termination_resumption_and_other_recovery_remaining_mixed_business_checkout_except_same_pet_wash_groom_care_add_on_partial_refund_allocation_ledger_corrections_and_remaining_boarding_rate_changes_boarding_followup_reminders_special_handover_and_corrections
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -96,7 +96,7 @@ V1.0 只保留三个分类：
 
 后台可保留更细内部状态，但不直接暴露给客户。
 
-洗美内部五态按04§4.3，正常客户端显示等待中／洗护中或美容中／洗护完毕或美容完毕，取消显示已取消。未结算已完成服务可重新处理、原因选填，顾客恢复服务中，旧普通结果保留历史但非当前最终；再次完成产生新结果版本并可再通知一次，不重置AI权益。已结算不重开旧单；正常已完成洗美补照片／改普通说明是独立内容补改，已结算亦可，不改账、不重开、不发补改通知，明细按04§4.4。店内老板／有效员工无审批可办、原因选填，旧内容／人／时间留历史、顾客默认最新；检查结论、实际时间及收费明细仍按原规则。AI报告由顾客主动选择并校验原资格，补改不自动运行AI／覆盖旧报告；洗美中止说明选填，顾客端无本次中止过程／过程照片或检查时间轴、不发布普通完成结果／AI报告，不发中止通知；店内原真实记录／审计保留，不假记正常完成。中止精确标签及直接恢复仍待DEC-STAFF-04，明细见04§4.4。
+洗美内部五态按04§4.3，正常客户端显示等待中／洗护中或美容中／洗护完毕或美容完毕，取消显示已取消。未结算已完成服务可重新处理、原因选填，顾客恢复服务中，旧普通结果保留历史但非当前最终；再次完成产生新结果版本并可再通知一次，不重置AI权益。已结算不重开旧单；正常已完成洗美补照片／改普通说明是独立内容补改，已结算亦可，不改账、不重开、不发补改通知，明细按04§4.4。店内老板／有效员工无审批可办、原因选填，旧内容／人／时间留历史、顾客默认最新；检查结论、实际时间及收费明细仍按原规则。AI报告由顾客主动选择并校验原资格，补改不自动运行AI／覆盖旧报告；洗美中止说明选填，顾客端无本次中止过程／过程照片或检查时间轴、不发布普通完成结果／AI报告，不发中止通知；店内原真实记录／审计保留，不假记正常完成。中止精确标签及实际终止后重做仍待DEC-STAFF-04；洗美／独立护理误操作恢复按04§4.4五项已确认：本店老板／有效员工，无审批／原因选填，仅原单未结算且未实际收款、未免单时，误取消回待开始、误中止回服务中；沿原单保留终止及恢复历史，不直接完成、不跳检查／主人决定、不自动收退款，成功发一次普通恢复通知，授权微信可用时尝试，短信不开放。账本未记不等于未实收，曾收款／免单即拒绝、退款不放行；原单聚合据实更新，未列挂单／券库存联动仍待DEC-STAFF-05，明细见04§4.4。
 
 同顾客多宠一单，按宠物分别显示项目／进度／结果、整单总金额；一宠完成或取消不覆盖其他宠物。全部服务结束且中止／取消费用明确后一起结算，不按宠拆账／分次付款。全未开始即全部取消不收费，整单取消、不记免单成交；已开始后中止说明选填；实际应收及独立收费原因明确后可按原例外结算，不伪记完成、不按比例自动算。
 
@@ -131,7 +131,7 @@ V1.0 只保留三个分类：
 
 正常完成后即发布本宠普通结果，不等收款；同客多宠一单、每宠独立记录、最后一起结算，不跨顾客合单或按宠分次付款。正常护理完成后才收款，中止操作说明选填、收费仍按实际应收及独立收费原因结算、不自动按比例算；全未开始即全部取消不收费、不记免单成交。财务即时／工作结束后录入均按§1.1，未记账仍真实显示服务完成及未结算，不增线上支付。
 
-已完成未结算可重新处理、原因选填、操作留痕；顾客当前恢复服务中，旧普通结果留历史、不冒充当前最终，再次完成发布真实结果，已结算不重开或改历史金额。护理挂单／人工联系及撤销按04§4.6；护理的额外通知、其他状态恢复等剩余细则仍待04对应DEC，不把洗美额外通知整套套入。
+已完成未结算可重新处理、原因选填、操作留痕；顾客当前恢复服务中，旧普通结果留历史、不冒充当前最终，再次完成发布真实结果，已结算不重开或改历史金额。护理挂单／人工联系及撤销按04§4.6；护理开始／完成与再次完成／补改消息按04§4.5已定，误取消／误中止恢复及普通恢复消息按04§4.4已定；其他未列取消／更正消息、实际终止后重做与其他未列恢复等继续待对应DEC，不把洗美其他通知整套套入。
 
 同只宠物在洗美中增加护理项目是原单加项，共用该宠物原洗美进度，不另建护理流程、改原service_type或降低洗美六项检查要求。本例外不开放商品／寄养混单及其他未决组合；参考价可调、明确免单、先本金后赠送、无老板审批且原路退款按统一规则，部分退款分配仍待决。
 
