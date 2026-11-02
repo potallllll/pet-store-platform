@@ -1,7 +1,7 @@
 # 03I 客户端「页面蓝图与关键交互验收场景」
 
 > status: mixed
-> confirmed_scope: cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_current_page_map_confirmed_care_twelve_boarding_sixteen_pricing_checkout_departure_unpaid_hold_and_other_confirmed_interactions
+> confirmed_scope: staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_current_page_map_confirmed_care_twelve_boarding_sixteen_pricing_checkout_departure_unpaid_hold_and_other_confirmed_interactions
 > pending_scope: risk_visual_unresolved_03h_remaining_care_edges_interruption_label_remaining_mixed_business_checkout_ai_version_contract_partial_refund_allocation_remaining_ledger_corrections_and_remaining_boarding_rate_changes_boarding_followup_reminders_special_handover_and_corrections
 > status_scope: full_document
 > retired_acceptance_ids: [C-BOARDING-03, C-BOARDING-04, C-BOARDING-05]
@@ -945,7 +945,7 @@ C-BOARDING-03／04／05为已退役的独立执行验收编号，保留编号供
 | C-POINTS-04 | 积分兑换商户券与幂等补偿 | [03k-customer-loyalty-points.md](03k-customer-loyalty-points.md) |
 | C-POINTS-05 | 实物兑换、总仓到店与自提 | [03k-customer-loyalty-points.md](03k-customer-loyalty-points.md) |
 | C-POINTS-06 | 库存并发、取消与核销互斥及结果恢复 | [03k-customer-loyalty-points.md](03k-customer-loyalty-points.md) |
-| C-ORDER-01 | 订单分类与洗美同一结果页、护理消费边界、整单调价及免单真实展示／并发组合场景 | [03d-customer-orders.md](03d-customer-orders.md) |
+| C-ORDER-01 | 订单分类与洗美结果页、店员洗美历史15天／手机号筛选／最终应收、护理边界、整单调价及免单展示／并发 | [03d-customer-orders.md](03d-customer-orders.md) |
 | C-PRODUCT-01 | 商品购买需求及线下收款边界 | [03e-customer-products.md](03e-customer-products.md) |
 | C-MSG-01 | 单一时间流、全小程序两档通知等级与业务详情跳转 | [03f-customer-messages.md](03f-customer-messages.md) |
 | C-MSG-02 | 平台消息、门店隔离和未读范围 | [03f-customer-messages.md](03f-customer-messages.md) |
@@ -1005,6 +1005,8 @@ C-BOARDING-03／04／05为已退役的独立执行验收编号，保留编号供
 - 洗美逐项验：六项未检查拒绝开始、异常／无法检查记录主人真实决定、完成前复检、无图完成／普通结果立即可见、逐宠状态／整单金额、正常服务不预收／中止明确金额例外、全未开始取消无收费／无免单成交。未结算重开空原因可成功、已结算拒绝，旧结果与新版通知／已读不串、AI权益不重置。未付不自动挂单、手动挂单空原因拒绝、顾客内部备注隐藏、记清收款／免单自动解除；改0保存不结算、明确免单后才waived。全部消费最多两种支付（余额内部分账算一种）；消费退款老板／有效员工均可、无老板审批，消费先扣本金再扣赠送，退款按原付款渠道／原账户退回，未实收／超剩余额拒绝，草稿不算已退。即时／晚记账均仅一次更新余额／流水／适用库存，退款不自动回库、真实退货才联动，余额不足不能负数；未记账不伪造客户端成功，不产生外部支付接口或回调。中止标签／混合业务／部分退款分配及其余更正等未决子项保持blocked。
 - 启动覆盖分享 / 通知冷启动、后台恢复、广告无填充 / 失败、登录返回、目标无效及跨门店权限。
 - 加餐覆盖普通商品成交、零元明确免单及一次出库、结算不自动生成照护、手动喂食无需先收款及免单后不被未付款超时取消；积分覆盖最后一份库存并发、取消与核销竞态及补偿处理中。
+- C-ORDER-01补验04§3.0.1店员洗美历史：已完成／已取消／已中止均纳入，未结算不排除，历史与待结算复用同order_id／service_record_id、不复制账目；多宠状态独立，独立护理不进洗美。默认Asia/Shanghai今天及此前14个自然日，原order.created_at起点含／末日次日00:00不含，按开单倒序；手机号／类型／服务状态／结算状态／日期可组合筛，更早日期能查，不将15天当保留期。搜索只读本店F-CUST-001，不以验证手机号／同号跨店或共享额度取数；清除／换筛选／切店及迟到响应不串旧结果。列表仅开单时间、顾客宠物、项目、真实服务状态／结算状态和F-ORD-014最终应收；无新增实收，不能用参考价／实收／空值默认0代替，多宠标整单应收不分摊／重复计收入，全未开始全取消显示不收费且不假免单。未结算、已收款、已免单、退款等按原状态不混写，0应收不自动结算。点击原详情并重新鉴权，读取失败如实提示，内部内容隔离；查询／刷新不改服务／资产／已读／通知，取消中止仍不能恢复旧单。沿原ID／交付追踪补场景，不冒充已执行功能验收。
+
 - C-ORDER-01／C-MSG-01补验04§4.4终止后重新开单：洗美／独立护理已取消／已中止均拒绝直接回待开始／服务中／完成，即使误点、未结算／未收款也不放行；不存在恢复按钮／成功接口、恢复发送任务或假成功。新开单须新的order_id／service_record_id，原顾客／宠物可选择，初始待开始／未检查，不复制旧检查／主人决定／时间／已读／结果或AI任务，手动开始及完成仍校验对应新检查；重试不重复建单。旧取消／中止与已存记录／账目保留、余宠不被复活，不自动退款／结清或转移旧款／券库存。新单创建不冒充开始完成，后续真实事件按原消息规则，旧中止无通知；洗美／护理补改差异保持。验证旧恢复请求拒绝、旧事件晚到不回退终止状态，新旧对象／租户／身份隔离和原单历史／新账独立。已完成未结算重新处理、正常完成内容补改及食品提醒恢复待知悉仍按原规则有效；原验收ID／交付追踪不改，不冒称已功能验收。
 
 - C-ORDER-01／C-MSG-01补验04§4.5护理补充：开始／完成与再次完成／正常完成后的补图或普通说明更正分别普通／重要／普通通知，成功的真实事件／有内容变化保存站内一次、尝试授权可用微信；无授权／失败不回滚业务，短信无调用／队列。草稿／无变化／失败／同次请求或旧事件重放不重复通知，补改沿原F-AUD稳定请求及F-SVC-019去重，不能推进023假装新完成。新消息独立未读，原服务已查看不把新消息标已读。中止空说明成功，无本次顾客过程／结果或任何渠道中止消息，原内部记录保留、不跳开始检查／异常主人决定或假填完成，独立收费原因另校验。正常已完成在已／未结算均可由本店老板／有效员工补真实照片或改普通说明，无审批／原经办限制、空原因成功，前后内容／媒体关联／人／时间留存、顾客默认最新且内部不泄露；权限／版本／重试、越店失效拒绝，不改账／重开／检查结论／实际时间／收费明细，不新增AI。对照洗美补改仍不通知，同宠洗美加护理不生成第二套消息。其他取消／更正事件仍待决，不新增验收ID／更改交付状态。
