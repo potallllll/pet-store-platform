@@ -1,8 +1,8 @@
 # 03F 客户端「消息中心 + 微信通知」模块
 
 > status: mixed
-> confirmed_scope: existing_messages_wash_groom_result_version_completion_and_recompletion_notifications_and_sections_13_2_13_3_directions_and_boarding_record_visibility_controls
-> pending_scope: sms_configuration_food_store_mapping_todo_lifecycle_interruption_correction_care_and_hold_collection_notifications
+> confirmed_scope: existing_messages_wash_groom_result_version_completion_and_recompletion_notifications_and_sections_13_2_13_3_directions_food_risk_initial_store_routing_and_boarding_record_visibility_controls
+> pending_scope: sms_configuration_food_todo_remaining_lifecycle_fields_multi_store_or_reassignment_interruption_correction_care_and_hold_collection_notifications
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -368,9 +368,30 @@ V1.0 按三档处理：
 
 ### 13.3 食品风险独立店员待办
 
-§13.1给宠物主人的食品品牌风险提醒还必须另行形成店员待办，不能以主人收到消息代替店员承接。
+> status: mixed
+> confirmed_scope: initial_store_routing_three_rules_and_owner_notice_independence
+> confirmed_by: user
+> confirmed_on: 2026-11-02
+> known_disputed_store_routing: that_store_only
+> no_disputed_store_routing: platform_handles_original_complaint_no_store_dispatch
+> later_store_assignment: platform_confirms_factually_related_disputed_store_then_dispatch_once
+> store_todo_identity: complaint_id_and_target_store_id
+> owner_notice_blocked_by_store_assignment: false
+> manufacturer_contact_blocked_by_store_assignment: false
+> dispatch_implies_store_liability: false
+> pending_scope: staff_responsibility_visible_fields_claim_transfer_completion_multi_store_reassignment_and_platform_ui
 
-主人消息继续按 `Platform User + complaint_id` 去重；这不是店员待办去重键的确认。待办归属争议门店，不按主人当前选择门店或所有关联门店分发。食品投诉尚未明确争议门店时，门店映射仍待确认，不得猜测或全量广播。门店内部责任人、可见字段、重复事件处理、领取 / 转交、完成条件须在 `DEC-STAFF-03 / DEC-STAFF-07` 收口。确认前不默认向该主人关联的所有门店广播，不自动停卖、退款或认定食品质量责任。
+以下只确认原食品风险承接规则的初次归属，不改变§13.1主人提醒触发条件。§13.1给主人发出的食品品牌风险提醒与门店待办分开。已明确争议门店时，应另行形成该店独立待办，不能以主人收到消息代替门店承接；没有明确门店时按下述平台承接例外执行。
+
+1. **已有明确争议门店**：待办只交给该店，不按主人当前选择门店、绑定店或所有关联门店分发。
+2. **只有品牌／厂家、未明确争议门店**：由平台沿原食品投诉承接，暂不生成／派发门店待办。不能猜测最近店、销售同品牌的店或顾客当前门店，也不广播；原投诉及待后续确认的归属信息保留，不因暂缓派店而丢弃。
+3. **之后明确争议门店**：平台有事实依据确认本案关联的争议门店后，再生成该店待办。复用原complaint_id和明确的target_store_id，同案同店的重复通知／重试只关联一次，不因多位主人、多宠或员工重复操作生成多条同店待办；确认事实依据、操作者、时间及原值／新值沿原审计保留。这里只明确处理入口，不认定门店食品质量责任，也不自动授予该店食品正式回应或厂家维护权限。
+
+主人消息仍按Platform User＋complaint_id去重，不拿这个键当门店任务键；无门店、门店派发暂缓或失败均不暂停符合条件的主人风险提醒，也不暂停后台客服联系厂家及Web管理员录入回信的原流程。已发主人的同条提醒不因后来明确门店再次生成；派店失败按同一原案／门店重试，不伪报成功或改派猜测门店。
+
+平台承接复用原投诉，不新增另一套食品投诉／工单或“默认负责门店”。字段沿F-CMP-001／004，未明确时target_store_id可空；初次后补关联不改User当前门店、不新建Customer／迁移资产。门店仍仅获本待办有权查看的内容，不能借派发索取所有收到提醒主人的联系方式、宠物私有档案或未审原件。
+
+本节未确认店内责任人、可见字段、领取／转交／完成条件、已派后的改店／多店处理及平台具体界面，仍按DEC-STAFF-03／07及相关食品DEC收口。门店任务的技术结构后续先登记，不以Mock派发冒充已接通；不自动停卖、退款、认定质量责任或扩大短信频率。
 
 ## 14. V1.0 不实现
 
