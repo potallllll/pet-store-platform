@@ -1,8 +1,8 @@
 # 03F 客户端「消息中心 + 微信通知」模块
 
 > status: mixed
-> confirmed_scope: global_two_notification_levels_and_existing_messages_wash_groom_result_version_completion_and_recompletion_notifications_and_sections_13_2_13_3_directions_food_risk_initial_store_routing_staff_acknowledgement_updates_and_restore_rounds_and_boarding_record_visibility_controls
-> pending_scope: sms_configuration_food_notice_reassignment_multi_store_remaining_note_corrections_platform_ui_interruption_correction_care_and_hold_collection_notifications
+> confirmed_scope: current_stage_sms_unavailable_and_global_two_notification_levels_and_existing_messages_wash_groom_result_version_completion_and_recompletion_notifications_and_sections_13_2_13_3_directions_food_risk_initial_store_routing_staff_acknowledgement_updates_and_restore_rounds_and_boarding_record_visibility_controls
+> pending_scope: future_sms_enablement_and_configuration_food_notice_reassignment_multi_store_remaining_note_corrections_platform_ui_interruption_correction_care_and_hold_collection_notifications
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -124,7 +124,7 @@ AI 报告生成完成后默认不额外重复发送微信通知。客户之后�
 
 若客户已经完成广告并获得查看资格，后续 AI 失败或超时重试不得要求再次观看广告。
 
-04§4.6挂单只由门店自行电话／微信联系，系统不自动发催款短信／微信消息或定时催办；选填联系时间和备注内部可见。误挂撤销仍待结算，不发收款成功／免单／欠款消除通知，不因跨日发自动取消消息。本条不取消投诉等原业务短信规则，实际收款／明确免单仍按真实结果发送原适用消息。
+04§4.6挂单只由门店自行电话／微信联系，系统不自动发催款短信／微信消息或定时催办；选填联系时间和备注内部可见。误挂撤销仍待结算，不发收款成功／免单／欠款消除通知，不因跨日发自动取消消息。当前阶段投诉等业务短信也按§13.2暂未开放；实际收款／明确免单仍按真实结果发送原适用消息。
 
 ## 5. 寄养消息
 
@@ -265,7 +265,7 @@ V1.0 为店员保留轻量“通知客户”能力，用于特殊业务情况，
 
 - 按原事件规则生成站内消息。
 - 食品品牌风险提醒必须生成站内消息；微信在用户已授权且渠道可用时按事件配置尝试发送。
-- 重要等级本身不强制微信／短信、重复催办或重开任务；短信仍仅按§13.2等已确认业务规则发送。
+- 重要等级本身不强制微信／短信、重复催办或重开任务；当前阶段业务短信按§13.2暂未开放，不发送。
 
 ### 普通通知
 
@@ -362,15 +362,29 @@ V1.0 为店员保留轻量“通知客户”能力，用于特殊业务情况，
 
 提交处理情况按03h§6.2单列handling_progress用途，不当作商家首个正式回应、重新补证、已解决或线下退款到账事件；不重置7天／3天、不触发自动结案／收退款消息。未审／未公开原文与附件只允许该条实际提交者及平台有权人员读取，消息／分享／摘要／附件引用／缓存不能向投诉对方、其他店员或老板夹带私有内容；公众读取只用已审核脱敏的公开副本，不能回退原件。该更新是否另发站内提醒及其频率后续收口，本次不新增短信渠道、群发或催办默认值。
 
-消费争议工作台按04§3.2.1派生同一原complaint_id的一张当前卡：待回应→逾期待回应移异常→回应后补证中回待处理；补证结束无门店需办时移出，有真实补材料要求再显示，平台确认已解决后移出。消息送达／已读／重试、换员工或提交处理进展不新增重复卡、不自动完成仍需办理事项，跨天不清空。移出不删除消息或原争议，不写成已回应／已解决，不影响独立食品风险待办；短信频率／提前预警仍待确认。
+消费争议工作台按04§3.2.1派生同一原complaint_id的一张当前卡：待回应→逾期待回应移异常→回应后补证中回待处理；补证结束无门店需办时移出，有真实补材料要求再显示，平台确认已解决后移出。消息送达／已读／重试、换员工或提交处理进展不新增重复卡、不自动完成仍需办理事项，跨天不清空。移出不删除消息或原争议，不写成已回应／已解决，不影响独立食品风险待办；短信当前暂未开放，未来发送规则待确认；提前预警仍待确认。
 
 详细状态与 7 天 / 3 天规则见 `03h-customer-risk-feedback.md`.
 
-### 13.2 投诉短信：新增渠道
+### 13.2 当前阶段短信通知：暂未开放
 
-投诉提醒与逾期处理增加短信渠道，不替代站内消息及已授权且可用的微信通知；本次不把短信扩展为全部业务通知或营销群发。
+> status: confirmed
+> status_scope: current_stage_business_sms_unavailable
+> confirmed_by: user
+> confirmed_on: 2026-11-02
+> sms_notification_availability: not_available
+> sms_notification_label: 暂未开放
+> sms_send_enabled: false
+> sms_enqueue_enabled: false
+> future_enablement_requires_confirmation: true
 
-短信接收对象为争议门店，不是默认发送给全部员工或宠物主人。接收号码固定使用争议门店的注册号码，不另设可独立配置的“争议通知手机号”，不自动替换成门店公开联系电话或任一员工个人号码。注册号码变更 / 验证规则按后续账号管理设计收口；号码缺失或不可用时不得猜测替代号码，也不改变投诉状态与期限。短信模板、发送时间与频率、失败重试和费用控制仍须在后续通知 / 权限设计中确认，不自行配置默认值。发送成功、失败或已读都不等于正式回应、已解决或投诉成立；失败不回滚业务状态，也不自行重置7天回应 / 3天补证期限。短信对外发送结果须留痕；具体字段在技术设计前按字段注册表登记，不复用微信专用字段冒充短信。
+当前阶段不提供业务短信通知，投诉提醒、临期及逾期等均不发送短信。相关短信通知入口／状态统一显示**“暂未开放”**，不可开通或执行发送；不显示“已发送”“发送中”或可成功保存的启用开关，不冒充已接入短信服务。
+
+不调用真实短信发送、不创建短信发送／定时催办／失败重试任务、不累计本阶段事件等以后自动补发。站内消息及已授权且可用的微信通知继续按原事件规则执行；短信未开放不阻断投诉受理、正式回应、食品待办、7天回应／3天补证的生成与计时，也不伪造短信送达来启动期限，原系统通知条件沿03h§4.3／4.4。
+
+以后开放须另行确认，本阶段不确定首次／临期／逾期频次、重试间隔、模板、费用或开通日期。未经确认的频次、时点或重试数值不得作为默认配置。未来如开放投诉短信，已确认接收方向仍是争议门店注册号码，不群发全部员工或主人、不替换公开联系电话／个人号码，也不另设争议通知手机号；这项预留不授权当前发送。号码变更／验证、短信字段及真实发送审计待开放设计时按账号与字段注册表收口，不复用微信字段。
+
+本节只决定业务短信通知的当前可用性，不取消或改写03g既有登录／手机号验证要求，不把“暂未开放”当第三种通知等级。普通通知／重要通知两档及已读不等于已处理等规则保留。
 
 ### 13.3 食品风险独立店员待办
 
