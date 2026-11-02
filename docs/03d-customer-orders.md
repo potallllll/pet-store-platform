@@ -1,7 +1,7 @@
 # 03D 客户端「我的订单」模块
 
 > status: mixed
-> confirmed_scope: current_order_rules_wash_groom_care_twelve_boarding_sixteen_pricing_checkout_departure_unpaid_hold_and_offline_financial_ledger
+> confirmed_scope: wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_current_order_rules_wash_groom_care_twelve_boarding_sixteen_pricing_checkout_departure_unpaid_hold_and_offline_financial_ledger
 > pending_scope: interruption_client_label_other_state_recovery_remaining_mixed_business_checkout_except_same_pet_wash_groom_care_add_on_partial_refund_allocation_ledger_corrections_and_remaining_boarding_rate_changes_boarding_followup_reminders_special_handover_and_corrections
 > status_scope: full_document
 > change_policy: record_required
@@ -96,9 +96,9 @@ V1.0 只保留三个分类：
 
 后台可保留更细内部状态，但不直接暴露给客户。
 
-洗美内部五态按04§4.3，正常客户端显示等待中／洗护中或美容中／洗护完毕或美容完毕，取消显示已取消。未结算已完成服务可重新处理、原因选填，顾客恢复服务中，旧普通结果保留历史但非当前最终；再次完成产生新结果版本并可再通知一次，不重置AI权益。已结算不重开旧单；中止的具体顾客标签仍待DEC-STAFF-04，不假记正常完成。
+洗美内部五态按04§4.3，正常客户端显示等待中／洗护中或美容中／洗护完毕或美容完毕，取消显示已取消。未结算已完成服务可重新处理、原因选填，顾客恢复服务中，旧普通结果保留历史但非当前最终；再次完成产生新结果版本并可再通知一次，不重置AI权益。已结算不重开旧单；洗美中止说明选填，顾客端无本次中止过程／过程照片或检查时间轴、不发布普通完成结果／AI报告，不发中止通知；店内原真实记录／审计保留，不假记正常完成。中止精确标签及直接恢复仍待DEC-STAFF-04，明细见04§4.4。
 
-同顾客多宠一单，按宠物分别显示项目／进度／结果、整单总金额；一宠完成或取消不覆盖其他宠物。全部服务结束且中止／取消费用明确后一起结算，不按宠拆账／分次付款。全未开始即全部取消不收费，整单取消、不记免单成交；已开始中止可明确实际应收及原因后中止结算，不伪记完成、不按比例自动算。
+同顾客多宠一单，按宠物分别显示项目／进度／结果、整单总金额；一宠完成或取消不覆盖其他宠物。全部服务结束且中止／取消费用明确后一起结算，不按宠拆账／分次付款。全未开始即全部取消不收费，整单取消、不记免单成交；已开始后中止说明选填；实际应收及独立收费原因明确后可按原例外结算，不伪记完成、不按比例自动算。
 
 ### 4.2 寄养
 
@@ -154,7 +154,7 @@ V1.0 只保留三个分类：
 
 首页“当前服务”和“我的订单”中的进行中服务，应打开同一个服务详情数据源和页面能力。
 
-洗美强制六项前检查（皮肤、耳道、眼睛、口腔、指甲、毛发），异常／无法检查须如实记录并告知主人，店员记录主人同意继续或决定中止及说明，不默认正常／同意，不作医疗诊断。完成前确认是否出现新增异常，有则说明、不再重填全套。真实检查与护理注意事项向本人顾客展示，内部备注／员工评价／系统日志不公开。照片不强制、缺图如实提示，完成后发布普通结果、不等收款，不设确认接走按钮。
+洗美强制六项前检查（皮肤、耳道、眼睛、口腔、指甲、毛发），异常／无法检查须如实记录并告知主人，店员记录主人同意继续或决定中止及说明，不默认正常／同意，不作医疗诊断。完成前确认是否出现新增异常，有则说明、不再重填全套。非中止的真实检查与护理注意事项向本人顾客展示；已中止按04§4.4不展示本次过程，内部备注／员工评价／系统日志不公开。照片不强制、缺图如实提示，完成后发布普通结果、不等收款，不设确认接走按钮。
 
 洗美正常完成后收款，中止费用明确后可按中止结算例外；不预收、不假记完成。完成未收款先待结算，店员手动挂单且原因必填；顾客显示待结算／真实金额、不展示内部备注或线上付款。实际付清／明确免单成功自动解除挂单标记、历史保留，不套商品超时删消费；结算可改最终应收0，保存0不结算，仍明确确认免单并校验本单结算前提。其他类型收款顺序不随洗美规则改变。
 

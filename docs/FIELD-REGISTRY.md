@@ -349,12 +349,12 @@ F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型
 |---|---|---:|---|---|
 | F-SVC-001 | `service_record_id` | S | ID | 一次真实洗护／美容／护理／寄养服务记录标识。 |
 | F-SVC-002 | `service_type` | C | Enum | 洗护／美容／护理／寄养；独立care护理仅门店开单，按04§4.5，不开放客户端预约、护理AI报告或医疗流程。同宠洗美护理加项不改原服务类型／另建care流程；商品不属于此枚举。 |
-| F-SVC-003 | `service_customer_status` | C | Enum | 客户侧简化状态；洗美不得直接暴露全部店员内部步骤。 |
+| F-SVC-003 | `service_customer_status` | C | Enum | 客户侧简化状态；洗美不得直接暴露全部店员内部步骤。洗美中止按04§4.4无本次顾客过程／完成结果、不发中止通知；精确状态文案仍待确认，不假映射completed。 |
 | F-SVC-004 | `service_internal_status` | S | Enum | 洗美及04§4.5独立护理复用not_started／in_progress／completed／cancelled／interrupted，由本店有效员工手动操作；开单不自动开始。已完成仅未结算原单可重新处理、原因选填但审计，已结算不重开。不为同宠洗美护理加项另设进度，不自动付款／交付，不套寄养。 |
 | F-SVC-005 | `service_started_at` | S | Datetime | 实际开始服务时间。 |
 | F-SVC-006 | `service_completed_at` | S | Datetime | 实际完成服务时间。 |
 | F-SVC-007 | `service_result_viewed_at` | S | Datetime | 客户真正查看本次结果时间；查看后完成卡可退出首页当前服务。 |
-| F-SVC-008 | `service_summary` | C | Text/Struct | 本次服务摘要／结构化服务记录；独立护理普通过程文字选填、无文字如实展示项目和结果，不免除异常／无法检查等必要说明，不混入内部备注或伪造正常。 |
+| F-SVC-008 | `service_summary` | C | Text/Struct | 本次服务摘要／结构化服务记录；洗美中止不向顾客返回本次过程或完成结果，已保存的内部真实记录不删除；中止选填说明复用F-AUD-009，不另建原因字段。独立护理普通过程文字选填、无文字如实展示项目和结果，不免除异常／无法检查等必要说明，不混入内部备注或伪造正常。 |
 | F-SVC-009 | `service_staff_ids` | S | Ref[] | 实际服务员工稳定引用；员工离职不改写历史。 |
 | F-SVC-010 | `service_duration` | C | Number | 实际服务时长记录语义，计算口径后续架构可细化；04§3.0.8排除员工工时核算不删除本字段，也不得据此新增员工工时、工资或提成算法。 |
 | F-SVC-011 | `service_abnormal_notes` | C | Text | 服务中异常情况。 |
@@ -366,13 +366,13 @@ F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型
 | F-SVC-017 | `pre_service_checked_at` | S | Datetime | 本service_record_id前检查实际完成的服务端记录时间；不通过空勾选或补录时间伪造检查，不与服务实际开始时间混用。 |
 | F-SVC-018 | `pre_service_checked_by_staff_id` | S | ID | 实际检查的本店有效员工；关联稳定staff_id，离职不改历史，照片不强制。 |
 | F-SVC-019 | `service_record_version` | S | Int | 同一宠物服务记录的操作版本，供检查／开始／完成／重新处理／时间更正等竞态校验；不替代订单金额版本或审核row_version，不表示所有待决动作已获批准。 |
-| F-SVC-020 | `pre_service_check_items` | C | Struct[] | 洗美service_record_id的skin／ears／eyes／mouth／nails／coat六项真实结果及必要说明，不默认正常；独立护理不强制此六项数组，改用F-SVC-016整体检查。同宠洗美护理加项仍须原洗美六项，不因加项减免。本人可见真实护理注意事项，内部备注不混入。 |
+| F-SVC-020 | `pre_service_check_items` | C | Struct[] | 洗美service_record_id的skin／ears／eyes／mouth／nails／coat六项真实结果及必要说明，不默认正常；独立护理不强制此六项数组，改用F-SVC-016整体检查。同宠洗美护理加项仍须原洗美六项，不因加项减免。非中止服务本人可见真实护理注意事项；洗美中止按04§4.4不对顾客返回本次过程，内部已保存检查保留、不能跳过原开始检查。内部备注不混入。 |
 | F-SVC-021 | `pre_service_owner_decision` | C | Enum | 洗美／护理异常或无法检查时宠物主人已明确表达的continue_authorized或discontinue，未记录为空、不默认同意；店员记录告知及真实决定，说明复用F-SVC-008／011，操作时间／人复用F-AUD。不是线上身份验证、医疗同意书或跨店共享授权。 |
 | F-SVC-022 | `post_service_has_new_abnormality` | C | Bool | 洗美及独立护理完成前是否新增异常，未确认为空，须真实确认为false或true；true须F-SVC-011说明，不强制照片或重复整套前检查，不因无照片拒绝完成。 |
 | F-SVC-023 | `service_result_version` | S | Int | 本宠普通结果的真实发布版本；完成发布，未结算重新处理后旧版保留历史、非当前最终，再完成新版本并对应新完成事件。不是AI权益／任务版本，不自动重置资格或启动AI。 |
 | F-SVC-024 | `service_result_viewed_version` | S | Int | 本人顾客实际查看的普通结果版本，配合F-SVC-007记录；不能用已看旧版冒充看过重新完成的新结果。旧版及当前版可见性仍须同一Customer权限校验。 |
 
-洗美多宠一order_id、每宠独立service_record_id／pet_id及对应原明细，按merchant_id隔离，不新建第二账本。全部服务结束且异常费用明确可一起结算，不按宠拆账／分次付款；正常完成后收费，中止可明确实际应收／原因后结算、不伪记完成，全未开始即全取消不收费、不记免单成交。照片可选、普通结果完成发布，无接走确认；未结算重开原因选填，挂单手动且原因必填，改0后仍明确免单，不自动结算。
+洗美多宠一order_id、每宠独立service_record_id／pet_id及对应原明细，按merchant_id隔离，不新建第二账本。全部服务结束且异常费用明确可一起结算，不按宠拆账／分次付款；正常完成后收费，中止可明确实际应收／原因后结算、不伪记完成，全未开始即全取消不收费、不记免单成交。照片可选、普通结果正常完成发布，无接走确认；洗美中止说明选填（F-AUD-009），不向顾客提供本次过程／完成结果、不发中止通知，内部已有事实／素材留存。中止状态保存不以收费原因为前提，收费另按原实际应收及独立原因；未结算重开原因选填，挂单手动且原因必填，改0后仍明确免单，不自动结算。
 
 F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值／更正记录，结束不早于开始、不填未来，不重写原操作时间、付款或真实服务事实。操作人／时间／前后值／原因复用F-AUD，不增加提成／默认业绩分配；其他有效员工可接手。
 
