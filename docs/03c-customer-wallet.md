@@ -1,7 +1,7 @@
 # 03C 客户端「我的钱包」模块
 
 > status: mixed
-> confirmed_scope: unified_wallet_balance_edit_required_reason_without_separate_recharge_refund_and_reasoned_owner_staff_recharge_corrections_and_super_admin_reversal_exceptions_and_recharge_query_document_creation_date_sort_filter_entries_six_columns_mobile_date_filters_and_readonly_details_with_wallet_rules_manual_recharge_without_packages_optional_bonus_and_coupons_gift_note_required_principal_first_and_original_route_refunds
+> confirmed_scope: coupon_owner_management_active_staff_manual_grants_care_scope_template_lifecycle_and_issue_snapshots_and_unified_wallet_balance_edit_required_reason_without_separate_recharge_refund_and_reasoned_owner_staff_recharge_corrections_and_super_admin_reversal_exceptions_and_recharge_query_document_creation_date_sort_filter_entries_six_columns_mobile_date_filters_and_readonly_details_with_wallet_rules_manual_recharge_without_packages_optional_bonus_and_coupons_gift_note_required_principal_first_and_original_route_refunds
 > pending_scope: partial_refund_channel_component_allocation_platform_exception_details_and_remaining_transaction_contracts
 > status_scope: full_document
 > change_policy: record_required
@@ -18,6 +18,14 @@
 > recharge_gift_note_required: when_bonus_amount_positive_or_coupon_items_nonempty
 > recharge_note_field: wallet_note
 > recharge_grants: after_successful_recharge_confirmation
+> coupon_template_management_role: merchant_owner
+> coupon_manual_grant_actors: [merchant_owner, active_store_staff]
+> coupon_manual_grant_reason_required: true
+> coupon_manual_grant_owner_approval: not_required
+> coupon_template_new_default_enabled: true
+> coupon_template_delete: forbidden
+> coupon_template_changes_affect: future_issuance_only
+> coupon_template_disabled_existing_instances: original_instance_rules_remain_effective
 
 ## 1. 客户端定位
 
@@ -203,10 +211,21 @@ V1.0 只保留三类优惠券：
 - 全部消费
 - 洗护
 - 美容
+- 护理
 - 寄养
 - 商品
 
-V1.0 不要求老板维护复杂多层营销条件。
+V1.0 不要求老板维护复杂多层营销条件。新增“护理”可作为明确适用范围，不因此扩大旧洗护／美容限定券；护理仍只供门店开单，不增加顾客预约入口。
+
+### 8.1 模板管理、启停与已发券
+
+“老板管理 → 优惠券管理”只由本店老板新增／修改本商户模板，普通员工仅可按§9.2选择已有券赠送，不能维护模板或从直接API绕过。模板表单仍沿本节已确认的三类券及字段，不增加复杂营销引擎。
+
+新建模板成功后默认启用；老板可停用／恢复，恢复沿原coupon_template_id及历史，不提供删除模板操作。停用后不得新发券，包括单独赠券、充值赠券及依赖本模板的其他已有发券来源；服务端发放前校验当前启用状态及本商户条件，旧页面／链接不能继续发放。
+
+已经发出的coupon_instance_id继续按发放时的优惠条件／范围／有效期使用；模板停用不将旧实例标失效、已用或已过期。模板改名、优惠、范围或期限只影响以后发出的券，原实例沿发放快照，不读取后来模板覆盖旧优惠。已有券的有效期锁定暂停／解除后补回时长、核销与退款仍按§11执行，不因本次确认被取消；恢复模板不复活原已用／过期实例或重发旧券。
+
+模板维护保留前后内容、老板／服务端时间；发券记录保留本次真实模板、顾客、券实例和来源。模板变化与发放并发时须核对当前合法状态／内容，不用旧页面发出不一致快照；剩余版本与跨渠道技术映射按字段注册表先收口。已发行券的额外人工更改或独立误发撤回等未列细则仍待确认。
 
 ## 9. 优惠券发放方式
 
@@ -216,11 +235,13 @@ V1.0 支持以下四种来源：
 
 门店在本次充值表单选择已有优惠券及数量、填写赠送备注；充值成功后系统按本次选择发放一次，不依赖充值套餐。规则见§3～4。
 
-### 9.2 老板 / 有权限员工手动赠送
+### 9.2 老板／有效员工单独赠券
 
-老板可选择客户并直接赠送已配置的优惠券。
+顾客详情 → 会员资产 → 赠送优惠券，本店老板及有效员工都可操作、不限原经办人、无需老板审批，也不要求同时充值。选择本商户已有且当前启用的模板及本次数量，填写本次赠送原因后确认；数量须为正整数，原因去空白后非空必填。模板不能由店员在赠券表单修改或新建。
 
-普通店员是否允许赠券由权限体系控制；默认不开放随意赠券权限。
+本次数量用F-CPN-021 coupon_grant_quantity，不借商品数量、充值赠券或邀请码绑定字段冒充本次独立赠送；原因沿F-AUD-009，人员及时间沿原审计，优惠券备注F-CPN-018仍为原可选字段，不被改成全局必填。每张实际券有原F-CPN-002稳定实例，来源F-CPN-014记“人工赠送”，关联当前本店顾客；不伪造一笔充值／付款／积分兑换来发券。
+
+服务端同时校验本店／顾客／有效身份、当前模板及启用、数量与原因；失败不报发放成功，同次成功请求重试不重复发券，顾客只按原权限查看已成功发放的券与可用券数量。员工可获取完成发放所需的模板内容，不因此获得老板模板管理、原始系统审计或跨商户资产权限。
 
 ### 9.3 邀请码兑换
 
@@ -340,7 +361,7 @@ V1.0 退款规则采用简单方案：
 - 查看优惠券
 - 手动赠送优惠券
 
-统一业务资格不等于可以直接改余额、抹除流水或任意赠券；原充值更正／撤销按§4.2已确认、原因必填，无需老板审批，失败需超管处理的边界按该节；当前余额修改及充值余额退还按§4.3已确认，原因必填、无需审批；平台异常细节与独立赠券等仍按对应待决项收口。充值套餐已取消；优惠券模板配置仍归老板管理，充值时选择已有券按§3～4办理；未确认的动作不能借统一权限提前开放。
+统一业务资格不等于可以直接改余额、抹除流水或任意赠券；原充值更正／撤销按§4.2已确认、原因必填，无需老板审批，失败需超管处理的边界按该节；当前余额修改及充值余额退还按§4.3已确认，原因必填、无需审批；独立赠券按§9.2已确认，老板／有效员工可办、原因必填无审批；平台异常细节、赠券误发撤回等其他未列范围仍按对应待决项收口。充值套餐已取消；优惠券模板配置仍归老板管理，充值时选择已有券按§3～4办理；未确认的动作不能借统一权限提前开放。
 
 门店消费订单结算最多两种支付方式，会员余额本金／赠送内部拆分算一种；消费先扣本金、再扣赠送，原扣款构成留痕。消费退款本店老板／有效员工均可登记、无需老板审批；全部款项按原付款渠道／原账户退回，不能主动改退余额或现金。原余额部分在确认退款时由系统实际退回原钱包、按原本金／赠送归属形成独立流水；原微信／支付宝／现金等在线下按原路实际退回后登记。保存草稿不代表已退，重试不重复增余额，按03d§1.1／12；部分退款分配按§5待决。该消费规则不开放充值退款、任意余额调整或积分补偿，不以界面失败假回滚或免单造付款。
 

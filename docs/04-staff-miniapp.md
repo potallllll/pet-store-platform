@@ -2,7 +2,7 @@
 
 > status: mixed
 > status_scope: staff_requirements
-> confirmed_scope: unified_customer_balance_edit_with_required_reason_no_separate_recharge_refund_workflow_and_reasoned_recharge_correction_by_owner_staff_and_super_admin_only_reversal_exceptions_and_recharge_record_document_creation_date_query_sort_entries_six_columns_mobile_date_filters_readonly_details_and_manual_recharge_without_packages_optional_bonus_coupon_and_required_gift_note_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_business_statistics_five_rules_employee_self_view_and_explicit_order_performance_attribution_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
+> confirmed_scope: coupon_management_manual_grant_five_rules_and_unified_customer_balance_edit_with_required_reason_no_separate_recharge_refund_workflow_and_reasoned_recharge_correction_by_owner_staff_and_super_admin_only_reversal_exceptions_and_recharge_record_document_creation_date_query_sort_entries_six_columns_mobile_date_filters_readonly_details_and_manual_recharge_without_packages_optional_bonus_coupon_and_required_gift_note_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_business_statistics_five_rules_employee_self_view_and_explicit_order_performance_attribution_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
 > pending_scope: all_other_staff_proposals_and_cross_store_risk_details
 > change_policy: record_required
 > development_readiness: blocked
@@ -187,7 +187,7 @@
 
 “删除员工”表示移出本店当前员工名单、终止当前有效关系，保留原员工稳定标识、历史订单、服务、业绩、工作记录及系统操作日志；不物理删除经营记录或注销平台自然人账号。被删除员工重新回本店入职（包括误删后重新加入），由老板重新邀请，经员工接受与已验证身份关联后沿用原`staff_id`，保留历史任职／删除事件并建立本轮有效关系；不复活旧邀请或旧会话。完整规则见02§6.1，未完成任务的交接细节仍待DEC-STAFF-03收口。
 
-老板管理中的“门店资料”“营业与预约设置”“服务项目管理”分别见§3.0.6／3.0.7／3.0.8。系统操作日志的门店查看入口归老板管理，平台管理员通过平台管理查看；日志菜单具体名称、排序、筛选与手机／Web分工后续讨论。其他门店配置菜单仍为候选，已确认的员工管理、门店资料、营业与预约设置及服务项目管理边界不因此回退。
+老板管理中的“门店资料”“营业与预约设置”“服务项目管理”分别见§3.0.6／3.0.7／3.0.8。系统操作日志的门店查看入口归老板管理，平台管理员通过平台管理查看；日志菜单具体名称、排序、筛选与手机／Web分工后续讨论。优惠券管理入口及五项见§3.0.15，仅老板维护模板；其他门店配置菜单仍为候选，已确认的员工管理、门店资料、营业与预约设置及服务项目管理边界不因此回退。
 
 #### 3.0.5 已确认：统一员工权限与记录可见性
 
@@ -564,6 +564,33 @@ F-WAL-018／019／024～027仅套餐专属字段退役保留注册号，020～02
 
 复用F-WAL-001～004、006～017及原F-AUD／F-CORE-010，目标金额直接沿现有本金／赠送余额字段，差额沿011／012，原因沿016；不新增退款申请状态、审批字段、第二本账或同义余额字段。前轮独立充值退款五项建议不作为本阶段实现规则；平台异常具体界面、未列财务技术契约及其他待决项按原DEC继续收口，本节不变更消费退款原路规则。
 
+#### 3.0.15 优惠券管理与单独赠券五项
+
+> status: confirmed
+> status_scope: coupon_management_and_manual_grant_five_rules
+> confirmed_by: user
+> confirmed_on: 2026-11-03
+> coupon_management_entry: 老板管理/优惠券管理
+> coupon_template_management_role: merchant_owner
+> coupon_manual_grant_entry: 顾客详情/会员资产/赠送优惠券
+> coupon_manual_grant_actors: [merchant_owner, active_store_staff]
+> coupon_manual_grant_reason_required: true
+> coupon_manual_grant_owner_approval: not_required
+> coupon_scope_options: [全部消费, 洗护, 美容, 护理, 寄养, 商品]
+> coupon_template_new_default_enabled: true
+> coupon_template_actions: [新增, 修改, 停用, 恢复]
+> coupon_template_delete: forbidden
+> coupon_template_changes_affect: future_issuance_only
+> coupon_template_disabled_existing_instances: original_instance_rules_remain_effective
+
+1. **老板管理入口**：“我的 → 老板管理 → 优惠券管理”，本店老板新增／修改本商户模板；模板沿03c§8原三类券及表单，普通员工不能通过入口或直接API维护。该权限不从独立赠券继承，平台既有按职责权限本次不变。
+2. **独立赠券**：顾客详情 → 会员资产 → 赠送优惠券，本店老板／有效员工均可选已有启用模板和数量，赠送原因必填，无需审批，不要求充值、不限原经办人。数量为正整数，沿F-CPN-021；原F-AUD-009保存非空原因，人员／服务端时间沿原审计，每张券有F-CPN-002、来源014记人工赠送。失败不报成功、重试不重复，不伪造充值／付款或积分业务；选券所需读取不开放老板管理数据或原始审计。
+3. **护理范围**：适用范围新增护理，全部消费／洗护／美容／寄养／商品沿原规则保留。旧洗护／美容限定券不扩大，模板将来新增护理也不回写既有实例；不开放顾客护理预约或新增护理AI。
+4. **启停与恢复**：新建模板默认启用，老板可停用／恢复，不提供删除。停用阻止后续新发放，各原发券来源按真实当前模板校验；已有券仍按发放时条件使用，不因停用变过期／失效或被撤回。恢复用原模板ID与历史，不复活已用／过期券，也不重复补发。
+5. **只影响未来发放**：模板名称／优惠条件／适用范围／期限等变更仅作用于后续发券，已发实例保留发放快照。既有券的锁定期暂停计时、解除后补回实际锁定时长等规则照常，不因“快照不回写”冻结其合法有效期变化；模板修改不能替代人工修改已发券。
+
+03c§8／9.2为钱包详细规则，沿F-CPN-001～021及原顾客／商户／审计／F-CORE-010完成权限、状态与去重，模板或身份变化后旧页面不能继续发放／管理。记录前后值、人／时间及本次发放实例，不把模板维护当作修改已发券、撤销已用券、改余额或变更积分库存的权限；独立误发撤回、其他模板校验细分和剩余跨渠道技术契约仍待对应阶段，不借五项确认宣布整端已实现。
+
 ### 3.1 五个入口的建议职责
 
 下表一级入口及洗护美容／寄养归属遵循§3.0；客户入口的已确认结构见§3.0.2，普通员工“我的”菜单及老板管理入口见§3.0.3／3.0.4，其余职责细化与二级菜单内容仍为提案。
@@ -681,7 +708,7 @@ F-WAL-018／019／024～027仅套餐专属字段退役保留注册号，020～02
 | 财务 | 日结、交接班、对账、收款记录、异常核对 | 全部功能/财务，授权可见 | 全量分析/导出建议老板Web；口径与流程待定 | 01§10/§15 |
 | 员工业绩 | 老板汇总本店、员工核对本人归属订单；每单归属必须明确 | 我的/我的业绩；老板管理/经营统计；平台管理员按职责查看 | §3.0.10经营统计五项与查看范围已定；一单一人、归属修改按员工只转本人／老板改本店全部且原因必填、员工实收／退款／净消费按实际收款已定，结算后更正带整单历史和后续退款／原日期重归属；历史缺归属回填等未列细节仍待06/08，不以经办字段代归属 | 01§10、02§4、§3.0.10 |
 | 员工管理 | 员工列表、邀请员工；停用／删除／恢复放在列表内；无权限配置 | 我的/老板管理/员工管理（§3.0.4已确认） | 删除后回本店由老板重新邀请并关联原身份；手机／Web分工及任务交接仍待确认 | 02§6～8 |
-| 门店配置 | 门店资料、营业与预约设置、四类项目及表单／启停恢复已确认；商品、优惠券和通知模板其他细节继续讨论；充值不设套餐 | 我的/老板管理/门店资料、营业与预约设置、服务项目管理已确认 | 项目主资料仅老板维护，商品关联已有SKU；护理仅门店开单，结算调价不改主资料 | §3.0.6～3.0.9、01、02、03各子模块 |
+| 门店配置 | 门店资料、营业与预约设置、四类项目及表单／启停恢复已确认；优惠券管理五项按§3.0.15已定；商品、通知模板及未列配置细节继续讨论，充值不设套餐 | 我的/老板管理/门店资料、营业与预约设置、服务项目管理已确认 | 项目主资料仅老板维护，商品关联已有SKU；护理仅门店开单，结算调价不改主资料 | §3.0.6～3.0.9、01、02、03各子模块 |
 | 付费能力 | 本店养宠顾问开关/资格查看（管理入口候选） | 老板管理候选 | 平台授予Store权益；门店不能自行授予，不得查看客户聊天正文 | 03l |
 | 日志与数据 | 系统操作日志、导出、历史数据导入、资源管理 | 系统日志归老板管理及平台管理，具体布局待确认；复杂操作Web候选 | 系统日志只向本店老板及平台管理员开放；手机是否开放导出、资源配额等待后续阶段 | 01§11～12/§15、02 |
 | 账号支持 | 当前身份、登录异常、通知权限说明、帮助、退出 | 我的 | 不建设已排除的在线客服/私聊系统 | 02、03f及全局边界 |
@@ -1614,7 +1641,7 @@ F-WAL-018／019／024～027仅套餐专属字段退役保留注册号，020～02
 
 | ID | 状态 | 核心问题 | 影响及收口 |
 |---|---|---|---|
-| DEC-STAFF-01 | pending | 其他老板菜单、其余手机／Web分工及优先流程仍待确认。§3.0.8四类／表单校验／默认启用／恢复／旧预约例外和§3.0.9全部到店订单调价／免单已确认；护理仅门店开单、商品只关联已有SKU。充值无套餐／逐次金额／可选赠送余额与券／有赠送必填备注按§3.0.11已定，不再预留套餐管理；门店资料平台审核页待阶段05 | 阶段04/05，页面范围；已确认子项不回退 |
+| DEC-STAFF-01 | pending | 优惠券管理入口、老板模板维护／启停恢复无删除、员工可独立赠券原因必填、护理范围和已发快照五项按§3.0.15已定；其他老板菜单、其余手机／Web分工及优先流程仍待确认。§3.0.8四类／表单校验／默认启用／恢复／旧预约例外和§3.0.9全部到店订单调价／免单已确认；护理仅门店开单、商品只关联已有SKU。充值无套餐／逐次金额／可选赠送余额与券／有赠送必填备注按§3.0.11已定，不再预留套餐管理；门店资料平台审核页待阶段05 | 阶段04/05，页面范围；已确认子项不回退 |
 | DEC-STAFF-02 | pending | §4.1基础资料、洗美／护理同客多宠一单独立进度／一起结算、同宠洗美护理原单加项已定；§5.1寄养多宠各自独立入住／位置／时间已定，§5.2同店同客可一起结算、逐宠本次日价与实际晚数计算已定。新增顾客保存后提醒／失败直接继续及重复频率按§6.5.1已定；其他未决混单、复杂复用／绑定冲突仍待细化 | 阶段04/06，与03g核对；不扩大到商品／寄养混单或自动合并顾客 |
 | DEC-STAFF-03 | pending | 争议待办归属争议门店及§3.2.1三步流转／单卡去重／跨天保留已定；§3.7预约待处理／阅读确认／共享提醒不可用选择继续已定；§5.1寄养异常由员工实际处理并填写结果后明确关闭，已读／通知不关闭已定。食品风险初次归属／平台暂承接及同案同店不重复按03f§13.3已定，§13.3.1全店有效人员知悉／基本可见范围／无领取转交审批／移卡留历史已定；已派后改店／多店、其他待办归属、领取／转交／责任转移、多人处理及其余通知任务关系仍待决 | 阶段04/06/08；不回退寄养异常已确认范围 |
 | DEC-STAFF-04 | pending | §3.0.1另三列表的范围／升序排序、手机号及类型筛选、最终应收列／待确认／整单标签、跨天保留／不套历史15天、原详情办理／无列表一键完成收款五项已定；洗美历史已完成／取消／中止均可查、未结算双入口同原单、默认15天／手机号／类型状态日期筛选与只显示整单最终应收已定； §4.3／4.4洗美及§4.5护理12项已定：独立护理五态、简短强制前检查／主人决定／完成前确认、照片备注选填、本人普通结果、未结算重开；同宠洗美加护理不降低洗美六项。洗美中止说明选填／顾客无过程／无中止通知已定；正常已完成的补图／普通文字更正含已结算已定：全店有效人员无审批、原因选填、历史保留／默认最新、不重开不改账不通知，AI由顾客选择；顾客精确标签、其他未列状态／内容更正、其他护理取消／更正事件消息、AI新素材再次分析版本契约等其余细节仍待决；护理开始普通／完成重要／补改普通、中止不通知及完成后补改权限按§4.5已定，取消／中止后不恢复原服务、包括误点都重新开单按§4.4已定，寄养不照搬 | 阶段04/06，与03/03i联动；不回退已确认洗美或护理规则 |
