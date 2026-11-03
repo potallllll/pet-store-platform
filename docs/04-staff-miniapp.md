@@ -2,7 +2,7 @@
 
 > status: mixed
 > status_scope: staff_requirements
-> confirmed_scope: single_order_performance_staff_attribution_and_original_owner_refund_metrics_and_business_statistics_five_rules_employee_self_view_and_explicit_order_performance_attribution_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
+> confirmed_scope: self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_business_statistics_five_rules_employee_self_view_and_explicit_order_performance_attribution_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
 > pending_scope: all_other_staff_proposals_and_cross_store_risk_details
 > change_policy: record_required
 > development_readiness: blocked
@@ -153,7 +153,7 @@
 |---|---|---|
 | 1 | 员工与门店信息 | 查看本人姓名、所属门店和当前账号状态。 |
 | 2 | 我的工作记录 | 承接本人工作记录，并允许查看本店其他员工的业务经办事实；工作记录对本店所有有效员工开放，排除系统审计详情。 |
-| 3 | 我的业绩 | 查看本人归属订单明细核对，老板可汇总本店员工；每单归属必须明确，每单一人默认开单人／结算前可改、客户端商品确认时必选，消费实收／退款／净消费口径按§3.0.10已定。 |
+| 3 | 我的业绩 | 查看本人归属订单明细核对，老板可汇总本店员工；每单归属必须明确，每单一人默认开单人／员工只能转出当前本人归属／老板可改本店全部且变更原因必填，客户端商品确认时必选，消费实收／退款／净消费口径按§3.0.10已定。 |
 | 4 | 通知设置 | 管理本人可设置的业务提醒。 |
 | 5 | 账号与安全 | 账号绑定、登录与安全设置。 |
 | 6 | 帮助与反馈 | 查看操作说明、提交使用问题反馈。 |
@@ -383,8 +383,8 @@
 
 > status: mixed
 > status_scope: store_business_statistics_and_employee_performance
-> confirmed_scope: business_statistics_five_rules_single_staff_order_attribution_pre_settlement_change_goods_confirmation_required_and_employee_net_consumption
-> pending_scope: post_settlement_attribution_correction_legacy_backfill_inactive_target_unsettled_followup_and_recharge_transaction_contract
+> confirmed_scope: business_statistics_single_staff_order_attribution_self_owned_transfer_owner_all_order_correction_required_reason_and_actual_receipt_metrics
+> pending_scope: legacy_missing_attribution_backfill_inactive_target_followup_and_recharge_transaction_contract
 > confirmed_by: user
 > confirmed_on: 2026-11-03
 > business_statistics_entry: 老板管理/经营统计
@@ -403,11 +403,18 @@
 > performance_order_staff_field: order_performance_staff_id
 > performance_staff_opened_order_default: actual_creating_staff
 > performance_attribution_change_actors: [merchant_owner, active_store_staff]
-> performance_attribution_change_window: before_first_successful_collection_or_waiver
+> performance_attribution_change_window: pre_settlement_selection_and_post_settlement_explicit_correction
+> performance_staff_transfer_source: current_order_attribution_is_self
+> performance_owner_correction_scope: all_orders_in_current_store
+> performance_attribution_change_reason_required: true
+> performance_attribution_correction_scope: entire_order_all_recorded_and_future_consumption_refunds
+> performance_attribution_correction_period: original_transaction_dates
+> performance_attribution_business_summary_readers: source_and_target_staff_for_own_related_changes
+> performance_amount_basis: actual_recorded_consumption_receipts_minus_actual_recorded_refunds
 > performance_client_goods_assignment: explicit_choice_required_on_store_confirmation
 > performance_client_goods_owner_default: excluded
 > performance_employee_metrics: [消费实收, 消费退款, 净消费]
-> performance_refund_attribution: original_order_attributed_staff
+> performance_refund_attribution: effective_order_attributed_staff_including_corrections
 > commission_feature_status: retired
 
 **经营统计五项已确认**：
@@ -420,10 +427,13 @@
 
 **员工业绩方向已确认**：老板可看本店员工汇总及各员工归属订单明细，员工可看自己的归属订单明细核对；每笔门店消费订单必须明确业绩归属。业绩归属与实际开单、服务、收款／退款经办、录入及原审计身份分别保存，不能将经办人字段静默改作归属或因换员工操作改变归属；工作记录原本允许看本店经办事实，不因此扩大为可读他人业绩汇总。员工停用／移出后失去本店访问，原稳定身份和历史保留，返聘不把旧订单重算成新业绩。提成仍取消，不生成任何提成配置、提成计算／结算或提成报表。本次归属和金额三项已确认：
 
-- **每单一人**：每笔门店消费订单以F-ORD-038 `order_performance_staff_id`唯一归属一名本店员工，值引用原稳定staff_id，包括老板参与本店业务时的原稳定业务身份；不按名字、手机号或Platform User猜归属，不按多宠／服务项目／付款拆分成多名业绩人员。员工开单默认实际开单人，服务端从原合法创建操作确定；本店老板／有效员工在结算前可明确改选同店合法归属人，保留前后人员、实际修改人和时间。其他实际开单／服务／收退款操作者照常记录，不因经办改变业绩归属。
-- **客户端商品例外**：顾客提交商品需求时尚无员工开单，允许在门店确认前暂未归属；本店确认商品需求时必须明确选择一人，缺失／跨店或非法对象拒绝确认，不能默认老板／确认人或让顾客填写。选择可在原一屏确认中完成，不增加审批或另一张商品单；确认成功后该消费订单归属必填，收款／免单前再次校验。纯预约、投诉、上门撮合、平台积分兑换不是本节门店消费订单，不为其强派消费业绩。
-- **结算锁定与核对**：原单首次成功收款或明确免单后，不再用结算前改选动作直接改归属；寄养同单分批结算、组合支付都沿同一人，不因余宠未结算或其他员工补记／退款改归属。归属改选及确认／收款／免单用原F-ORD-032版本与当前对象／权限校验，归属变更让旧结算上下文重新核对，不能以旧页面把钱计到过期归属；请求重试不重复，选人不改变金额、付款或服务状态，原F-AUD留修改事实。结算后归属纠错、旧已结算单缺归属回填、归属员工失效后的未结算接续仍须后续确认，不无痕篡改历史或自动归给经办人。
-- **员工金额口径**：按归属订单的已入账消费实收、消费退款、净消费统计，口径／发生日期／充值单列／余额消费去重与上述门店统计一致，净消费＝实收－退款。退款无论谁经办，都扣回原订单归属人，计在实际退款期，不能记到退款操作人的业绩；充值另列，免单及未收款不增加消费实收。金额依真实交易／拆分稳定ID只计一次，多宠／多次照护或退款经办次数不放大金额，不新增提成。员工本人范围由服务端从当前稳定身份限定，不接受客户端换staff_id查询他人；老板按本店汇总与员工明细核对，原单详情仍执行既有业务访问权限。
+- **每单一人及归属修改权限**：每笔门店消费订单以F-ORD-038 `order_performance_staff_id`唯一归属一名本店员工，引用原稳定staff_id；员工开单仍默认实际开单人，客户端商品初次选择按下一项。本次最新权限统一用于结算前改选和结算后更正：普通有效员工只能将当前归属本人的订单改给本店其他合法员工，不得修改当前归属他人的订单；老板可修改本店全部订单，不能跨店。原开单人、收款人或曾经归属过不等于现在可修改，也不能靠原业务详情可读或直接传order_id绕过。归属实际变更必须填写非空原因，前后归属、修改人、服务端时间沿F-AUD留存；默认开单或商品确认的首次选归属不作为更正、不额外强制填更正原因。其他实际服务／收退款经办身份保持；一单多宠、组合支付、寄养同单分批均不拆成多人业绩。目标选择仅提供本店合法员工所需身份信息，不向选择人开放目标员工的订单／金额或老板员工管理资料。
+- **客户端商品例外**：顾客提交商品需求时尚无员工开单，允许在门店确认前暂未归属；本店确认商品需求时必须明确选择一人，缺失／跨店或非法对象拒绝确认，不能默认老板／确认人或让顾客填写。尚未归属的客户端商品需求，沿原门店确认资格由本店老板／有效员工初次选择，不以“来源必须本人”阻断首次确认；已有归属后的改选才执行上述当前本人／老板范围和必填原因。选择可在原一屏确认中完成，不增加审批或另一张商品单；确认成功后该消费订单归属必填，收款／免单前再次校验。纯预约、投诉、上门撮合、平台积分兑换不是本节门店消费订单，不为其强派消费业绩。
+- **结算后更正及核对**：原单收款或免单后，金额和真实交易保持锁定；业绩归属填错时从原单使用明确的“更正业绩归属”动作，按上述员工只能转出本人／老板可改本店全部的规则办理，原因必填。不重开订单、撤销收款或改实际经办人，不改变订单金额／余额／付款退款／库存／服务记录。已结算不直接改单的旧限制不阻断这个已确认的独立归属更正动作，也不授予其他改账权限。
+- **金额重归属与历史**：更正成功后，整单已入账实收、已发生退款及后续真实退款均统一归更正后的员工；按各收退款原实际发生日期重算对应员工期间业绩，不把更正当天记为新增收款或退款。全店各期间实收／退款／净消费合计不变，不新增资金转账／退款记录。保留历次原归属、新归属、修改人、原因及时间；原归属员工和新归属员工可查看与本人相关的调出／调入更正摘要，不重复统计业绩、不把历史调入当当前仍归本人。该摘要是原业务事实的授权投影，不开放原始审计或他人员工业绩；转出后不再属于本人当前业绩，原转出人不能自行改回，只有最新归属员工或老板按各自权限处理。旧记录保留不授予已停用／移出员工访问。
+- **服务端校验与并发**：修改时服务端从当前身份／门店和当前038校验来源是否本人，老板也必须属本店，原因及目标身份同时校验，不能仅隐藏按钮。同原单032当前版本协调归属更正／收款／免单／退款核对，成功更正推进版本，旧上下文重新核对；同一归属A被两个转出请求竞争时只允许一个合法结果，不让旧页面覆盖最新归属。已成功请求重试只返回原结果及当次有权摘要、不再次转移或重算；新的请求按最新归属重新鉴权。统计读取一致的原单有效归属，将整单各真实收退款统一重归属，不能部分计A、部分计B或让更正事件进入消费实收。历史已结算单缺归属回填、失效目标接续和充值交易契约等未列细则仍待确认，不据此无痕补猜。
+
+- **员工金额口径**：业绩按已入账的实际消费收款计算，不按最终应收、参考价、开单金额或服务完成金额。消费实收取真实付款／组合拆分，消费退款取真实退款，净消费＝实收－退款，可负数；原项目报价100元、实际调价后已记账收80元，消费实收只计80元，未收款和免单不增加实收。会员余额消费仍只计一次、不代表新现金，充值另列；发生日期及补录规则沿上文。退款归该订单当前有效业绩归属（含合法更正后的人员），不归退款经办人；历史已发生退款同样随整单归属更正重新归集，不能保留在最初填错的人名下。老板看本店汇总／员工明细，员工仅看本人当前归属订单和本人相关更正摘要；服务端拒绝更换查询staff_id读取他人。已有门店协作订单／工作记录的读取资格仍按原业务权限，不能从这些入口获得更改他人业绩归属或查看他人员工汇总的能力。
 
 
 ### 3.1 五个入口的建议职责
@@ -541,7 +551,7 @@
 | 上门喂养 | 待确认、已确认、历史；仅确认／撤销 | 工作台待处理／业务/上门喂养 | 当前店确认后仅本店可看双方联系方式；修改与实际服务在线下，无进度跟踪 | 03j§8～9.3 |
 | 积分实物履约 | 本店已发货奖励、实际交付后登记已领取、历史 | 工作台/待处理/商品处理下的奖励自提；业务/商品处理/奖励自提 | 无奖励收货分类／到货确认／领取凭证；老板与有效员工沿03k登记真实领取，不做总仓发货或未决取消／退积分 | 02§2／4、03k |
 | 财务 | 日结、交接班、对账、收款记录、异常核对 | 全部功能/财务，授权可见 | 全量分析/导出建议老板Web；口径与流程待定 | 01§10/§15 |
-| 员工业绩 | 老板汇总本店、员工核对本人归属订单；每单归属必须明确 | 我的/我的业绩；老板管理/经营统计；平台管理员按职责查看 | §3.0.10经营统计五项与查看范围已定；一单一人、结算前可改与员工实收／退款／净消费按§3.0.10已定，退款归原单归属人；结算后更正／历史回填等未列细节仍待06/08，不以经办字段代归属 | 01§10、02§4、§3.0.10 |
+| 员工业绩 | 老板汇总本店、员工核对本人归属订单；每单归属必须明确 | 我的/我的业绩；老板管理/经营统计；平台管理员按职责查看 | §3.0.10经营统计五项与查看范围已定；一单一人、归属修改按员工只转本人／老板改本店全部且原因必填、员工实收／退款／净消费按实际收款已定，结算后更正带整单历史和后续退款／原日期重归属；历史缺归属回填等未列细节仍待06/08，不以经办字段代归属 | 01§10、02§4、§3.0.10 |
 | 员工管理 | 员工列表、邀请员工；停用／删除／恢复放在列表内；无权限配置 | 我的/老板管理/员工管理（§3.0.4已确认） | 删除后回本店由老板重新邀请并关联原身份；手机／Web分工及任务交接仍待确认 | 02§6～8 |
 | 门店配置 | 门店资料、营业与预约设置、四类项目及表单／启停恢复已确认；商品／充值套餐和通知模板其他细节继续讨论 | 我的/老板管理/门店资料、营业与预约设置、服务项目管理已确认 | 项目主资料仅老板维护，商品关联已有SKU；护理仅门店开单，结算调价不改主资料 | §3.0.6～3.0.9、01、02、03各子模块 |
 | 付费能力 | 本店养宠顾问开关/资格查看（管理入口候选） | 老板管理候选 | 平台授予Store权益；门店不能自行授予，不得查看客户聊天正文 | 03l |
@@ -1483,7 +1493,7 @@
 | DEC-STAFF-05 | pending | 洗美收费／挂单及护理正常完成后收费／中止实际费用／全未开始取消不收费／多宠一起结算已定；统一明确免单、最多两种支付、先本金后赠送、无老板审批且原路退款、自动资产联动不变。寄养§5.2过夜计数／实际离店结算、入住逐宠设置日价及同店同客多宠一起结算、分批接走分别结算已定，离店费用确认即离店、未付可手动挂单原因必填且按实际时间停计已定；第14～18项离店确认前留痕更正整次正日价、不分段／不自动涨价、免费走明确免单、离店未付只调最终应收及已结算不直接改账已定；§4.6挂单查询／人工联系、护理挂单及误挂撤销已定；其余未决类型结算时序、除同宠洗美护理加项外的未决混合业务、部分退款分配、账本更正／冲正等剩余细则仍待决；外部支付通道及失败恢复不在V1范围 | 阶段04/06/08；只记账、服务及时操作，不造收款／完成／退款，不扩展充值退款／任意改余额／积分权限 |
 | DEC-STAFF-06 | pending | §5.1寄养16项及用户第11项修正已定：实际到店确认、时间／单宠防重、多宠独立、简单位置、简短入住检查、本次资料／明确同步、饮食核实／随带物品、单表单三动作→时间→选填照片、逐宠无配额、可见性独立、异常明确处理、到期仅提醒。§5.2北京时间03:00过夜计数（入住排除／离店包含）、0晚无寄养费、实际离店结算、延期／提前离店据实重算已定。本店员工入住逐宠设置日价及同店同客多宠一起结算、分批接走分别结算且余宠不预收、逐宠计算再汇总、费用确认即离店而未付仍可挂单／实际时间停计／物品交还提醒已定。第14～18项日价更正／不分段／正日价及明确免单／离店后未付应收调整／已结算历史保护已定。挂单查询／人工联系及撤销按§4.6已定；特殊交接与离店时间等历史更正、已结算独立更正流程仍待决。§5.4健康资料／人工接收、特殊照护含代喂药／实际执行、异常沟通／实际处理与提前接走衔接已定。医疗处置／紧急升级、交接／责任转移及历史更正等剩余边界仍待决 | 阶段04/05/06/08；03a建议容量只提醒，加餐按普通销售、照护需要时另记，不恢复洗美硬名额 |
 | DEC-STAFF-07 | pending | 统一店员资格、停用恢复、删除仅移出、返聘新邀请关联原身份、工作记录／业绩／审计可见性及取消提成已确认；门店资料由老板提交、平台管理员审核及营业执照仅供本店老板／平台管理员使用、不向顾客公开已确认，其他未决业务动作与敏感字段视图仍待细化 | 阶段08，先由04提交动作清单 |
-| DEC-STAFF-08 | pending | §3.0.10老板经营统计五项（实收／退款／净消费、实际发生日期／已入账、充值单列、原单明细）、老板汇总／员工本人核对与每单明确归属已定；一单一人默认开单人／结算前老板与有效员工可改、客户端商品确认时必选、员工实收退款净消费及退款归原归属已定；结算后归属更正／历史回填／失效人员未结算接续和充值交易时间映射仍待确认；日结／交接班、财务对账及库存／导出／日志的手机Web分工仍待决 | 阶段04/05/06/08 |
+| DEC-STAFF-08 | pending | §3.0.10老板经营统计五项（实收／退款／净消费、实际发生日期／已入账、充值单列、原单明细）、老板汇总／员工本人核对与每单明确归属已定；一单一人默认开单人／员工仅转当前本人归属／老板可改本店全部、原因必填／客户端商品确认必选及实际收款业绩已定；结算后独立更正带整单历史及后续收退款按原日期归新员工、调入调出摘要和全店不变已定；历史缺归属回填／失效人员接续和充值交易时间映射仍待确认；日结／交接班、财务对账及库存／导出／日志的手机Web分工仍待决 | 阶段04/05/06/08 |
 
 已有DEC-APPT／DEC-FEED／DEC-POINTS编号不复用。上门喂养按§3.9／03j仅确认撤销及店家确认后联系资料权限，DEC-FEED-01修改与服务跟踪已退役、03截止已确认，02仅剩地理技术／异常界面；积分等其他待决保持。
 
