@@ -1,7 +1,7 @@
 # 03C 客户端「我的钱包」模块
 
 > status: mixed
-> confirmed_scope: coupon_owner_management_active_staff_manual_grants_care_scope_template_lifecycle_and_issue_snapshots_and_unified_wallet_balance_edit_required_reason_without_separate_recharge_refund_and_reasoned_owner_staff_recharge_corrections_and_super_admin_reversal_exceptions_and_recharge_query_document_creation_date_sort_filter_entries_six_columns_mobile_date_filters_and_readonly_details_with_wallet_rules_manual_recharge_without_packages_optional_bonus_and_coupons_gift_note_required_principal_first_and_original_route_refunds
+> confirmed_scope: direct_customer_gift_coupon_quantity_reduction_and_deletion_and_coupon_owner_management_active_staff_manual_grants_care_scope_template_lifecycle_and_issue_snapshots_and_unified_wallet_balance_edit_required_reason_without_separate_recharge_refund_and_reasoned_owner_staff_recharge_corrections_and_super_admin_reversal_exceptions_and_recharge_query_document_creation_date_sort_filter_entries_six_columns_mobile_date_filters_and_readonly_details_with_wallet_rules_manual_recharge_without_packages_optional_bonus_and_coupons_gift_note_required_principal_first_and_original_route_refunds
 > pending_scope: partial_refund_channel_component_allocation_platform_exception_details_and_remaining_transaction_contracts
 > status_scope: full_document
 > change_policy: record_required
@@ -225,7 +225,7 @@ V1.0 不要求老板维护复杂多层营销条件。新增“护理”可作为
 
 已经发出的coupon_instance_id继续按发放时的优惠条件／范围／有效期使用；模板停用不将旧实例标失效、已用或已过期。模板改名、优惠、范围或期限只影响以后发出的券，原实例沿发放快照，不读取后来模板覆盖旧优惠。已有券的有效期锁定暂停／解除后补回时长、核销与退款仍按§11执行，不因本次确认被取消；恢复模板不复活原已用／过期实例或重发旧券。
 
-模板维护保留前后内容、老板／服务端时间；发券记录保留本次真实模板、顾客、券实例和来源。模板变化与发放并发时须核对当前合法状态／内容，不用旧页面发出不一致快照；剩余版本与跨渠道技术映射按字段注册表先收口。已发行券的额外人工更改或独立误发撤回等未列细则仍待确认。
+模板维护保留前后内容、老板／服务端时间；发券记录保留本次真实模板、顾客、券实例和来源。模板变化与发放并发时须核对当前合法状态／内容，不用旧页面发出不一致快照；剩余版本与跨渠道技术映射按字段注册表先收口。顾客持有赠券的直接减量／删除按§9.2.1已确认；已发券其他内容更改及超管异常等未列细则仍待确认。
 
 ## 9. 优惠券发放方式
 
@@ -242,6 +242,16 @@ V1.0 支持以下四种来源：
 本次数量用F-CPN-021 coupon_grant_quantity，不借商品数量、充值赠券或邀请码绑定字段冒充本次独立赠送；原因沿F-AUD-009，人员及时间沿原审计，优惠券备注F-CPN-018仍为原可选字段，不被改成全局必填。每张实际券有原F-CPN-002稳定实例，来源F-CPN-014记“人工赠送”，关联当前本店顾客；不伪造一笔充值／付款／积分兑换来发券。
 
 服务端同时校验本店／顾客／有效身份、当前模板及启用、数量与原因；失败不报发放成功，同次成功请求重试不重复发券，顾客只按原权限查看已成功发放的券与可用券数量。员工可获取完成发放所需的模板内容，不因此获得老板模板管理、原始系统审计或跨商户资产权限。
+
+### 9.2.1 顾客赠券数量直接修改／删除
+
+本店老板和有效员工可在“顾客详情 → 会员资产 → 优惠券”直接减少当前赠券数量或点击“删除赠券”，不要求原发放人、不设老板审批或独立误发申请／作废工单，也不强制先作废再重新赠送。删错／发错由门店手工调整；本次赠券数量变更沿已确认的变更原因要求填写原因，并记录真实经办、时间和前后实例／数量，不能用原赠送说明自动代本次原因。
+
+操作明确到当前本商户／顾客的实际coupon_instance_id，不按平台User汇总或跨店删券；减少至0即移除本次对应可操作赠券，不能仅改一个“总券数”留下仍可核销的原券。删除数量从本次移除的具体实例派生，不借coupon_grant_quantity当剩余持券数或新增随意可写的总券数字段。增加券仍用原赠券动作，不通过改数量绕过启用模板及发放条件。
+
+手工删除作用于未使用、未被原订单占用的持有赠券：原订单锁定／核销规则不被删除绕过，已使用券仍按之前的超管异常边界处理，不撤销既有消费。服务端提交时校验当前身份／本店顾客／具体券状态，不能让旧页面删除刚被锁定或使用的券；失败不部分改资产，重复成功请求不再减少数量，不能删错其他顾客或相同名称下不同实际实例。
+
+界面“删除”将持有实例沿F-CPN-013记removed，退出可用券列表，可用数量F-WAL-005按剩余真实可用实例重新计算；原模板、原发放来源、赠送事实及本次操作历史保留，不物理抹账。模板仍不提供删除，顾客持券可删除与模板无删除是两个对象。删赠券不自动撤销原充值／兑换、不改本金或赠送余额、不退积分／生成收退款，也不自动补发新券；顾客按原资产权限查看最新结果，内部审计权限不扩大。具体规则见04§3.0.16。
 
 ### 9.3 邀请码兑换
 
@@ -333,7 +343,7 @@ V1.0 退款规则采用简单方案：
 “我的优惠券”仅需区分：
 
 - 可使用
-- 已使用 / 已过期
+- 历史券：已使用 / 已过期 / 已删除（removed）
 
 每张券至少显示：
 
@@ -361,7 +371,7 @@ V1.0 退款规则采用简单方案：
 - 查看优惠券
 - 手动赠送优惠券
 
-统一业务资格不等于可以直接改余额、抹除流水或任意赠券；原充值更正／撤销按§4.2已确认、原因必填，无需老板审批，失败需超管处理的边界按该节；当前余额修改及充值余额退还按§4.3已确认，原因必填、无需审批；独立赠券按§9.2已确认，老板／有效员工可办、原因必填无审批；平台异常细节、赠券误发撤回等其他未列范围仍按对应待决项收口。充值套餐已取消；优惠券模板配置仍归老板管理，充值时选择已有券按§3～4办理；未确认的动作不能借统一权限提前开放。
+统一业务资格不等于可以直接改余额、抹除流水或任意赠券；原充值更正／撤销按§4.2已确认、原因必填，无需老板审批，失败需超管处理的边界按该节；当前余额修改及充值余额退还按§4.3已确认，原因必填、无需审批；独立赠券按§9.2已确认，老板／有效员工可办、原因必填无审批；顾客持有赠券直接减量／删除按§9.2.1已确认；平台异常细节及其他未列范围仍按对应待决项收口。充值套餐已取消；优惠券模板配置仍归老板管理，充值时选择已有券按§3～4办理；未确认的动作不能借统一权限提前开放。
 
 门店消费订单结算最多两种支付方式，会员余额本金／赠送内部拆分算一种；消费先扣本金、再扣赠送，原扣款构成留痕。消费退款本店老板／有效员工均可登记、无需老板审批；全部款项按原付款渠道／原账户退回，不能主动改退余额或现金。原余额部分在确认退款时由系统实际退回原钱包、按原本金／赠送归属形成独立流水；原微信／支付宝／现金等在线下按原路实际退回后登记。保存草稿不代表已退，重试不重复增余额，按03d§1.1／12；部分退款分配按§5待决。该消费规则不开放充值退款、任意余额调整或积分补偿，不以界面失败假回滚或免单造付款。
 
