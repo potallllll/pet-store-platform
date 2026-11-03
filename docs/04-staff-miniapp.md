@@ -2,7 +2,7 @@
 
 > status: mixed
 > status_scope: staff_requirements
-> confirmed_scope: recharge_record_entries_six_columns_mobile_date_filters_readonly_details_and_manual_recharge_without_packages_optional_bonus_coupon_and_required_gift_note_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_business_statistics_five_rules_employee_self_view_and_explicit_order_performance_attribution_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
+> confirmed_scope: recharge_record_document_creation_date_query_sort_entries_six_columns_mobile_date_filters_readonly_details_and_manual_recharge_without_packages_optional_bonus_coupon_and_required_gift_note_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_business_statistics_five_rules_employee_self_view_and_explicit_order_performance_attribution_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
 > pending_scope: all_other_staff_proposals_and_cross_store_risk_details
 > change_policy: record_required
 > development_readiness: blocked
@@ -487,8 +487,8 @@ F-WAL-018／019／024～027仅套餐专属字段退役保留注册号，020～02
 
 > status: mixed
 > status_scope: staff_recharge_record_query
-> confirmed_scope: customer_and_store_entries_six_columns_mobile_date_query_document_date_desc_direction_and_readonly_record_details
-> pending_scope: date_basis_clarification_recharge_refund_reversal_and_remaining_transaction_contracts
+> confirmed_scope: customer_and_store_entries_six_columns_mobile_date_query_document_created_at_desc_and_readonly_record_details
+> pending_scope: recharge_refund_reversal_and_remaining_transaction_contracts
 > confirmed_by: user
 > confirmed_on: 2026-11-03
 > recharge_record_customer_entry: 顾客详情/充值记录
@@ -497,17 +497,19 @@ F-WAL-018／019／024～027仅套餐专属字段退役保留注册号，020～02
 > recharge_record_filters: [顾客手机号, 日期]
 > recharge_record_default_date: 今天
 > recharge_record_date_options: [今天, 昨天, 本月, 自定义日期]
-> recharge_record_sort: recharge_document_date_desc
-> recharge_record_document_date_mapping: pending_user_clarification
+> recharge_record_sort: recharge_document_created_at_desc
+> recharge_record_document_date_mapping: recharge_record_created_at
+> recharge_record_date_column_basis: recharge_record_created_at
+> recharge_record_date_filter_basis: recharge_record_created_at
 > recharge_record_direct_overwrite: forbidden
 
 1. **两个入口**：顾客详情查看该顾客充值记录，“业务 → 订单与收银 → 充值记录”查看当前门店的原充值记录。两入口复用同一原充值业务及流水，顾客入口固定当前本店顾客，不复制充值单／资产或把充值建成消费订单；老板及有效员工沿当前本店顾客／钱包记录原有读取权限查询，不能凭新增入口查看其他商户资产、他人员工业绩或原始系统日志。
 2. **六列内容**：日期、顾客、实收金额、赠送余额、赠送优惠券、经办人。实收沿F-WAL-020实际本金，不把021赠送或022含赠送到账额加作实收；赠送余额沿021、赠券及数量沿023、真实经办沿015，不用消费订单业绩归属或后来查询人替换经办。金额尚不可读／查询失败如实提示，不用0假报成功；无赠送按原真实0／无券展示，不凭列表写入或补发赠送。
 3. **查询筛选**：支持本店顾客手机号及日期组合查询，默认今天，可选昨天、本月、自定义日期，沿F-CORE-009业务时区Asia/Shanghai；所选起点含当日00:00、终点用末日次日00:00不含，不套洗美历史15天，也不触发跨店共享查询或新增顾客核验。
-4. **日期及排序**：按用户指定的“订单日期”从新到旧排序，替换上一轮“按实际充值收款时间倒序”的建议；订单日期具体指充值单据生成日期还是实际充值日期，仍待本轮澄清，不能先选择某一字段或静默改写日期筛选依据。补录仍真实保留实际收款日期及服务端录入时间，充值收入统计按原真实收款发生日期、不把录入时间冒充先前实际收款；列表日期与统计期的最终映射须明确后才能宣称已就绪。
+4. **日期及排序**：用户已明确“订单日期”为充值单据生成日期。日期列、日期筛选和排序统一取原充值记录的F-CORE-013 created_at，按完整生成时间从新到旧；日期查询边界按前项业务时区。昨天真实收款、今天补录生成单据的记录显示今天的单据日期、在今天的查询范围内并按今天生成时间排序，不回填昨天或按实际收款时刻排序。实际收款日期及服务端录入时间仍分别保留、详情可核对；充值收入统计按真实收款发生期，例中充值实收归昨天，不能以今天单据列表合计替代今天实际收款统计。不得将消费订单created_at、套餐时间、客户端时钟或后续备注修改时间代替原充值单据生成时间，也不因补录伪造昨天已入余额。
 5. **详情及历史保护**：可看本次本金、赠送余额、赠券及数量、备注、真实余额变化，关联原充值及流水记录；备注等字段仍按原对象／角色范围返回，不将内部审计当详情。已成功记账的充值记录不允许直接覆盖修改金额／赠送／经办／原日期或删除历史，错误更正／充值退款／冲正下一轮单独确认，不通过查询页开放任意改余额或重发券。历史记录已有不完整资料如实显示，不据当前余额／模板倒算旧值；读取不产生新资产、订单、通知或重复收入。
 
-充值与消费统计分开、赠送非实收、无套餐及赠送备注必填按§3.0.10～11／03c保持。日期业务方向的确认不等于真实充值交易身份／时间字段与接口已联调；剩余技术映射先按FIELD-REGISTRY收口，DEC-STAFF-05／08其余范围保留。
+充值与消费统计分开、赠送非实收、无套餐及赠送备注必填按§3.0.10～11／03c保持。单据生成日期与实际收款日期的业务分工已确认；这不等于真实充值交易身份／实际收款时间字段及接口已联调；剩余技术映射先按FIELD-REGISTRY收口，DEC-STAFF-05／08其余范围保留。
 
 ### 3.1 五个入口的建议职责
 
@@ -618,7 +620,7 @@ F-WAL-018／019／024～027仅套餐专属字段退役保留注册号，020～02
 | 交易异常 | 退款记账、撤销、冲正、补收等 | 原单详情，本店老板／有效员工可登记消费退款，无需老板审批 | 退款原渠道／原账户退回；不接外部通道，其余账本更正仍待决 | §4.4、02§4、03d§1.1／12 |
 | 客户 | 搜索/添加/详情、历史客户匹配异常、客户通知 | 客户 | 批量导入/复杂处理建议老板Web | 02§9、03g、03f |
 | 宠物 | 档案、基础/护理/寄养资料、体重、服务历史、当前食用品牌、行为与服务安全记录（跨店细节待确认） | 客户详情，或从洗美、业务/寄养带入 | 内部备注与客户资料权限分清，不替客户自动授权 | 01§5、03b、03h |
-| 会员 | 余额/本金/赠送/流水、逐次充值及可选赠送、充值记录查询、余额调整、优惠券查看与处理 | 客户详情按权限操作 | 充值不设套餐，有赠送备注必填，记录查询两入口与六列见§3.0.11～12／03c；订单日期含义待澄清，调整/退款不可直接改数字 | 01§8～9、03c |
+| 会员 | 余额/本金/赠送/流水、逐次充值及可选赠送、充值记录查询、余额调整、优惠券查看与处理 | 客户详情按权限操作 | 充值不设套餐，有赠送备注必填，记录查询两入口与六列见§3.0.11～12／03c；订单日期已定为充值单据生成日期，调整/退款不可直接改数字 | 01§8～9、03c |
 | 库存 | 库存查询、入出库/调整、异常库存核对 | 全部功能/库存，具体动作待确认 | 盘点/商品主数据建议Web；是否手机做盘点需确认 | 01§10、03e |
 | 投诉回应 | 正式回应、证据、第三方佐证、补证、裁决/申诉状态 | 工作台待处理/其他；异常与临期/投诉回应；业务/消费争议（已确认） | 平台负责审核与裁决；本店动作基线见§6.1，其他动作权限与手机/Web分工待确认 | 03h、§6.1～6.3 |
 | 上门喂养 | 待确认、已确认、历史；仅确认／撤销 | 工作台待处理／业务/上门喂养 | 当前店确认后仅本店可看双方联系方式；修改与实际服务在线下，无进度跟踪 | 03j§8～9.3 |
@@ -1566,7 +1568,7 @@ F-WAL-018／019／024～027仅套餐专属字段退役保留注册号，020～02
 | DEC-STAFF-05 | pending | 洗美收费／挂单及护理正常完成后收费／中止实际费用／全未开始取消不收费／多宠一起结算已定；统一明确免单、最多两种支付、先本金后赠送、无老板审批且原路退款、自动资产联动不变。寄养§5.2过夜计数／实际离店结算、入住逐宠设置日价及同店同客多宠一起结算、分批接走分别结算已定，离店费用确认即离店、未付可手动挂单原因必填且按实际时间停计已定；第14～18项离店确认前留痕更正整次正日价、不分段／不自动涨价、免费走明确免单、离店未付只调最终应收及已结算不直接改账已定；§4.6挂单查询／人工联系、护理挂单及误挂撤销已定；其余未决类型结算时序、除同宠洗美护理加项外的未决混合业务、部分退款分配、账本更正／冲正等剩余细则仍待决；外部支付通道及失败恢复不在V1范围 | 阶段04/06/08；只记账、服务及时操作，不造收款／完成／退款，不扩展充值退款／任意改余额／积分权限 |
 | DEC-STAFF-06 | pending | §5.1寄养16项及用户第11项修正已定：实际到店确认、时间／单宠防重、多宠独立、简单位置、简短入住检查、本次资料／明确同步、饮食核实／随带物品、单表单三动作→时间→选填照片、逐宠无配额、可见性独立、异常明确处理、到期仅提醒。§5.2北京时间03:00过夜计数（入住排除／离店包含）、0晚无寄养费、实际离店结算、延期／提前离店据实重算已定。本店员工入住逐宠设置日价及同店同客多宠一起结算、分批接走分别结算且余宠不预收、逐宠计算再汇总、费用确认即离店而未付仍可挂单／实际时间停计／物品交还提醒已定。第14～18项日价更正／不分段／正日价及明确免单／离店后未付应收调整／已结算历史保护已定。挂单查询／人工联系及撤销按§4.6已定；特殊交接与离店时间等历史更正、已结算独立更正流程仍待决。§5.4健康资料／人工接收、特殊照护含代喂药／实际执行、异常沟通／实际处理与提前接走衔接已定。医疗处置／紧急升级、交接／责任转移及历史更正等剩余边界仍待决 | 阶段04/05/06/08；03a建议容量只提醒，加餐按普通销售、照护需要时另记，不恢复洗美硬名额 |
 | DEC-STAFF-07 | pending | 统一店员资格、停用恢复、删除仅移出、返聘新邀请关联原身份、工作记录／业绩／审计可见性及取消提成已确认；门店资料由老板提交、平台管理员审核及营业执照仅供本店老板／平台管理员使用、不向顾客公开已确认，其他未决业务动作与敏感字段视图仍待细化 | 阶段08，先由04提交动作清单 |
-| DEC-STAFF-08 | pending | §3.0.10老板经营统计五项（实收／退款／净消费、实际发生日期／已入账、充值单列、原单明细）、老板汇总／员工本人核对与每单明确归属已定；一单一人默认开单人／员工仅转当前本人归属／老板可改本店全部、原因必填／客户端商品确认必选及实际收款业绩已定；结算后独立更正带整单历史及后续收退款按原日期归新员工、调入调出摘要和全店不变已定；离职／停用／移出不自动转归属、有效员工业务接续及后续实际收退款保留原归属、老板可更正／历史目标例外按本节已定；订单核对列表含未收／免单、六列及手机号／开单日期／业务筛选、开单倒序和独立本人变更摘要已定；充值记录两入口／六列／手机号日期查询／只读详情已确认，订单日期倒序方向已定但日期含义仍待澄清；历史缺归属回填和充值交易时间映射仍待确认；日结／交接班、财务对账及库存／导出／日志的手机Web分工仍待决 | 阶段04/05/06/08 |
+| DEC-STAFF-08 | pending | §3.0.10老板经营统计五项（实收／退款／净消费、实际发生日期／已入账、充值单列、原单明细）、老板汇总／员工本人核对与每单明确归属已定；一单一人默认开单人／员工仅转当前本人归属／老板可改本店全部、原因必填／客户端商品确认必选及实际收款业绩已定；结算后独立更正带整单历史及后续收退款按原日期归新员工、调入调出摘要和全店不变已定；离职／停用／移出不自动转归属、有效员工业务接续及后续实际收退款保留原归属、老板可更正／历史目标例外按本节已定；订单核对列表含未收／免单、六列及手机号／开单日期／业务筛选、开单倒序和独立本人变更摘要已定；充值记录两入口／六列／手机号日期查询／只读详情已确认，单据生成日期展示／筛选及生成时间倒序已定，实际收款时间另存用于充值收入统计；历史缺归属回填和充值交易时间映射仍待确认；日结／交接班、财务对账及库存／导出／日志的手机Web分工仍待决 | 阶段04/05/06/08 |
 
 已有DEC-APPT／DEC-FEED／DEC-POINTS编号不复用。上门喂养按§3.9／03j仅确认撤销及店家确认后联系资料权限，DEC-FEED-01修改与服务跟踪已退役、03截止已确认，02仅剩地理技术／异常界面；积分等其他待决保持。
 

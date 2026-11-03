@@ -1,8 +1,8 @@
 # 03C 客户端「我的钱包」模块
 
 > status: mixed
-> confirmed_scope: recharge_query_entries_six_columns_mobile_date_filters_and_readonly_details_with_wallet_rules_manual_recharge_without_packages_optional_bonus_and_coupons_gift_note_required_principal_first_and_original_route_refunds
-> pending_scope: recharge_document_date_clarification_partial_refund_channel_and_component_allocation_remaining_adjustment_reversal_controls_and_recharge_transaction_time_contracts
+> confirmed_scope: recharge_query_document_creation_date_sort_filter_entries_six_columns_mobile_date_filters_and_readonly_details_with_wallet_rules_manual_recharge_without_packages_optional_bonus_and_coupons_gift_note_required_principal_first_and_original_route_refunds
+> pending_scope: partial_refund_channel_and_component_allocation_remaining_adjustment_reversal_controls_and_recharge_transaction_time_contracts
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -95,7 +95,7 @@ V1.0 不引入复杂营销条件引擎。
 
 支持本店顾客手机号和日期组合查询，默认今天，可选昨天、本月、自定义日期，业务时区及详细日期边界按04§3.0.12。两入口引用原充值业务及流水，不复制消费订单／收入。
 
-点击详情可查看本次本金、赠送余额、赠券、备注及原真实余额变化；已成功记账的记录不能直接覆盖修改或删除。写错后的更正／充值退款／冲正另行确认，不借查询页直接改余额或重发权益；客户端仍无充值入口。列表按用户指定的订单日期从新到旧，订单日期究竟是单据生成日期或实际充值日期仍待本轮澄清；不能擅自选字段或把日期筛选依据改为某一种时间。真实收款日期及录入时间分别保留，充值收入仍按实际收款日期统计。完整规则见04§3.0.12，剩余真实交易时间技术映射仍待收口。
+点击详情可查看本次本金、赠送余额、赠券、备注及原真实余额变化；已成功记账的记录不能直接覆盖修改或删除。写错后的更正／充值退款／冲正另行确认，不借查询页直接改余额或重发权益；客户端仍无充值入口。用户已明确列表订单日期为充值单据生成日期：日期展示、日期筛选沿原充值记录的F-CORE-013 created_at，并按完整生成时间从新到旧。昨天收款、今天补录生成单据时，记录按今天单据日期显示／查询／排序；真实收款日期及录入时间分别保留，充值收入仍按昨天的实际收款日期统计，不能以今天生成的充值单列表合计冒充今天实收。完整规则见04§3.0.12，剩余真实交易时间技术映射仍待收口。
 
 ## 5. 本金与赠送余额
 
