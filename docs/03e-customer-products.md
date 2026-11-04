@@ -1,7 +1,7 @@
 # 03E 商品、购买需求、门店商品管理与入库
 
 > status: mixed
-> confirmed_scope: original_customer_purchase_rules_and_staff_product_management_six_rules_and_manual_and_ai_photo_intake_current_no_membership_check_future_membership_original_form_explicit_posting_and_inventory_management_correction_and_posted_intake_records_five_rules
+> confirmed_scope: original_customer_purchase_rules_and_staff_product_management_six_rules_and_manual_and_ai_photo_intake_current_no_membership_check_future_membership_original_form_explicit_posting_and_inventory_management_correction_and_posted_intake_records_five_rules_and_ai_photo_usage_five_rules
 > pending_scope: stock_intake_remaining_technical_contracts_and_future_membership_commercial_terms
 > status_scope: full_document
 > change_policy: record_required
@@ -255,8 +255,8 @@ V1.0 默认值确定为 24 小时。
 ### 15.1 两种商品入库方式（当前普通功能，会员验证后置）
 
 > status: mixed
-> confirmed_scope: manual_and_ai_photo_stock_intake_current_no_membership_original_form_explicit_posting_inventory_management_correction_and_future_membership
-> pending_scope: future_membership_commercial_terms_duplicate_documents_unit_conversion_cost_updates_and_remaining_technical_contracts
+> confirmed_scope: manual_and_ai_photo_stock_intake_current_no_membership_original_form_explicit_posting_inventory_management_correction_photo_usage_five_rules_and_future_membership
+> pending_scope: future_membership_commercial_terms_other_document_equivalence_unit_conversion_cost_updates_and_remaining_technical_contracts
 > stock_intake_entries: [商品入库, AI拍照入库]
 > manual_stock_intake_entry: 业务/商品处理/商品管理/商品入库
 > ai_stock_intake_entry: 业务/商品处理/商品管理/AI拍照入库
@@ -279,7 +279,7 @@ V1.0 默认值确定为 24 小时。
 - **商品入库**：手工选择本店SKU、填写实际入库数量及可选进货单价，在原入库表单点击“一键入库”；不要求拍照、调用AI或完成AI识别。需新商品时补齐第15节必填资料后可按同一规则建档入库，单据图片可选。
 - **AI拍照入库**：拍摄商品销货单、送货单等相关进货单据 → AI识别商品／规格／数量／进货价并直接填入原入库表单 → 店员可在本表单修改，关联本店SKU／补齐新商品必填 → 点击“一键入库”后生效。取消独立核对页面，不要求再跳转核对页、逐行勾选已核对或经过第二次核对确认；识别完成不自动入库，必要字段缺失仍在原表单提示补齐，不猜测填0或绕过SKU／数量校验。
 
-两入口共用原SKU、库存、入库确认单及防重逻辑，以F-INTAKE-012 stock_intake_method区分manual／ai_photo，不另建“AI库存”或重复商品账。补货增加数量的“商品入库”与第15节盘点填写库存目标区分，不能把本次入库数量覆盖成总库存。已正式入库的同一记录不能换入口再次入库；不同新单／重新拍摄同一物理单据的跨批次去重规则仍待确认，不把请求防重冒充已全部解决。
+两入口共用原SKU、库存、入库确认单及防重逻辑，以F-INTAKE-012 stock_intake_method区分manual／ai_photo，不另建“AI库存”或重复商品账。补货增加数量的“商品入库”与第15节盘点填写库存目标区分，不能把本次入库数量覆盖成总库存。已正式入库的同一记录不能换入口再次入库；新单重复使用本店已入库同一照片按§15.1.6只提醒、可看原单且允许继续；重新拍摄或裁剪等同一物理单据的其他等价识别技术仍待收口，不把请求防重或同图提醒冒充全部票据重复问题已解决。
 
 #### 15.1.2 当前不做会员验证，未来统一接入
 
@@ -303,13 +303,36 @@ AI原始识别结果仅用于填入原入库表单，仍是不可信输入，不
 
 保留方式、图片（如有）、AI原始内容（仅AI来源）、人工确认行、SKU／新商品、前后数量及差额、真实人和服务端时间。入库只记录库存事实，不生成顾客消费、充值、业绩或供应商已付款，不自动建应付流程。单据图片／进货价只供本店有权人员，不向顾客当商品图或订单材料公开；原始审计读取权限不扩大，业务摘要按原资格提供。
 
-商品、库存和入库单唯一归Merchant，store_id是实际门店上下文；未来付费权益才按Store归属，不混同。复用F-PROD-001～026、F-INTAKE-001～012、原身份媒体及F-AUD，新手工方式不要求F-INTAKE-003图片／005AI原始数据，手工状态可直接进入pending_review，不伪装成AI已识别。当前字段721，剩余AI技术／图片限制、跨批次重复、单位换算、成本更新及其他数据契约仍需收口；会员仅为未来范围，原商品购买及其他业务规则保持。需求审计不是H5、AI识别或真实库存已实测。
+商品、库存和入库单唯一归Merchant，store_id是实际门店上下文；未来付费权益才按Store归属，不混同。复用F-PROD-001～026、F-INTAKE-001～013、原身份媒体及F-AUD，新手工方式不要求F-INTAKE-003图片／005AI原始数据，手工状态可直接进入pending_review，不伪装成AI已识别。当前字段722，剩余AI技术／图片限制、同图以外单据等价识别、单位换算、成本更新及其他数据契约仍需收口；会员仅为未来范围，原商品购买及其他业务规则保持。需求审计不是H5、AI识别或真实库存已实测。
 
 #### 15.1.5 入库错误在库存管理修改
 
 入库后发现数量或商品选择错误，本店老板／有效员工可自行到“业务 → 商品处理 → 商品管理 → 库存管理”修改，复用第15节既有库存调整及staff_product.adjust_inventory，不另设入库作废、撤销或重走核对页的流程。按当前实际正确库存填写目标，系统以当前值计算差额，保留前后数量、实际操作人及服务端时间；已有后续销售／入库时，不直接把历史入库数量当当前库存。选错SKU需核实相关SKU当前库存后分别调整，不能只改原入库单上的商品名或删除原单来掩盖错误。
 
 当前已预占保持，可售按总量减预占派生，目标低于已预占先按原规则处理，不静默释放他人订单。原入库单及当次前后库存、确认人、时间、方式继续保留，库存管理调整产生后续变化，不回写或重新识别原单；本次只确认库存错误处理，不默认开放修改原进货价、供应商账款或自动改顾客订单。入库表单最终点击、库存调整均沿本店对象权限、版本及幂等留痕，不因取消核对页关闭基础校验。
+
+#### 15.1.6 AI拍照入库使用细节五项
+
+> status: confirmed
+> status_scope: ai_intake_photo_sources_multi_image_form_failure_fallback_missing_fields_and_same_image_warning_only
+> stock_intake_photo_sources: [camera, phone_album]
+> stock_intake_multi_image_destination: one_original_intake_form
+> stock_intake_recognition_failure_actions: [retry_recognition, edit_original_form_manually]
+> stock_intake_missing_required_fields_ui: inline_in_original_form
+> stock_intake_purchase_price_required: false
+> stock_intake_same_image_match_scope: current_merchant_store_posted_records
+> stock_intake_same_image_policy: warn_view_original_allow_continue
+> stock_intake_same_product_duplicate_policy: never_block_by_product_match_alone
+
+1. **照片来源**：支持现场拍摄和从手机相册选择，均进入原AI拍照入库流程；不要求只能现拍。图片／相册权限不可用或用户取消选图时如实提示，不记已上传／已识别／已入库。
+2. **多张单据**：一次可上传多张照片，结果合并填入同一张原入库表单，沿同一stock_intake_id及稳定行ID，不逐图自动生成入库单或分别改库存。仍由店员在原表单点击“一键入库”后按原整单一致性生效，不新增核对页。多图合并不等于擅自猜测相似商品／规格或重复叠加重叠内容；重叠跨页内容、图片张数大小等未列技术契约仍待收口，不写任意默认限额。
+3. **识别失败**：可重新识别，也可直接在原入库表单手工填写必要内容后正常入库，不强制识别成功才能提交。识别失败、重试或手填本身均不改库存；保留真实失败与已有表单内容，不能伪造识别成功。补齐必要表单后可沿原pending_review待点击，确认成功才posted，原识别失败事实保留，不要求再识别成功。AI入口中识别失败改手填仍保留ai_photo真实来源及图片（如已上传）、原识别／失败事实，不为未来会员绕行改成manual。重试结果按当前表单版本处理，不能无声覆盖店员已修改或已入库内容。
+4. **信息缺失**：商品、规格或数量不明确时在原表单对应位置提示补齐；单规格按原SKU规则处理，不为每个商品虚增多规格必填。必要本店SKU、合法数量及新商品资料必须满足原提交校验，不能猜测或假填0。进货价始终选填，未填保持未知，不用售价／成本补齐；不增加独立核对页、逐行已核对勾选或二次核对步骤。
+5. **重复照片提醒**：再次上传曾用于本店成功入库的同一照片时提示“可能重复入库”，可查看原入库记录，仍允许继续当前新单，不要求写理由或老板审批。只针对有权查看的当前Merchant／Store已posted记录比对，识别中／失败不冒充既往成功；查看原单仍按§15.2逐次鉴权，不跨店提示其他门店是否存在记录。多张照片有命中时提示对应原记录，不凭相同商品、规格或数量认定重复进货。不将该提醒做成强制禁止，也不把仅相似或同一物理单据换图／裁剪等识别能力宣称已解决。
+
+上述允许继续仅限新建入库单的照片提醒，**不是允许原已posted入库单重入**：同一单的双击、超时重试、并发或重复识别回调仍恢复原结果、库存只增加一次。继续新单按原SKU／数量／版本／对象权限和一次确认规则生效，真实重复入错仍由库存管理纠正，不删原历史。
+
+图片引用复用F-INTAKE-003，服务端逐图内容指纹新增F-INTAKE-013，仅用于同一照片跨上传匹配本店原posted单001；不以文件名、上传链接、客户端自报重复或OCR商品文本作为可信判重。媒体编码／压缩后等价判同等技术策略待架构收口，禁止宣称跨拍同一物理票据全部识别。原识别005、来源012、行／SKU及审计复用，字段累计722，原721永久号逻辑名类型状态不变；图像不对客户公开。
 
 ### 15.2 入库记录查看与查询
 
@@ -334,7 +357,7 @@ AI原始识别结果仅用于填入原入库表单，仍是不可信输入，不
 4. **详情**：展示本单号、方式、实际入库时间／操作人及每行商品、规格、入库数量、进货单价、入库前后库存；有进货单照片时可查看，无照片不阻断手工记录。明细沿本次已确认资料和原前后值呈现，入库前后是该次入库时的账面总库存事实，不从后来当前库存倒算，也不拿预占／可售替代。进货价未填写如实标“未填写”，不得补0、用售价或现SKU成本替代；图片和进货价仍限本店业务资格，非顾客商品图。列表日期及图片示例不是固定业务值，图片里的袋／罐等不新增单位换算规则。
 5. **原记录保护**：成功入库原记录只读，不直接改写原SKU、数量、价格、来源或时间，也不通过重新识别覆盖原库存；不提供删除已入库原记录的捷径。入错数量／选错商品按§15.1.5由老板／有效员工自行在库存管理调整，不新增原入库单作废／撤销流程，不自动回退已售／预占库存。原任职租户、版本防重和历史保护保持。
 
-复用F-INTAKE-001～012、F-PROD-001／002／004／011／016／026及F-AUD已保存前后值、身份和媒体映射，字段总数仍721；已确认业务摘要可供本店老板／有效员工核对，不扩大原始审计日志读取权限。页面产品ID为staff_product.intake_records、staff_product.query_intake_records和staff_product.intake_record_detail。本节只确认记录查询，不提前完成剩余AI、跨批次重复单据、单位换算、成本更新及历史缺来源迁移等剩余技术契约；库存错误的处理入口和方式已按§15.1.5确定。
+复用F-INTAKE-001～013、F-PROD-001／002／004／011／016／026及F-AUD已保存前后值、身份和媒体映射，字段总数仍722；已确认业务摘要可供本店老板／有效员工核对，不扩大原始审计日志读取权限。页面产品ID为staff_product.intake_records、staff_product.query_intake_records和staff_product.intake_record_detail。本节只确认记录查询，不提前完成剩余AI、同图以外单据等价识别、单位换算、成本更新及历史缺来源迁移等剩余技术契约；库存错误的处理入口和方式已按§15.1.5确定。
 
 ## 16. V1.0 核心流程
 
