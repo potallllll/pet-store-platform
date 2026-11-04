@@ -2,7 +2,7 @@
 
 > status: mixed
 > status_scope: staff_requirements
-> confirmed_scope: manual_activity_voucher_redemption_and_manual_checkout_price_adjustment_and_single_invite_content_and_one_calendar_month_claimed_entitlement_validity_and_coupon_and_direct_service_product_activity_entitlement_then_instore_use_scope_and_single_use_fixed_72_hour_owner_create_only_invitation_codes_and_direct_customer_gift_coupon_quantity_deletion_and_coupon_management_manual_grant_five_rules_and_unified_customer_balance_edit_with_required_reason_no_separate_recharge_refund_workflow_and_reasoned_recharge_correction_by_owner_staff_and_super_admin_only_reversal_exceptions_and_recharge_record_document_creation_date_query_sort_entries_six_columns_mobile_date_filters_readonly_details_and_manual_recharge_without_packages_optional_bonus_coupon_and_required_gift_note_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_business_statistics_five_rules_employee_self_view_and_explicit_order_performance_attribution_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
+> confirmed_scope: all_coupon_and_activity_manual_redemption_and_manual_checkout_price_adjustment_and_single_invite_content_and_one_calendar_month_claimed_entitlement_validity_and_coupon_and_direct_service_product_activity_entitlement_then_instore_use_scope_and_single_use_fixed_72_hour_owner_create_only_invitation_codes_and_direct_customer_gift_coupon_quantity_deletion_and_coupon_management_manual_grant_five_rules_and_unified_customer_balance_edit_with_required_reason_no_separate_recharge_refund_workflow_and_reasoned_recharge_correction_by_owner_staff_and_super_admin_only_reversal_exceptions_and_recharge_record_document_creation_date_query_sort_entries_six_columns_mobile_date_filters_readonly_details_and_manual_recharge_without_packages_optional_bonus_coupon_and_required_gift_note_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_business_statistics_five_rules_employee_self_view_and_explicit_order_performance_attribution_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
 > pending_scope: all_other_staff_proposals_and_cross_store_risk_details
 > change_policy: record_required
 > development_readiness: blocked
@@ -12,7 +12,7 @@
 
 ## 1. 文件边界
 
-邀请码仅本店、老板只创建、单码全部顾客合计一次、创建后连续72小时且不设启停／换码／活动调整保持；兑换范围增加优惠券以外的服务／商品活动，后两者先领待使用权益，到店由老板／有效员工使用并关联原服务单／商品单，详见03c§9.3及§3.0.17。每码只含一个内容，领到的优惠券及服务／商品活动权益初始有效期均为成功领取后一个日历月；活动券由老板／有效员工手动核销，活动免单或打折仅在原结算手动改价；误核销撤销、取消退款后券处理及数据契约、未确认入口／查询细节继续待确认。
+邀请码仅本店、老板只创建、单码全部顾客合计一次、创建后连续72小时且不设启停／换码／活动调整保持；兑换范围增加优惠券以外的服务／商品活动，后两者先领待使用权益，到店由老板／有效员工使用并关联原服务单／商品单，详见03c§9.3及§3.0.17。每码只含一个内容，领到的优惠券及服务／商品活动权益初始有效期均为成功领取后一个日历月；所有优惠券及活动统一由老板／有效员工手动核销，免单／打折在原结算手动改价，不自动推荐计算、选券锁定或结算核销；误核销撤销、取消退款后券处理及数据契约、未确认入口／查询细节继续待确认。
 
 全小程序通知等级已确认仅“普通通知／重要通知”，店员端同样执行03f§10，复用F-MSG-012；预约等业务类型、渠道、任务完成规则独立。当前阶段业务短信按03f§13.2不发送，相关入口显示“暂未开放”；未来开放、其他通知可配置项及剩余触发规则仍另议，也不把所有重要通知当食品重新知悉。
 
@@ -589,7 +589,7 @@ F-WAL-018／019／024～027仅套餐专属字段退役保留注册号，020～02
 2. **独立赠券**：顾客详情 → 会员资产 → 赠送优惠券，本店老板／有效员工均可选已有启用模板和数量，赠送原因必填，无需审批，不要求充值、不限原经办人。数量为正整数，沿F-CPN-021；原F-AUD-009保存非空原因，人员／服务端时间沿原审计，每张券有F-CPN-002、来源014记人工赠送。失败不报成功、重试不重复，不伪造充值／付款或积分业务；选券所需读取不开放老板管理数据或原始审计。
 3. **护理范围**：适用范围新增护理，全部消费／洗护／美容／寄养／商品沿原规则保留。旧洗护／美容限定券不扩大，模板将来新增护理也不回写既有实例；不开放顾客护理预约或新增护理AI。
 4. **启停与恢复**：新建模板默认启用，老板可停用／恢复，不提供删除。停用阻止后续新发放，各原发券来源按真实当前模板校验；已有券仍按发放时条件使用，不因停用变过期／失效或被撤回。恢复用原模板ID与历史，不复活已用／过期券，也不重复补发。
-5. **只影响未来发放**：模板名称／优惠条件／适用范围／期限等变更仅作用于后续发券，已发实例保留发放快照。既有券的锁定期暂停计时、解除后补回实际锁定时长等规则照常，不因“快照不回写”冻结其合法有效期变化；模板修改不能替代人工修改已发券。
+5. **只影响未来发放**：模板名称／优惠条件／适用范围／期限等变更仅作用于后续发券，已发实例保留发放快照。历史合法延期后的截止与记录保留，当前不再新建选券锁定／暂停延期；模板修改不能替代人工修改已发券。
 
 03c§8／9.2为钱包详细规则，沿F-CPN-001～021及原顾客／商户／审计／F-CORE-010完成权限、状态与去重，模板或身份变化后旧页面不能继续发放／管理。记录前后值、人／时间及本次发放实例，不把模板维护当作修改已发券、撤销已用券、改余额或变更积分库存的权限；顾客持券直接减量／删除按§3.0.16已定，其他模板校验细分和剩余跨渠道技术契约仍待对应阶段，不借五项确认宣布整端已实现。
 
@@ -613,17 +613,17 @@ F-WAL-018／019／024～027仅套餐专属字段退役保留注册号，020～02
 按用户简化，老板和有效员工可在本店各顾客账号的会员资产里，直接减少赠券数量或手工删除，不另设误发处理申请、专门作废工单或强制“作废后重赠”流程。原已确认的赠券变更原因要求保持，填写本次原因，记录实际经办、时间、被删实例及前后数量；无需老板审批、不限原发放人，不拿平台User身份跨商户删除资产。
 
 - **操作对象**：明确当前本店／顾客的具体F-CPN-002持有实例，减少至0即移除本次可操作赠券；F-WAL-005可用券数量按真实剩余实例派生，不只改显示数字。删除数量由被删实例数计算，不复用发券数量021为剩余持券数，不新增第二套券库存；增加赠券仍走原发放资格。
-- **原状态保护**：本次可手工删除的是未使用、未被原订单占用的持有赠券，不能靠旧页面或直接API删除刚被锁定／核销的券。已使用券仍依既有超管异常规则处理，不通过删除改已发生消费或解除原订单状态；本轮没有取消锁定／核销与超管边界。
+- **原状态保护**：本次可手工删除的是未使用的持有赠券，删除和手动核销都校验当前状态，不能靠旧页面删除刚被核销的券；历史旧锁定数据仍须先确认迁移处理，不新建锁定。已使用券仍依既有超管异常规则处理，不通过删除改已发生消费或解除原订单状态；手动核销及已用券超管边界保持，旧锁定只保留历史。
 - **删除与留痕**：界面叫删除，沿013记removed并退出可用列表，原模板／来源／发放及本次操作记录不物理删除；原模板无删除规则保持。客户端保留可使用／历史券两组，已删除属历史，不新增误发流程或第三组操作菜单。普通员工查看业务摘要不等于可读原始系统审计。
 - **不联动其他业务**：减少赠券不自动撤销原充值／兑换、不改钱包本金／赠送余额，不退积分、不生成退款／新付款或自动补发券。删错后如需增加券，由门店按已有赠券规则手工办理，不能直接把已删除实例复活而抹掉历史。
-- **校验与重复**：服务端当前门店／顾客／有效身份及券状态校验，原因沿原F-AUD-009，前后状态及数量、人时间与请求沿F-AUD-007～011／F-CORE-010；失败不部分删除，同次成功重试返回原结果、不再次减数量。并发锁定／使用／删除只按当前合法状态成功，不因可读顾客详情获得越店／模板管理或平台异常权限。
+- **校验与重复**：服务端当前门店／顾客／有效身份及券状态校验，原因沿原F-AUD-009，前后状态及数量、人时间与请求沿F-AUD-007～011／F-CORE-010；失败不部分删除，同次成功重试返回原结果、不再次减数量。并发手动核销／删除只按当前合法状态成功，不因可读顾客详情获得越店／模板管理或平台异常权限。
 
 本节承接03c§9.2.1；原706字段／ID继续使用，013仅扩展removed状态、不改变注册号／逻辑名／类型。未列的已用券异常后台数据处理及其他内容更改仍按原待决项，不把本轮直接删除承诺扩成任意改历史交易或宣称已实际验收。
 
 #### 3.0.17 邀请码创建与一次兑换
 
 > status: mixed
-> confirmed_scope: single_content_coupon_or_service_or_product_activity_one_calendar_month_claimed_validity_owner_create_only_issuing_store_only_single_total_redemption_fixed_72_hours_manual_activity_redemption_and_manual_checkout_price_adjustment
+> confirmed_scope: single_content_coupon_or_service_or_product_activity_one_calendar_month_claimed_validity_owner_create_only_issuing_store_only_single_total_redemption_fixed_72_hours_all_coupon_and_activity_manual_redemption_and_manual_checkout_price_adjustment
 > pending_scope: activity_redemption_reversal_and_contracts_staff_read_copy_record_queries_and_entry_placement
 > invite_code_create_actor: merchant_owner
 > invite_code_management_actions: [create]
@@ -639,14 +639,19 @@ F-WAL-018／019／024～027仅套餐专属字段退役保留注册号，020～02
 > invite_activity_price_handling: manual_order_checkout_price_adjustment
 > invite_activity_automatic_checkout_discount: false
 > invite_activity_order_reservation: excluded
+> coupon_redemption_mode: manual_by_owner_or_active_staff
+> coupon_checkout_price_mode: manual_final_receivable
+> coupon_auto_recommendation: excluded
+> coupon_checkout_auto_redemption: excluded
+> coupon_lock_and_pause_validity: retired
 
 详细规则唯一见03c§9.3。本店老板只创建邀请码，每码只含一个选定优惠券兑换项目、服务活动或商品活动，不能多个模板／活动或跨类型混装；不设启停／恢复／换码／活动调整或改已创建码。全部顾客合计成功一次，服务端创建后连续72小时可兑、恰好到期拒绝。
 
-领取所得权益（含邀请码券）初始有效期从服务端成功领取起顺延一个日历月，按Asia/Shanghai保留时分秒、下月无同日取月末；11月4日10:00领，12月4日10:00到期，不从码创建或到店起算。码到期不提前终止已领权益；邀请码券来源特定的发放快照优先模板默认期限，但不改模板／其他来源／历史实例，合法锁定延期仍按03c§11。活动券不走开单锁定／暂停延期，按手动核销成功的服务端时间校验未过期，恰好到期拒绝；服务跨期不占住资格，已核销后到期不再次改变状态。
+领取所得权益（含邀请码券）初始有效期从服务端成功领取起顺延一个日历月，按Asia/Shanghai保留时分秒、下月无同日取月末；11月4日10:00领，12月4日10:00到期，不从码创建或到店起算。码到期不提前终止已领权益；邀请码券来源特定的发放快照优先模板默认期限，但不改模板／其他来源／历史实例，历史合法延期保留，不新建锁定暂停延期；所有券均按手动核销成功的服务端时间校验未过期，恰好到期拒绝；服务跨期不占住资格，已核销后到期不再次改变状态。
 
 服务／商品活动先领取待使用活动券，到店由本店老板／有效员工手动点击核销，无审批；原单关联留痕方向保留，具体入口／时机待收口，不据此增加自动收银联动。输入码或核销不直接开待处理订单、不写实际服务／交付／实收／免单。原本店资格、成功结果与计次一致、失败无部分权益及并发重试防重保持；004／008D、007固定1、009只0或1不变。
 
-活动券核销只更新当前具体券及留人／时间／前后状态，服务端校验本店有效身份／顾客／未核销／未到期；并发只成功一次，同次重试恢复原成功且不改首次时间，失败不改券或原单。免单／打折由门店在原订单结算手动改最终应收，原因及前后金额沿03d§10.1；0仍明确确认免单，折后按真实实收记账，不造付款或实收业绩。券核销不自动改价／结算／占扣库存，改价或结算也不自动核销活动券；服务与商品库存照常走原业务，不做活动自动抵扣或开单锁定流程。普通优惠券继续原推荐／计算／锁定／结算核销规则，不能一并改成手动。
+活动券核销只更新当前具体券及留人／时间／前后状态，服务端校验本店有效身份／顾客／未核销／未到期；并发只成功一次，同次重试恢复原成功且不改首次时间，失败不改券或原单。免单／打折由门店在原订单结算手动改最终应收，原因及前后金额沿03d§10.1；0仍明确确认免单，折后按真实实收记账，不造付款或实收业绩。所有券核销不自动改价／结算／占扣库存，改价或结算也不自动核销任何券；服务与商品库存照常走原业务，不做活动自动抵扣或开单锁定流程。普通满减／金额抵扣／折扣优惠券及全部活动现统一采用此手动核销／手动改价方法，取消旧普通券自动推荐计算、选券锁定与结算核销；发放来源和各自初始期限不受此调整。
 
 活动券误核销撤销、取消中止退款后券处理及字段契约仍待确认；配置、权益实例、领取截止／核销结果与原单关联字段先注册，不拿003绑券字段或券ID／订单ID冒充活动权益。员工查看复制、兑换记录查询及入口位置仍未定，不扩展普通员工创建资格；优惠券模板自身生命周期及兑换通知沿原规则。
 
@@ -1069,7 +1074,7 @@ F-WAL-018／019／024～027仅套餐专属字段退役保留注册号，020～02
 - **财务定位与组合记账（全部门店消费订单）**：财务仅作线下交易账本，老板／有效员工可即时或工作结束后录入，实际交易时间与录入时间区分；预约确认、六项检查、服务状态及结果仍及时操作。洗护／美容／护理／寄养／商品同次结算最多两种真实支付方式，按F-PAY-003不同方式计数、合计等于应收；余额内部本金／赠送算一种。一种亦可，本条不授予任意按宠分次付款或商品／服务混合单许可；寄养分批离店分别结算另按§5.2；无实际付款不填拆分。不接外部收银或支付／退款接口，不设计外部通道失败、未知结果或自动退款恢复流程，内部余额／流水仍真实更新且不重复扣增。
 - **消费退款无需老板审批**：本店老板和有效员工均可登记退款，原因必填、保留原单／金额／实际经办人／实际退款时间和录入时间。不设置老板审批、拒绝理由或撤回批准。同单最多一份未完成退款录入，完成且仍有可退金额可再登记；不退超过已实收扣除已退的剩余额，不改原实付，免单无款可退。
 - **本金先扣／退款原路**：消费使用会员余额先扣本金、不足再扣赠送，分别记录原实际扣款。退款全部按原付款渠道／原账户：钱包退原钱包、本金退本金／赠送退赠送；微信／支付宝退各原付款账户，现金退现金，其他付款按原渠道。不改退另一渠道、不将赠送转本金或余额提现。组合全退按各原渠道剩余实付，部分退款在原渠道及本金／赠送间的分配仍待03c§5／DEC-STAFF-05，不推定比例或先后次序。
-- **退款记账与联动**：外部款项在线下核实并原路退回后登记，系统不接外部退款接口；原余额部分在本次确认时实际入原钱包并形成流水，确认后自动更新订单／流水／适用库存和券。退款不是退货，真实收回且可再次销售才按原SKU登记回库、无需老板逐单审批。不得错充其他顾客、重复入账、超各原渠道已付未退金额或改写服务／投喂事实，按03d§1.1／12；不扩展充值退款、任意改余额或积分补偿。
+- **退款记账与联动**：外部款项在线下核实并原路退回后登记，系统不接外部退款接口；原余额部分在本次确认时实际入原钱包并形成流水，确认后自动更新订单／流水／适用库存，券依03c§11原退款原则及手动关联恢复契约处理，不能假定结算自动核销。退款不是退货，真实收回且可再次销售才按原SKU登记回库、无需老板逐单审批。不得错充其他顾客、重复入账、超各原渠道已付未退金额或改写服务／投喂事实，按03d§1.1／12；不扩展充值退款、任意改余额或积分补偿。
 - **项目／品种**：不另设每个项目的开始／完成状态，以每宠整体进度判断可否直接移除；服务中不直接删已有项，误加走有原因的更正，保留原关联及金额历史。品种确不明确可填混种／不详，仍保留猫／狗／其他类型，不强迫猜测或AI识别；客户端首次建档品种选填不变。
 
 前一批20题及补充已确认规则与本轮明确变更按本节执行，不恢复外部支付通道或退款审批。挂单查询／人工联系及误挂撤销按§4.6已确认，中止顾客标签仍待决；商品退款不自动回库及真实退货联动仅按已确认范围。其他未列状态更正、除§4.5同宠洗美护理加项外的未决混合业务、AI版本契约、部分退款分配和其余账本更正仍待对应DEC，不以默认值或Mock绕过，不宣称整端已就绪。
