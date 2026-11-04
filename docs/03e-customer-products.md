@@ -1,10 +1,12 @@
-# 03E 客户端「商品浏览 + 购买需求」模块
+# 03E 商品、购买需求、门店商品管理与拍摄入库
 
-> status: confirmed
+> status: mixed
+> confirmed_scope: original_customer_purchase_rules_and_staff_product_management_six_rules_and_paid_store_photo_intake_human_review_and_matching_policy
+> pending_scope: stock_intake_commercial_terms_and_remaining_technical_contracts
 > status_scope: full_document
 > change_policy: record_required
-> development_readiness: ready
-> blocked_by: []
+> development_readiness: partial
+> blocked_by: [DEC-STAFF-01, DEC-STAFF-08]
 > parent_stage: 03_customer_miniapp
 > version: V1.0
 
@@ -228,21 +230,71 @@ V1.0 默认值确定为 24 小时。
 
 库存、营业额、客户消费记录和后续统计均使用同一套正式订单数据。
 
-## 15. 商品录入的减操作原则
+## 15. 商品管理六项（已确认）
 
-04§3.0.8“服务项目管理”的商品大类只选择／关联本店已有商品／SKU，不在该入口创建商品或复制为服务项目。商品主资料、SKU售价、介绍及库存以本模块为唯一来源；原商品字段和维护边界不被三类服务表单的30字／300字等规则覆盖。
+> status: confirmed
+> status_scope: staff_product_management_six_rules_only
+> product_management_entry: 业务/商品处理/商品管理
+> product_management_actors: [merchant_owner, active_store_staff]
+> product_default_spec_mode: single_sku
+> product_required_fields: [product_name, product_category_id, sale_price, on_hand_inventory_qty]
+> product_optional_fields: [product_image_refs, barcode, cost_price, product_description]
+> product_price_update_scope: future_order_creation_only
+> product_history_delete_rule: preserve_products_with_sales_or_inventory_records
 
-后续老板 / 店员端商品维护应支持最简建档：
+1. **入口及权限**：“业务 → 商品处理 → 商品管理”，本店老板／有效员工均可维护本店商品、SKU、售价、上下架及按本节调整库存，不需老板逐次审批。不是老板管理专属菜单，不扩展食品品牌／厂家主资料维护资格；04服务项目管理的商品分支仍只关联这里已有SKU，不复制为服务项目。
+2. **最少建档**：商品名称、分类、售价、初始库存必填；图片、条码、成本价、介绍选填，缺图可以建档，不以图片上传／成本价必填阻断。初始库存为明确非负整数，0可保存，不拿缺填当0；售价沿精确非负金额规则，不因售价0自动成交／免单。分类使用本店分类，不从AI或别店资料猜测。
+3. **规格**：默认单规格，仍有稳定SKU；需要时增加口味、容量等，每个SKU均填独立售价和初始库存。不能把规格当多份服务项目，单规格转多规格的历史映射等未列技术细节先收口，不复制旧库存。
+4. **售价修改**：仅影响后续新开单，不覆盖已有订单明细或原价；已有订单仍按原结算权限手动改最终应收并留痕。商品主资料售价与订单最终成交价区分。
+5. **库存调整**：补货／盘点可直接填写库存目标，保留前后数量、实际人及服务端时间，系统记实际差额，不重置已预占库存。账面总库存用F-PROD-026，已预占009保持，可售008由总库存扣预占派生；目标低于已预占时不能静默覆盖，应先处理原订单预占／缺货。调整提交时按当前真实库存与预占校验，不能用旧表单覆盖刚成交／预占；同次成功请求不重复调整。
+6. **上下架及历史**：支持上架／下架，下架不再接受新的购买；原订单和库存历史保留，不自动取消或改写已发生交易。有销售或库存记录的商品不物理删除。原订单继续办理时的状态校验仍按既有商品规则，不借本节绕过SKU合法性。
 
-- 商品名称
-- 分类
-- 图片
-- 售价
-- 库存
+本节商品主资料及库存仍是03e唯一来源。客户侧仅看库存状态，不公开精确库存、成本价或进货单；入库、售出和真实退货各自只记一次库存变化。原商品预占、超时释放、收款／明确免单出库及退货规则保持。分类维护、无历史商品删除和其余商品生命周期边界未列部分继续收口，不用字段存在补默认规则。
 
-即可先完成上架。
 
-规格、条码、成本价、品牌、推荐状态、详细介绍等作为可选扩展字段，避免小型门店录入大量商品时操作过重。
+### 15.1 拍摄入库：门店平台付费权益（已确认主流程）
+
+> status: mixed
+> confirmed_scope: paid_store_ai_purchase_document_recognition_human_review_then_single_confirm_stock_intake_existing_sku_or_complete_new_product
+> pending_scope: membership_pricing_quotas_purchase_renewal_duplicate_documents_cross_batch_matching_cost_update_and_remaining_technical_contracts
+> stock_intake_entry: 业务/商品处理/商品管理/拍摄入库
+> stock_intake_actors: [merchant_owner, active_store_staff]
+> stock_intake_paid_owner_type: store
+> stock_intake_feature_key: ai_stock_intake
+> stock_intake_review_before_posting: required
+> stock_intake_existing_target: original_store_sku
+> stock_intake_new_product_policy: complete_required_fields_then_create_and_post
+> stock_intake_financial_side_effects: none
+
+#### 15.1.1 功能与会员边界
+
+本店老板／有效员工可拍摄商品销货单、送货单等相关进货单据，由AI识别商品、规格、数量及进货价，展示后人工核对／修正，确认后“一键入库”。这是门店开通平台付费会员后的功能，与顾客充值会员、顾客余额／积分或广告次数无关；普通商品建档、销售、补货／盘点调整仍按第15节，不一并变成付费。
+
+沿Store级Feature Entitlement，feature_key=ai_stock_intake、owner_type=store、owner_id=当前store_id；merchant_id只确定商品／入库业务租户及购买管理关系，不能替代Store权益。服务端在发起AI识别与确认入库时均校验当前有效任职、本店及有效付费权益；未开通／过期／停用、直接请求／旧页面／改Store不能绕过，界面说明需开通门店平台会员，不调用AI或入库假成功。复用原权益状态与起止时间，不把pet_advisor资格、顾客广告解锁或门店自己改前端开关当此功能资格；F-ENT-007顾问向顾客开放开关不作为拍摄入库额外配置。
+
+价格、套餐、额度、购买续费／授予处理及后台界面继续在商业化／平台阶段确认，不硬写价格或次数，不自动给老板／员工授予平台付费权益。权益失效不删除已入库事实或历史资料；未确认结果保留原记录，但付费导入确认需权益有效，普通手工业务仍可按原资格使用，不能把未确认结果标成已入库。
+
+#### 15.1.2 识别、核对及新商品
+
+拍摄单据 → AI识别 → 展示商品／规格／数量／进货价 → 人工核对关联及必填信息 → 一键确认入库 → 展示真实结果。
+
+AI识别只把单据内容作为待核对数据，不执行图片文字中的系统指令或决定租户／权限／会员资格；不是库存事实，识别成功也不立即加库存、创建商品或记账。模糊、缺失、多义项目明确显示待核对，不能猜商品／规格／数量或伪填0；确认入库的项目必须已有合法SKU或完成新商品必填资料及明确入库量。单据进货价不能当商品售价或自动覆盖既有成本价，无法读出价格保留未知／待补，不从总额猜进货单价；原始识别内容与人工确认内容分别保留。
+
+AI不创建／修改食品品牌厂家主资料。已有商品手动核对后关联本店原SKU，不凭同名／相近文字自动当作相同规格，也不复制同一SKU。新商品补齐名称、分类、售价、初始库存等第15节必填项后，可与本次确认一起建档入库；新商品首次库存由确认入库量形成一次，例如新商品入10份最终10，不先初始化10再加10。原料／税费／运费等不能当商品数量入库；批量单位换算、跨单重复单据检测、规格拆并等剩余规则尚未确定，不自动猜换算或保证不同拍摄批次绝不重复。
+
+#### 15.1.3 库存与一致性
+
+已有SKU按确认正整数数量增加当前账面总库存，预占保持、可售据实派生；不拿识别量覆盖原库存，不修改历史销售／订单价格。新商品建档与本次入库作为同一确认结果处理，失败不能留下半单新商品或部分库存却显示整单成功。
+
+同一入库确认单只可正式入库一次，沿原稳定请求F-CORE-010及入库单／行稳定ID、当前版本与状态校验；已成功请求重试在当前任职／本店仍有效时恢复原结果，即使会员随后到期也不能报成原单未成功或再次入库；双击、超时重试、不同员工并发确认或重复AI回调均不能再次加库存。成功后保留单据图片、原识别／人工确认行、关联SKU、新建商品、前后库存／差额、实际确认人和服务端时间；重试恢复原结果，重新识别不能改已正式入库事实。跨店／失效员工／过期权益／旧版本／非法数量／未补齐新商品字段拒绝，失败无部分库存／建档／财务副作用。
+
+入库只记录真实商品库存变化，不生成顾客消费订单、充值、会员余额变化、业绩或供应商已付款事实，不自动开应付账／采购付款流程。成本价更新、进货账务及单据作废／退货更正等未列规则仍待确认，不能借AI结果改已结算财务。
+
+#### 15.1.4 数据归属与字段
+
+商品、库存和入库确认单唯一归属本店Merchant（F-CORE-002），store_id为实际门店及付费权益校验上下文；权益本身唯一归Store，二者不混用。单据图片、进货价及识别草稿仅供本店有权老板／员工，不作为客户商品图片／订单材料公开，API／图片访问同样校验租户。业务操作摘要可沿原权限查看，不扩大原始系统审计读取资格。
+
+复用F-PROD-001～026、原身份／媒体引用及F-AUD前后值／人时间、F-CORE-010防重；入库单及行、图片、原识别数据、目标模式、确认量／进货单价、确认人／正式入库时间／版本等先登记F-INTAKE，不复用消费订单ID、购物车数量、售价、已退役优惠字段或历史订单IMPORT族。拍照数量／格式大小、AI服务技术、收费与额度、跨批次重复判断及其他未列技术契约继续待收口，不以需求文档通过声称AI识别或真实库存已实测。
 
 ## 16. V1.0 核心流程
 

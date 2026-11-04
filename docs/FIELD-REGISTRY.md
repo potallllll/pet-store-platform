@@ -540,7 +540,7 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 | F-PROD-002 | `sku_id` | C | ID | 商品规格 SKU 标识；独立售价与库存。 |
 | F-PROD-003 | `product_category_id` | S | ID | 商户自定义商品分类。 |
 | F-PROD-004 | `product_name` | C | Text | 商品名称。 |
-| F-PROD-005 | `product_image_refs` | C | Ref[] | 商品图片。 |
+| F-PROD-005 | `product_image_refs` | C | Ref[] | 选填商品图片；缺图可建档，不用采购单据图片冒充客户商品图。 |
 | F-PROD-006 | `sale_price` | C | Money | 当前 SKU 售价 / 参考售价。 |
 | F-PROD-007 | `inventory_status` | C | Enum | 客户侧仅：有货 / 库存紧张 / 暂时无货；默认不暴露精确数量。 |
 | F-PROD-008 | `available_inventory_qty` | S | Int | 后台真实可售库存数量；不默认返回普通客户端。 |
@@ -552,7 +552,7 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 | F-PROD-014 | `flavor_tags` | C | Struct/Text[] | 可选口味标签。 |
 | F-PROD-015 | `allergen_tags` | C | Struct/Text[] | 可选过敏原标签；只基于明确数据匹配，不用 AI 猜测。 |
 | F-PROD-016 | `barcode` | C | Text | 可选条码。 |
-| F-PROD-017 | `cost_price` | C | Money | 可选成本价；客户端不应公开。 |
+| F-PROD-017 | `cost_price` | C | Money | 可选SKU成本价，客户端不公开；不是单次进货单价，AI识别进货价不自动覆盖此值，后续成本更新算法未定。 |
 | F-PROD-018 | `brand_name` | C | Text | 可选品牌。 |
 | F-PROD-019 | `is_recommended` | C | Bool | 可选推荐状态。 |
 | F-PROD-020 | `product_enabled` | S | Bool | 商品是否可售 / 上架。 |
@@ -561,12 +561,37 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 | F-PROD-023 | `cart_quantity` | C | Int | SKU 数量。 |
 | F-PROD-024 | `cart_note` | C | Text | 客户提交购买需求时可选备注。 |
 | F-PROD-025 | `order_hold_expires_at` | S | Datetime | 商品订单确认后的库存保留截止；默认业务规则为 24 小时，可由商户配置允许值。 |
+| F-PROD-026 | `on_hand_inventory_qty` | S | Int | 本SKU账面总库存，非负整数、初始建档明确填写可为0；人工补货／盘点目标及AI确认入库更新此值，不覆盖009预占；008可售=026总量-009预占，目标低于预占拒绝并先处理原订单缺货。前后数量及人时间沿审计；旧库存总量迁移先收口，不以新字段缺失默认0覆盖原库存。 |
 
 04§3.8商品需求查询分组不新增持久化状态。待处理排序复用F-CORE-013原需求created_at（不是后续确认／修改时间），待付款排序复用F-PROD-025及原保留配置，“不自动取消”排后，不为排序另造截止或重置期限。搜索用本店原Customer联系方式、F-ORD-001及F-PROD-004；来源渠道／业务场景复用F-ORD-027／028，不能混用或跨店取数。
 
 普通商品结算前减量／移除／人工取消用原F-ORD-006／007／031保留申请与现状，F-ORD-032及原状态校验调整原SKU预占。选填说明复用F-AUD-009，未填可空，不在数据库或通用DTO把所有取消都设为原因必填；实际人／时间／前后值仍用原F-AUD。加餐商品同样适用，调价／退款原因要求不放宽。全部归零是取消，不是空单或免单成交。F-ORD-004普通商品已完成只表示交易完成，不生成顾客已取走／实物交付字段；不同需求不合并结算，同购物车多项仍复用原订单，不增加第二账本或修改平台奖励字段；退役的加餐执行字段不再启用。
 
 ---
+
+### 11.1 商品管理与拍摄入库（STOCK_INTAKE）
+
+商品管理按03e§15／04§3.0.18，老板与有效员工都可在业务／商品处理／商品管理维护本店主资料。名称004、分类003、各SKU售价006／初始总库存026必填，图片005、条码016、成本017、介绍010选填；默认单SKU，有多规格仍复用002／011。改售价不回写原单，有销售／库存历史不物理删除；手工库存调整只算差额，预占009不覆盖、008派生，旧表单不得覆盖成交／预占新值。业务前后数量摘要沿原对象和F-AUD，不新增第二套库存或逐员工审批。
+
+拍摄入库按03e§15.1／04§3.0.19：入库单唯一业务所有者为merchant_id（F-CORE-002），store_id是实际门店及权益上下文；每行唯一属于stock_intake_id，引用本店原sku_id，图片归本单而非商品图库。Store付费权益用F-ENT，不能由顾客会员、钱包、积分或广告资格替代。
+
+| 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
+|---|---|---:|---|---|
+| F-INTAKE-001 | `stock_intake_id` | S | ID | 拍摄入库确认单稳定标识；同单只能正式入库一次，不能用消费order_id／历史IMPORT任务冒充。 |
+| F-INTAKE-002 | `stock_intake_item_id` | S | ID | 本单明细行稳定标识，唯一归属001，不用图片页码／表格行号作为身份。 |
+| F-INTAKE-003 | `purchase_document_image_refs` | C | Ref[] | 本店拍摄的销货单等进货相关单据引用，商家私有，不能当F-PROD-005客户商品图片或绕过媒体归属。 |
+| F-INTAKE-004 | `stock_intake_status` | S | Enum | recognizing／pending_review／posted／failed；识别不等于入库，只有人工确认成功为posted，重复回调不重入库。 |
+| F-INTAKE-005 | `stock_intake_extracted_data` | S | Struct[] | AI原始识别行：商品名、规格、数量及进货价等原结果及缺失不确定事实，未核对不可信；原识别与人工最终内容分别保留，不把缺失猜成0或复写原图。 |
+| F-INTAKE-006 | `stock_intake_target_mode` | C | Enum | 每条确认行existing_sku／new_sku；前者引用本店原F-PROD-002，后者补齐03e§15字段后同次建档入库，不造同义SKU。 |
+| F-INTAKE-007 | `stock_intake_quantity` | C | Int | 人工核对后的本行实际入库量，正整数；不是购物车数量／目标总库存。已有SKU按差额增加026，新商品首次库存只由此量形成一次，不先初始化再加一遍。 |
+| F-INTAKE-008 | `purchase_unit_price` | C | Money | 本行实际进货单价，识别后核对，可缺失保持未知，不虚填0／拿售价替代或从税费运费猜出；不自动变成006售价或017成本价，不凭此生成付款。 |
+| F-INTAKE-009 | `stock_intake_confirmed_by_staff_id` | S | ID | 正式确认入库的本店实际老板／员工稳定staff_id，引用F-CORE-005，不能写成AI或原拍摄人冒充经办。 |
+| F-INTAKE-010 | `stock_intake_posted_at` | S | Datetime | 正式入库成功的服务端时间，不等于拍摄／AI识别／单据印刷日期或供应商付款时间。 |
+| F-INTAKE-011 | `stock_intake_row_version` | S | Int | 入库单识别核对／确认的当前版本；旧核对结果不能覆盖新修正／已入库状态，不能借F-ORD-032消费金额版本替代。 |
+
+商品主资料、确认行目标和数量、原识别结果及前后库存分开保存；SKU／新商品资料复用原F-PROD字段，身份／权限／媒体和F-CORE-010幂等、F-AUD前后值及真实人时间复用，不把库存数当作无历史可写数字。整单确认与新商品建档／库存更新需一致，失败无半单，成功重试恢复原结果；已posted单不能重复确认／重新识别改库存，成功重试仍校验任职本店并恢复原结果，不因随后会员到期伪报原入库失败。同单不同请求／员工并发也只入一次，不依赖前端按钮禁用。
+
+现有字段累计720；F-INTAKE只落实已确认主流程，不表示AI技术、会员定价次数／开通、跨批次重复单据检查、单位换算、成本更新、入库更正等已齐全。会员权益在识别与确认时均校验当前Store及有效状态，原AI草稿／已入库历史不因过期删除；单据／进货价不向顾客公开，不自动记顾客消费／充值／供应商已付款。
 
 ## 12. 订单、金额、付款与退款（ORDER / PAYMENT）
 
@@ -1016,12 +1041,12 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
 | F-ENT-001 | `feature_entitlement_id` | S | ID | 单条 Store Feature Entitlement。 |
-| F-ENT-002 | `owner_type` | C | Enum | 当前养宠顾问固定 `store`。 |
+| F-ENT-002 | `owner_type` | C | Enum | 已确认pet_advisor及ai_stock_intake权益均固定store；不由顾客会员或Merchant购买关系替代Store归属。 |
 | F-ENT-003 | `owner_id` | C | ID | 当前值必须等于对应 `store_id`；不能用 purchaser Merchant 替代资格归属。 |
 | F-ENT-004 | `purchaser_merchant_id` | C | ID | 购买 / 管理 / 审计关联，不参与替代 Store 资格判断。 |
-| F-ENT-005 | `feature_key` | C | Text | 当前确认 `pet_advisor`。 |
+| F-ENT-005 | `feature_key` | C | Text | 已确认pet_advisor及ai_stock_intake两个独立付费功能；后者为门店平台会员拍摄入库，前者资格／顾客广告额度不能替代。价格套餐及购买续费另行确认。 |
 | F-ENT-006 | `entitlement_status` | C | Enum | 有效 / 过期 / 停用等权益状态。 |
-| F-ENT-007 | `enabled_by_merchant` | C | Bool | Merchant Owner 在有效平台权益前提下是否向本店客户开启。 |
+| F-ENT-007 | `enabled_by_merchant` | C | Bool | pet_advisor在有效平台权益前提下由老板决定是否向本店客户开启；不转义为ai_stock_intake店内开关，拍摄入库不新增此配置门槛。 |
 | F-ENT-008 | `starts_at` | C | Datetime | 权益开始时间。 |
 | F-ENT-009 | `expires_at` | C | Datetime | 权益结束时间，可选。 |
 | F-ENT-010 | `plan` | C | Text | 付费方案语义，具体值后续商业化阶段确定。 |
@@ -1295,6 +1320,15 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 | `staff_owner.temporary_closure` | 营业与预约设置／临时关闭，组内第二项，仅本店老板修改；不是平台停用门店 |
 | `staff_owner.business_statistics` | 老板管理／经营统计，04§3.0.10五项及员工业绩查看方向已确认；仅本店老板进入，本店员工用原staff_me.performance看本人，与其他老板菜单排序未定 |
 | `staff_owner.service_item_management` | 老板管理／服务项目管理，入口及操作边界按04§3.0.8；与其他老板菜单的排序未定 |
+| `staff_product.management` | 业务／商品处理／商品管理，老板／有效员工，商品管理六项已确认 |
+| `staff_product.create` | 新增本店商品／SKU，名称分类售价初始库存必填，图片条码成本介绍选填 |
+| `staff_product.edit` | 维护本店商品／SKU，售价只影响后续开单，旧单不回写 |
+| `staff_product.adjust_inventory` | 手工补货／盘点目标库存调整，前后值及人时间留痕，不能覆盖预占 |
+| `staff_product.publish` | 本店商品上架，服务端校验当前资格和对象 |
+| `staff_product.unpublish` | 本店商品下架，新购买停止，历史订单及库存记录保留 |
+| `staff_product.photo_intake` | 商品管理／拍摄入库，老板／有效员工且当前Store有效ai_stock_intake权益 |
+| `staff_product.recognize_purchase_document` | 拍摄单据AI识别，只产待核对结果，不加库存或创建商品 |
+| `staff_product.confirm_photo_intake` | 人工核对后一次正式确认，可同次新商品建档入库，当前角色及付费权益复核 |
 | `staff_owner.invite_code_creation` | 老板管理／创建邀请码页面，仅本店有效老板，内部菜单排序未定 |
 | `staff_owner.create_invite_code` | 创建提交，单内容／数量固定1／系统生成，不支持手工指定、启停或修改 |
 | `staff_owner.invite_code_result` | 本次成功创建结果页，码／内容／真实兑换截止及领取后一个月有效提示 |
