@@ -32,7 +32,7 @@
 - `10a-customer-ui-design-system.md`：客户端通用视觉基线。
 - `10b-customer-homepage-ui-spec.md`：首页 UI 详细规格。
 - `10c-customer-launch-cover-ad-ui-spec.md`：启动封面广告 UI / 调试规格。
-- `04-staff-miniapp.md`：店员端需求分析入口；按文件头区分提案与正式范围，§3.0.10.1～3.0.10.2已确认本期不做独立日结／交接班／现金盘点或对账，沿原统计明细和记账补录；门店表格导入导出归Web后续设计、手机本期无入口，AI拍照入库保留；其他待决不能因列入地图视为已确认。
+- `04-staff-miniapp.md`：店员端需求分析入口；按文件头区分提案与正式范围，§3.0.10.1～3.0.10.2已确认本期不做独立日结／交接班／现金盘点或对账，沿原统计明细和记账补录；门店表格导入导出归Web后续设计、手机本期无入口，AI拍照入库保留；§3.0.4.1老板小程序操作日志三列倒序与只读详情已定，员工原工作记录不变；其他待决不能因列入地图视为已确认。
 - `execution/deepseek-execution-standard.md`：AI执行、分批交付和独立验收约束；不新增业务规则，不替代阶段14最终开发总提示词。
 - `execution/deepseek-start-prompt.md`：上述标准的可复制启动/整改提示词。
 - `execution/customer-delivery-tracker.md`：引用03i唯一验收ID的交付证据记录，不定义业务或验收ID含义。
