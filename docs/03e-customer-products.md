@@ -1,7 +1,7 @@
 # 03E 商品、购买需求、门店商品管理与入库
 
 > status: mixed
-> confirmed_scope: original_customer_purchase_rules_and_staff_product_management_six_rules_and_manual_and_ai_photo_intake_current_no_membership_check_future_membership_original_form_explicit_posting_and_inventory_management_correction_and_posted_intake_records_five_rules_and_ai_photo_usage_five_rules_and_product_category_lifecycle_five_rules_and_staff_product_list_five_rules
+> confirmed_scope: original_customer_purchase_rules_and_staff_product_management_six_rules_and_manual_and_ai_photo_intake_current_no_membership_check_future_membership_original_form_explicit_posting_and_inventory_management_correction_and_posted_intake_records_five_rules_and_ai_photo_usage_five_rules_and_product_category_lifecycle_five_rules_and_staff_product_list_five_rules_and_simple_inventory_view_edit_automatic_audit_without_movement_query_page
 > pending_scope: stock_intake_remaining_technical_contracts_and_future_membership_commercial_terms
 > status_scope: full_document
 > change_policy: record_required
@@ -405,6 +405,25 @@ AI原始识别结果仅用于填入原入库表单，仍是不可信输入，不
 5. **排序与操作**：按原商品F-CORE-013 created_at完整创建时间倒序，不按入库、SKU新建、最近编辑或盘点时间冒充商品创建时间；修改资料或调库存不重写创建时间。点击商品进入原详情，再按既有权限和条件修改资料、调整库存或上下架，不在列表增加另一套绕过校验的操作。恢复上架、误建删除和有历史只能下架仍按§15.3，入库错误去库存管理仍按§15.1.5。
 
 查询、展开及详情均服务端校验当前有效任职、本店租户与对象，查询不修改商品或库存；读取失败不伪装库存为0或自动判下架。字段复用F-CORE-002／003／005／013及F-PROD现有项，累计725不新增长期字段；商品管理入口／列表复用staff_product.management，查询及详情产品ID为staff_product.query_products和staff_product.product_detail。原AI入库、分类兜底转移、只读入库历史及顾客展示边界保持，本节确认列表规则不代表H5或实际商品库存功能已验收。
+
+### 15.5 精简库存查看与修改
+
+> status: confirmed
+> status_scope: simple_inventory_view_edit_and_automatic_audit_only
+> inventory_view_owner: staff_product.product_detail
+> inventory_edit_action: staff_product.adjust_inventory
+> inventory_edit_label: 修改库存
+> inventory_edit_input: on_hand_inventory_qty
+> inventory_audit_policy: automatic_before_after_actor_and_server_time
+> inventory_movement_menu: excluded
+> inventory_movement_query_page: excluded
+> stock_intake_records_policy: retained
+
+1. **查看库存**：沿用商品详情，按原SKU展示总库存、预占库存、可售库存，不另建库存变动记录菜单、列表或查询筛选页面。三种库存分别复用F-PROD-026／009／008，可售仍由总库存减预占派生；权限仅本店老板／有效员工，顾客精确库存边界不变。
+2. **修改库存**：在商品详情点“修改库存”，填写当前正确总库存数量后保存，复用原staff_product.adjust_inventory。原“库存管理”入口与此动作使用同一SKU／同一库存修改逻辑，不新建第二套库存或编辑流程。只编辑026总库存目标，不直接改预占／可售，不要求店员额外登记变动记录或新增审批／原因必填步骤；原非负整数、目标不低于预占及本店对象／最新库存并发与幂等校验保持，不允许旧页面覆盖后续变化。缺货／预占冲突仍先按原订单规则处理。
+3. **自动留痕与保留既有记录**：系统随成功修改自动保留原值、新值、实际操作人及服务端时间，沿原F-AUD前后状态及稳定对象／请求保存，失败不伪记已修改。这里不新增店员查询库存变动历史页面，也不删除已保存事实或扩大原始系统审计读取权限；后台日志／Web其他分工仍待对应阶段。§15.2已确认的“入库记录”列表、查询和只读详情照常保留，手工／AI商品入库仍按原表单点击入库及一次成功规则处理。
+
+精简的是新增库存变动查询界面，不是取消原库存管理或审计。库存错误仍用本节与§15.1.5的同一修改动作，保留原入库和其当次前后数量；库存调整不冒充入库单、不伪造销售／退款或供应商付款。商品上架下架、分类、误建删除及原库存联动不变。复用原725字段及现有产品ID，无新增业务记录类型、菜单ID或平行台账；本次只同步需求，不宣称实际库存／审计已测试。
 
 ## 16. V1.0 核心流程
 
