@@ -516,15 +516,17 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 | F-INV-001 | `invite_code_id` | S | ID | 邀请码记录标识。 |
 | F-INV-002 | `invite_code` | C | Text | 客户输入的邀请码内容。老板生成／指定的码仅所属本店可兑换；沿F-CORE-002 merchant_id及F-CORE-003 store_id明确所属Merchant／Store，服务端校验当前店及本店Customer，不跨店或跨商户。 |
 | F-INV-003 | `bound_coupon_items` | C | Ref[]/Struct | 绑定所属本店优惠券及数量，兑换后券仍仅本店使用；不得绑定／发放其他店的券。 |
-| F-INV-004 | `invite_code_enabled` | C | Bool | 启用 / 停用。 |
-| F-INV-005 | `invite_code_starts_at` | C | Datetime | 生效时间。 |
-| F-INV-006 | `invite_code_expires_at` | C | Datetime | 失效时间。 |
-| F-INV-007 | `max_redemptions_total` | C | Int | 总兑换次数上限（可选）。 |
-| F-INV-008 | `max_redemptions_per_customer` | C | Int | 单 Customer 次数上限；默认同码同 Customer 一次。 |
-| F-INV-009 | `redeemed_count` | C | Int | 已兑换次数。 |
+| F-INV-004 | `invite_code_enabled` | D | Bool | 邀请码启停退役，仅留历史，禁止新写；当前码由成功兑换次数及固定到期时间判断可兑，不复用为已兑换状态。 |
+| F-INV-005 | `invite_code_starts_at` | C | Datetime | 服务端创建即生效，固定等于F-INV-011，不可手工选择或改写。 |
+| F-INV-006 | `invite_code_expires_at` | C | Datetime | 固定为F-INV-011加连续72小时；服务端当前时间恰好等于或晚于该时点不可兑换，不是兑换后券的到期时间。 |
+| F-INV-007 | `max_redemptions_total` | C | Int | 单码全部顾客合计成功兑换上限，固定1，由系统约束，不提供配置；不是每位顾客各一次。 |
+| F-INV-008 | `max_redemptions_per_customer` | D | Int | 单顾客可配上限退役，仅留历史，禁止新写；现行规则是单码全部顾客合计一次，不另配个人上限。 |
+| F-INV-009 | `redeemed_count` | C | Int | 已成功兑换次数，只可0或1；与实际权益发放一致保存，失败不计次，成功重试不再计次或发券。 |
 | F-INV-010 | `invite_code_created_by` | C | ID | 创建人。 |
 | F-INV-011 | `invite_code_created_at` | C | Datetime | 创建时间。 |
-| F-INV-012 | `invite_code_note` | C | Text | 可选备注。 |
+| F-INV-012 | `invite_code_note` | C | Text | 创建时可选备注，不据此新增后续编辑流程。 |
+
+邀请码按03c§9.3只创建、固定单码合计一次和创建后72小时；不提供启停／恢复／换码／活动调整。F-INV-003继续表示本店绑定券及数量，不改为任意活动ID或服务／商品权益；“可兑换活动”的具体承载尚待用户确认，确认前不新造活动字段或核销流程。历史可配限制不作为当前默认值，不自动重新开放已用／过期码；旧码迁移若涉及存量按后续迁移决策处理，不无痕重写历史。
 
 ---
 

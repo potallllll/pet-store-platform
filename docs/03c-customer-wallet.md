@@ -1,8 +1,8 @@
 # 03C 客户端「我的钱包」模块
 
 > status: mixed
-> confirmed_scope: direct_customer_gift_coupon_quantity_reduction_and_deletion_and_coupon_owner_management_active_staff_manual_grants_care_scope_template_lifecycle_and_issue_snapshots_and_unified_wallet_balance_edit_required_reason_without_separate_recharge_refund_and_reasoned_owner_staff_recharge_corrections_and_super_admin_reversal_exceptions_and_recharge_query_document_creation_date_sort_filter_entries_six_columns_mobile_date_filters_and_readonly_details_with_wallet_rules_manual_recharge_without_packages_optional_bonus_and_coupons_gift_note_required_principal_first_and_original_route_refunds
-> pending_scope: partial_refund_channel_component_allocation_platform_exception_details_and_remaining_transaction_contracts
+> confirmed_scope: single_use_fixed_72_hour_owner_create_only_invitation_codes_and_direct_customer_gift_coupon_quantity_reduction_and_deletion_and_coupon_owner_management_active_staff_manual_grants_care_scope_template_lifecycle_and_issue_snapshots_and_unified_wallet_balance_edit_required_reason_without_separate_recharge_refund_and_reasoned_owner_staff_recharge_corrections_and_super_admin_reversal_exceptions_and_recharge_query_document_creation_date_sort_filter_entries_six_columns_mobile_date_filters_and_readonly_details_with_wallet_rules_manual_recharge_without_packages_optional_bonus_and_coupons_gift_note_required_principal_first_and_original_route_refunds
+> pending_scope: activity_redemption_scope_and_carrier_and_partial_refund_channel_component_allocation_platform_exception_details_and_remaining_transaction_contracts
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -13,6 +13,9 @@
 > wallet_refund_component_rule: restore_original_components
 > partial_refund_allocation: pending
 > invite_code_store_scope: issuing_store_only
+> invite_code_total_redemptions: 1
+> invite_code_validity_hours: 72
+> invite_code_management_actions: [create]
 > recharge_package_feature_status: retired
 > recharge_entry_mode: manual_per_transaction
 > recharge_optional_gifts: [bonus_balance, coupon_items]
@@ -256,34 +259,33 @@ V1.0 支持以下四种来源：
 
 ### 9.3 邀请码兑换
 
-V1.0 不做“系统活动自动赠送优惠券”，改为邀请码兑换。
+> status: mixed
+> confirmed_scope: owner_create_only_issuing_store_only_single_total_redemption_fixed_72_hours
+> pending_scope: activity_redemption_scope_and_carrier
+> invite_code_total_redemptions: 1
+> invite_code_validity_hours: 72
+> invite_code_validity_start: server_creation_time
+> invite_code_management_actions: [create]
+> invite_code_lifecycle_controls: excluded
 
-老板可创建邀请码并绑定一张或多张已配置优惠券。邀请码至少支持：
+V1.0 不做系统活动自动赠送优惠券，沿邀请码兑换。
 
-- 邀请码内容（系统生成或老板指定）
-- 绑定优惠券及数量
-- 启用 / 停用
-- 生效时间 / 失效时间
-- 总兑换次数上限（可选）
-- 单个客户兑换次数上限；默认同一邀请码同一客户仅可兑换一次
-- 已兑换次数
-- 创建人
-- 创建时间
-- 备注（可选）
+老板只需创建邀请码并选择兑换内容；不提供启停、恢复、换码、调整活动或修改已创建码的管理流程，不要求维护多种可配置次数或有效期。原已确认的优惠券兑换仍沿绑定本店已有优惠券及数量执行，不直接增加会员余额；用户此次提到的“可兑换活动”具体承载方式待确认，在明确前不擅自增加服务／商品活动直接兑换、核销或新活动模块。
 
-客户端在“我的钱包”中提供轻量入口：
+**一条码总共一次**：每个邀请码在所属本店的全部顾客之间合计只能成功兑换一次，不是每位顾客各一次，也不是每张绑定券各一次。一次成功兑换可以按创建时绑定内容发放多张券，仍只消耗该码的一次资格；不同顾客并发仅允许一笔成功，不产生第二份权益。
 
-邀请码兑换
-→ 输入邀请码
-→ 后端校验当前商户及门店与邀请码所属本店一致，再校验邀请码状态、有效期、次数限制和客户领取资格
-→ 校验成功后自动发放绑定优惠券
-→ 显示兑换结果
+**固定3天**：从服务端成功创建邀请码时开始连续72小时，创建即生效，不按三个自然日或顾客首次输入起算。沿F-INV-011创建时间、005生效时间和006失效时间，005等于011，006等于011加72小时；服务端当前时间严格早于006且尚未成功兑换才可兑换，恰好到期拒绝。次数和期限不可由老板或前端自行改写，已兑换与到期均不能通过恢复／修改活动重新获得资格。该72小时是邀请码兑换窗口，不是兑换后优惠券的使用期限，券仍沿原发放快照及有效期规则。
 
-邀请码 V1.0 仅用于兑换优惠券，不直接增加会员余额，避免绕过充值和余额审计流程。
+老板创建内容沿F-INV-002邀请码内容（系统生成或老板指定）、003绑定优惠券及数量、010创建人、011服务端创建时间和012选填备注；007总上限固定为1，009成功次数只可0或1。不再使用004启停、008单顾客可配上限；永久号与历史字段保留为D，禁新写。创建后保留原码、内容及历史，不设编辑／删除操作；已创建码的状态由成功兑换事实和到期时间判断，不借用优惠券模板的启停状态代替邀请码状态。
 
-老板生成或指定的邀请码仅限其本店使用，不允许跨门店、跨商户兑换。邀请码归属生成它的Merchant／Store；V1一商户一门店，仍须区分F-CORE-002 merchant_id与F-CORE-003 store_id，不把创建人身份当作门店归属。绑定券及兑换后实际发放的券也须属于该本店，不能借邀请码发放其他门店的券或把本店券变成跨店通用券。
+客户端“我的钱包 → 邀请码兑换”：
+输入邀请码 → 服务端核对所属本店、当前本店Customer、未兑换及未到期和原领取资格 → 成功后发放创建时绑定权益并消耗唯一一次资格 → 当前页显示结果。普通输入、查看、越店或资格失败不消耗次数。
 
-兑换必须由服务端核对当前门店、邀请码所属门店及本店Customer关系；其他门店页面输入该码或篡改接口中的商户／门店／顾客标识均拒绝，不发券、不增加兑换次数。上一轮提出的店员查看复制、邀请码内容不可改、恢复与修改影响、兑换记录查询等管理细则仍待用户确认，本次只确认本店使用范围。
+老板生成或指定的邀请码仅限其本店使用，不允许跨门店、跨商户兑换。邀请码归属生成它的Merchant／Store，沿F-CORE-002 merchant_id、003 store_id和004 customer_id，不以创建者身份冒充门店归属；绑定及发放的券也只限本店。其他门店输入或接口篡改拒绝，不发券、不计次。
+
+兑换成功必须将唯一一次消耗与实际发券作为一次一致的业务结果保存：失败不消耗资格或部分发券；同一已成功请求沿原F-CORE-010恢复原成功结果，不再发券，也不能误报首次成功失败；其他请求在成功后提示已兑换。并发、重试与到期判断均以服务端实际受理结果为准，不能先在客户端判断可用再越过期限提交。
+
+店员查看复制、独立兑换记录查询与具体入口位置尚未确认；不由“只创建邀请码”扩展这些菜单或普通员工创建权限。通知仍按03f原兑换成功规则：当前页结果和站内记录，不额外微信通知；不得把一次兑换误成付款、充值或已完成服务。
 
 ### 9.4 平台积分兑换
 
