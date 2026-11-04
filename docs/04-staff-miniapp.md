@@ -2,7 +2,7 @@
 
 > status: mixed
 > status_scope: staff_requirements
-> confirmed_scope: owner_system_audit_readonly_log_view_and_reconciliation_via_existing_statistics_and_mobile_tabular_io_excluded_web_future_design_and_no_independent_day_end_close_shift_handover_or_cash_count_and_existing_statistics_and_one_spec_per_product_only_and_simple_inventory_view_edit_and_automatic_audit_without_movement_query_page_and_staff_product_management_list_five_rules_and_product_category_lifecycle_five_rules_and_ai_photo_intake_usage_five_rules_and_original_intake_form_no_review_page_and_inventory_management_correction_and_posted_stock_intake_records_five_rules_and_staff_product_management_six_rules_and_two_intake_routes_current_no_membership_future_ai_gate_and_owner_wechat_distribution_and_no_staff_unused_invite_code_surfaces_and_owner_invite_creation_five_rules_fixed_one_generated_code_and_copy_share_result_and_customer_detail_redeem_delete_without_order_no_mistake_undo_cancel_full_refund_only_returns_and_history_and_all_coupon_and_activity_manual_redemption_and_manual_checkout_price_adjustment_and_single_invite_content_and_one_calendar_month_claimed_entitlement_validity_and_coupon_and_direct_service_product_activity_entitlement_then_instore_use_scope_and_single_use_fixed_72_hour_owner_create_only_invitation_codes_and_direct_customer_gift_coupon_quantity_deletion_and_coupon_management_manual_grant_five_rules_and_unified_customer_balance_edit_with_required_reason_no_separate_recharge_refund_workflow_and_reasoned_recharge_correction_by_owner_staff_and_super_admin_only_reversal_exceptions_and_recharge_record_document_creation_date_query_sort_entries_six_columns_mobile_date_filters_readonly_details_and_manual_recharge_without_packages_optional_bonus_coupon_and_required_gift_note_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_business_statistics_five_rules_employee_self_view_and_explicit_order_performance_attribution_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
+> confirmed_scope: owner_all_store_order_access_and_direct_original_order_attribution_changes_without_handover_workflow_and_owner_system_audit_readonly_log_view_and_reconciliation_via_existing_statistics_and_mobile_tabular_io_excluded_web_future_design_and_no_independent_day_end_close_shift_handover_or_cash_count_and_existing_statistics_and_one_spec_per_product_only_and_simple_inventory_view_edit_and_automatic_audit_without_movement_query_page_and_staff_product_management_list_five_rules_and_product_category_lifecycle_five_rules_and_ai_photo_intake_usage_five_rules_and_original_intake_form_no_review_page_and_inventory_management_correction_and_posted_stock_intake_records_five_rules_and_staff_product_management_six_rules_and_two_intake_routes_current_no_membership_future_ai_gate_and_owner_wechat_distribution_and_no_staff_unused_invite_code_surfaces_and_owner_invite_creation_five_rules_fixed_one_generated_code_and_copy_share_result_and_customer_detail_redeem_delete_without_order_no_mistake_undo_cancel_full_refund_only_returns_and_history_and_all_coupon_and_activity_manual_redemption_and_manual_checkout_price_adjustment_and_single_invite_content_and_one_calendar_month_claimed_entitlement_validity_and_coupon_and_direct_service_product_activity_entitlement_then_instore_use_scope_and_single_use_fixed_72_hour_owner_create_only_invitation_codes_and_direct_customer_gift_coupon_quantity_deletion_and_coupon_management_manual_grant_five_rules_and_unified_customer_balance_edit_with_required_reason_no_separate_recharge_refund_workflow_and_reasoned_recharge_correction_by_owner_staff_and_super_admin_only_reversal_exceptions_and_recharge_record_document_creation_date_query_sort_entries_six_columns_mobile_date_filters_readonly_details_and_manual_recharge_without_packages_optional_bonus_coupon_and_required_gift_note_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_business_statistics_five_rules_employee_self_view_and_explicit_order_performance_attribution_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
 > pending_scope: all_other_staff_proposals_and_cross_store_risk_details
 > change_policy: record_required
 > development_readiness: blocked
@@ -187,7 +187,7 @@
 
 “老板管理 → 员工管理”固定设置“员工列表”和“邀请员工”两个菜单，按上述顺序展示。员工列表内承载停用员工、删除员工、恢复员工三个动作，不将它们另列为员工管理同级菜单，也不提供“配置权限”。停用／删除立即关闭目标员工本店访问并失效已有会话；恢复适用于被停用记录并使用当前统一店员资格。
 
-“删除员工”表示移出本店当前员工名单、终止当前有效关系，保留原员工稳定标识、历史订单、服务、业绩、工作记录及系统操作日志；不物理删除经营记录或注销平台自然人账号。被删除员工重新回本店入职（包括误删后重新加入），由老板重新邀请，经员工接受与已验证身份关联后沿用原`staff_id`，保留历史任职／删除事件并建立本轮有效关系；不复活旧邀请或旧会话。完整规则见02§6.1，未完成任务的交接细节仍待DEC-STAFF-03收口。
+“删除员工”表示移出本店当前员工名单、终止当前有效关系，保留原员工稳定标识、历史订单、服务、业绩、工作记录及系统操作日志；不物理删除经营记录或注销平台自然人账号。被删除员工重新回本店入职（包括误删后重新加入），由老板重新邀请，经员工接受与已验证身份关联后沿用原`staff_id`，保留历史任职／删除事件并建立本轮有效关系；不复活旧邀请或旧会话。完整规则见02§6.1；订单需要改归属时老板直接在原单更改，按§3.0.4.2／3.0.10，不另建订单交接流程。其他非订单待办的未列归属细节仍按DEC-STAFF-03，不据订单归属规则统一改成个人派单。
 
 老板管理中的“门店资料”“营业与预约设置”“服务项目管理”分别见§3.0.6／3.0.7／3.0.8。系统操作日志的门店查看入口为“老板管理 → 操作日志”，三列倒序列表／前后信息详情／只读按§3.0.4.1已确认，平台管理员仍从平台管理查看；与其他老板菜单相对排序和其他未列技术细节继续收口。优惠券管理入口及五项见§3.0.15，仅老板维护模板；“创建邀请码”入口及五项见§3.0.17.1，仅老板创建，结果页可复制／分享，内部菜单相对排序未定；其他门店配置菜单仍为候选，已确认的员工管理、门店资料、营业与预约设置及服务项目管理边界不因此回退。
 
@@ -209,6 +209,29 @@
 3. **只读**：查看页面不允许修改、删除日志或用于恢复数据；原业务成功后新增审计及自动留痕照常，不能因页面只读停止记录。不提供撤销日志、回滚快照或恢复原值按钮，查询也不产生业务变更。需要纠错仍回原业务按各自已确认规则处理，不因看见旧值绕过原状态、原因、权限或版本校验。原员工“我的工作记录”保持本店有效人员可查业务经办事实的规则，不将系统审计详情混入其中，也不收紧成只准看本人。
 
 本节确认最简入口、三列倒序与只读详情，不新增日志导出／表格入口、复杂检索或恢复流程；小程序表格导入导出仍按§3.0.10.2排除。菜单相对排序、分页加载及其他未列技术契约后续收口，不任意设保存期限或清理历史，不从本节推定平台日志界面已完成。复用F-AUD-001～011及原身份租户字段，仍725，原号逻辑名类型状态不改；登记staff_owner.system_audit_logs与staff_owner.system_audit_log_detail，其他业务产品ID不改。本次仅同步需求，未测试实际日志查询／字段权限。
+
+##### 3.0.4.2 老板查看全部本店订单，直接更改归属
+
+> status: confirmed
+> status_scope: owner_store_order_visibility_and_direct_existing_attribution_action_only
+> owner_order_visibility: all_orders_in_current_store
+> owner_order_attribution_entry: existing_order_management_and_original_order_detail
+> owner_order_attribution_field: order_performance_staff_id
+> owner_order_attribution_change_reason_required: true
+> owner_order_attribution_change_audit: required
+> order_handover_application: excluded
+> order_handover_confirmation: excluded
+> order_handover_assignment_workflow: excluded
+> inactive_staff_order_attribution_auto_transfer: false
+> historical_operator_identity: retained
+
+老板有权查看本店全部订单，不以本人开单／当前业绩归属限制订单管理范围；仍校验真实老板身份、本Merchant／Store及原业务字段权限，不开放他店或无权原件材料。“后台更改”沿已有老板订单管理及原订单详情的操作，不新增交接后台／菜单，不从本条新增“仅Web能改”限制；原已确认手机业务资格保持，Web界面技术细节仍在对应阶段收口。
+
+门店消费订单需要更改归属时，老板直接沿原F-ORD-038 order_performance_staff_id及§3.0.10原动作处理，变更原因必填，保留旧／新归属、实际修改人及服务端时间。收款／免单后仍用原单明确“更正业绩归属”动作，不重开订单或解锁金额，不增加交接申请、确认、员工接受、派单或逐次审批流程。员工停用或移出后订单不自动归老板；未更改时仍按既有有效人员接续业务规则办理，历史实际操作者不被新归属覆盖。
+
+目标人员、员工只转当前本人归属／老板可改本店全部、老板历史纠错可选历史身份例外、失效员工访问关闭、原因及版本防重，均沿原§3.0.10，不因本条放宽或取消员工已有合法权限。合法更正后整单已发生及后续实际收退款的业绩归属按原规则归集，真实交易日期、经办人、金额资金库存和服务记录不变；不是将所有历史改写为接手员工操作。
+
+本条只收口订单归属处理方式，不新增“交接负责人”字段或第二套订单／派单台账，不给预约、消费争议、食品提醒、充值等其他对象强加消费订单的业绩归属；其余待办仍按各自本店归属、访问及未决细节执行。复用原725字段、订单动作及产品ID，未新增交接菜单；原统计口径和系统日志只读规则保持。本次仅同步需求，不宣称订单权限／归属更正已功能实测。
 
 #### 3.0.5 已确认：统一员工权限与记录可见性
 
@@ -461,7 +484,7 @@
 
 **员工业绩方向已确认**：老板可看本店员工汇总及各员工归属订单明细，员工可看自己的归属订单明细核对；每笔门店消费订单必须明确业绩归属。业绩归属与实际开单、服务、收款／退款经办、录入及原审计身份分别保存，不能将经办人字段静默改作归属或因换员工操作改变归属；工作记录原本允许看本店经办事实，不因此扩大为可读他人业绩汇总。员工停用／移出后失去本店访问，原稳定身份和历史保留，返聘不把旧订单重算成新业绩。提成仍取消，不生成任何提成配置、提成计算／结算或提成报表。本次归属和金额三项已确认：
 
-- **每单一人及归属修改权限**：每笔门店消费订单以F-ORD-038 `order_performance_staff_id`唯一归属一名本店员工，引用原稳定staff_id；员工开单仍默认实际开单人，客户端商品初次选择按下一项。本次最新权限统一用于结算前改选和结算后更正：普通有效员工只能将当前归属本人的订单改给本店其他合法员工，不得修改当前归属他人的订单；老板可修改本店全部订单，不能跨店。原开单人、收款人或曾经归属过不等于现在可修改，也不能靠原业务详情可读或直接传order_id绕过。归属实际变更必须填写非空原因，前后归属、修改人、服务端时间沿F-AUD留存；默认开单或商品确认的首次选归属不作为更正、不额外强制填更正原因。其他实际服务／收退款经办身份保持；一单多宠、组合支付、寄养同单分批均不拆成多人业绩。目标选择仅提供本店合法员工所需身份信息，不向选择人开放目标员工的订单／金额或老板员工管理资料。
+- **每单一人及归属修改权限**：每笔门店消费订单以F-ORD-038 `order_performance_staff_id`唯一归属一名本店员工，引用原稳定staff_id；员工开单仍默认实际开单人，客户端商品初次选择按下一项。本次最新权限统一用于结算前改选和结算后更正：普通有效员工只能将当前归属本人的订单改给本店其他合法员工，不得修改当前归属他人的订单；老板可查看并修改本店全部订单归属，直接从已有订单管理／原单办理，不新增交接流程，见§3.0.4.2；不能跨店。原开单人、收款人或曾经归属过不等于现在可修改，也不能靠原业务详情可读或直接传order_id绕过。归属实际变更必须填写非空原因，前后归属、修改人、服务端时间沿F-AUD留存；默认开单或商品确认的首次选归属不作为更正、不额外强制填更正原因。其他实际服务／收退款经办身份保持；一单多宠、组合支付、寄养同单分批均不拆成多人业绩。目标选择仅提供本店合法员工所需身份信息，不向选择人开放目标员工的订单／金额或老板员工管理资料。
 - **客户端商品例外**：顾客提交商品需求时尚无员工开单，允许在门店确认前暂未归属；本店确认商品需求时必须明确选择一人，缺失／跨店或非法对象拒绝确认，不能默认老板／确认人或让顾客填写。尚未归属的客户端商品需求，沿原门店确认资格由本店老板／有效员工初次选择，不以“来源必须本人”阻断首次确认；已有归属后的改选才执行上述当前本人／老板范围和必填原因。选择可在原一屏确认中完成，不增加审批或另一张商品单；确认成功后该消费订单归属必填，收款／免单前再次校验。纯预约、投诉、上门撮合、平台积分兑换不是本节门店消费订单，不为其强派消费业绩。
 - **结算后更正及核对**：原单收款或免单后，金额和真实交易保持锁定；业绩归属填错时从原单使用明确的“更正业绩归属”动作，按上述员工只能转出本人／老板可改本店全部的规则办理，原因必填。不重开订单、撤销收款或改实际经办人，不改变订单金额／余额／付款退款／库存／服务记录。已结算不直接改单的旧限制不阻断这个已确认的独立归属更正动作，也不授予其他改账权限。
 - **金额重归属与历史**：更正成功后，整单已入账实收、已发生退款及后续真实退款均统一归更正后的员工；按各收退款原实际发生日期重算对应员工期间业绩，不把更正当天记为新增收款或退款。全店各期间实收／退款／净消费合计不变，不新增资金转账／退款记录。保留历次原归属、新归属、修改人、原因及时间；原归属员工和新归属员工可查看与本人相关的调出／调入更正摘要，不重复统计业绩、不把历史调入当当前仍归本人。该摘要是原业务事实的授权投影，不开放原始审计或他人员工业绩；转出后不再属于本人当前业绩，原转出人不能自行改回，只有最新归属员工或老板按各自权限处理。旧记录保留不授予已停用／移出员工访问。
@@ -1038,7 +1061,7 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 | 积分实物履约 | 本店已发货奖励、实际交付后登记已领取、历史 | 工作台/待处理/商品处理下的奖励自提；业务/商品处理/奖励自提 | 无奖励收货分类／到货确认／领取凭证；老板与有效员工沿03k登记真实领取，不做总仓发货或未决取消／退积分 | 02§2／4、03k |
 | 财务 | 原收退款记账及经营统计／原明细核对，无独立对账或日结／交接班／现金盘点 | 老板管理/经营统计及原交易详情，不新建对账入口 | 正常记账补录保持；门店表格导入导出归Web后续设计、手机本期无入口，其他Web契约待定 | §3.0.10～3.0.10.2、01§10/§15 |
 | 员工业绩 | 老板汇总本店、员工核对本人归属订单；每单归属必须明确 | 我的/我的业绩；老板管理/经营统计；平台管理员按职责查看 | §3.0.10经营统计五项与查看范围已定；一单一人、归属修改按员工只转本人／老板改本店全部且原因必填、员工实收／退款／净消费按实际收款已定，结算后更正带整单历史和后续退款／原日期重归属；历史缺归属回填等未列细节仍待06/08，不以经办字段代归属 | 01§10、02§4、§3.0.10 |
-| 员工管理 | 员工列表、邀请员工；停用／删除／恢复放在列表内；无权限配置 | 我的/老板管理/员工管理（§3.0.4已确认） | 删除后回本店由老板重新邀请并关联原身份；手机／Web分工及任务交接仍待确认 | 02§6～8 |
+| 员工管理 | 员工列表、邀请员工；停用／删除／恢复放在列表内；无权限配置 | 我的/老板管理/员工管理（§3.0.4已确认） | 删除后回本店由老板重新邀请关联原身份；订单归属老板原单直接更改、无交接流程按§3.0.4.2已定，其他未列手机Web／待办细节另定 | 02§6～8 |
 | 门店配置 | 门店资料、营业与预约设置、四类项目及表单／启停恢复已确认；优惠券管理五项按§3.0.15已定；商品管理及两种入库已按§3.0.18／19确认主流程，通知模板及未列配置细节继续讨论，充值不设套餐 | 我的/老板管理/门店资料、营业与预约设置、服务项目管理已确认 | 洗护美容护理项目主资料仅老板维护；商品主资料和库存按§3.0.18老板员工可维护，服务菜单的商品分支只关联已有SKU；护理仅门店开单，结算调价不改主资料 | §3.0.6～3.0.9、01、02、03各子模块 |
 | 付费能力 | 养宠顾问既有权益；AI拍照入库会员为未来阶段 | 养宠顾问管理入口仍候选；两种入库当前普通功能 | pet_advisor原付费不变，ai_stock_intake不作当前校验，后期价格额度／开通及验证另定；不开放顾客聊天 | 03l、03e§15.1、§3.0.19 |
 | 日志与数据 | 系统操作日志、Web表格导出／批量导入及资源管理 | 老板小程序操作日志三项按§3.0.4.1已定，平台日志仍原资格；表格进出归Web后续设计，手机本期无入口 | Web表格模板字段／权限等契约及资源配额后续收口；平台批量审核表格不受本次门店分工影响 | §3.0.4.1／3.0.10.2、01§11～12/§15、02 |
@@ -1974,7 +1997,7 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 |---|---|---|---|
 | DEC-STAFF-01 | pending | 优惠券管理入口、老板模板维护／启停恢复无删除、员工可独立赠券原因必填、护理范围和已发快照五项按§3.0.15已定；其他老板菜单、其余手机／Web分工及优先流程仍待确认。§3.0.8四类／表单校验／默认启用／恢复／旧预约例外和§3.0.9全部到店订单调价／免单已确认；护理仅门店开单、商品只关联已有SKU。充值无套餐／逐次金额／可选赠送余额与券／有赠送必填备注按§3.0.11已定，不再预留套餐管理；门店资料平台审核页待阶段05 | 阶段04/05，页面范围；已确认子项不回退 |
 | DEC-STAFF-02 | pending | §4.1基础资料、洗美／护理同客多宠一单独立进度／一起结算、同宠洗美护理原单加项已定；§5.1寄养多宠各自独立入住／位置／时间已定，§5.2同店同客可一起结算、逐宠本次日价与实际晚数计算已定。新增顾客保存后提醒／失败直接继续及重复频率按§6.5.1已定；其他未决混单、复杂复用／绑定冲突仍待细化 | 阶段04/06，与03g核对；不扩大到商品／寄养混单或自动合并顾客 |
-| DEC-STAFF-03 | pending | 争议待办归属争议门店及§3.2.1三步流转／单卡去重／跨天保留已定；§3.7预约待处理／阅读确认／共享提醒不可用选择继续已定；§5.1寄养异常由员工实际处理并填写结果后明确关闭，已读／通知不关闭已定。食品风险初次归属／平台暂承接及同案同店不重复按03f§13.3已定，§13.3.1全店有效人员知悉／基本可见范围／无领取转交审批／移卡留历史已定；已派后改店／多店、其他待办归属、领取／转交／责任转移、多人处理及其余通知任务关系仍待决 | 阶段04/06/08；不回退寄养异常已确认范围 |
+| DEC-STAFF-03 | pending | 争议待办归属争议门店及§3.2.1三步流转／单卡去重／跨天保留已定；§3.7预约待处理／阅读确认／共享提醒不可用选择继续已定；§5.1寄养异常由员工实际处理并填写结果后明确关闭，已读／通知不关闭已定。食品风险初次归属／平台暂承接及同案同店不重复按03f§13.3已定，§13.3.1全店有效人员知悉／基本可见范围／无领取转交审批／移卡留历史已定；订单归属由老板查看本店全部订单并在原单直接更改、不做交接流程按§3.0.4.2已定；已派后改店／多店、其他非订单待办归属、领取／转交／责任转移、多人处理及其余通知任务关系仍待决 | 阶段04/06/08；不回退寄养异常已确认范围 |
 | DEC-STAFF-04 | pending | §3.0.1另三列表的范围／升序排序、手机号及类型筛选、最终应收列／待确认／整单标签、跨天保留／不套历史15天、原详情办理／无列表一键完成收款五项已定；洗美历史已完成／取消／中止均可查、未结算双入口同原单、默认15天／手机号／类型状态日期筛选与只显示整单最终应收已定； §4.3／4.4洗美及§4.5护理12项已定：独立护理五态、简短强制前检查／主人决定／完成前确认、照片备注选填、本人普通结果、未结算重开；同宠洗美加护理不降低洗美六项。洗美中止说明选填／顾客无过程／无中止通知已定；正常已完成的补图／普通文字更正含已结算已定：全店有效人员无审批、原因选填、历史保留／默认最新、不重开不改账不通知，AI由顾客选择；顾客精确标签、其他未列状态／内容更正、其他护理取消／更正事件消息、AI新素材再次分析版本契约等其余细节仍待决；护理开始普通／完成重要／补改普通、中止不通知及完成后补改权限按§4.5已定，取消／中止后不恢复原服务、包括误点都重新开单按§4.4已定，寄养不照搬 | 阶段04/06，与03/03i联动；不回退已确认洗美或护理规则 |
 | DEC-STAFF-05 | pending | 洗美收费／挂单及护理正常完成后收费／中止实际费用／全未开始取消不收费／多宠一起结算已定；统一明确免单、最多两种支付、先本金后赠送、无老板审批且原路退款、自动资产联动不变。寄养§5.2过夜计数／实际离店结算、入住逐宠设置日价及同店同客多宠一起结算、分批接走分别结算已定，离店费用确认即离店、未付可手动挂单原因必填且按实际时间停计已定；第14～18项离店确认前留痕更正整次正日价、不分段／不自动涨价、免费走明确免单、离店未付只调最终应收及已结算不直接改账已定；§4.6挂单查询／人工联系、护理挂单及误挂撤销已定；原充值更正及有条件撤销按§3.0.13已定：老板／有效员工可改本金赠送券、原因必填留历史，需撤回的余额不足或券已用门店无法撤销、仅超管异常处理；当前余额修改／充值余额退还统一入口按§3.0.14已定，原因必填、差额留痕；超管具体数据处理及其余未决结算时序、混合业务、部分退款分配和其他账本更正仍待决；外部支付通道及失败恢复不在V1范围 | 阶段04/06/08；只记账、服务及时操作，不造收款／完成／退款，不扩展充值退款／任意改余额／积分权限 |
 | DEC-STAFF-06 | pending | §5.1寄养16项及用户第11项修正已定：实际到店确认、时间／单宠防重、多宠独立、简单位置、简短入住检查、本次资料／明确同步、饮食核实／随带物品、单表单三动作→时间→选填照片、逐宠无配额、可见性独立、异常明确处理、到期仅提醒。§5.2北京时间03:00过夜计数（入住排除／离店包含）、0晚无寄养费、实际离店结算、延期／提前离店据实重算已定。本店员工入住逐宠设置日价及同店同客多宠一起结算、分批接走分别结算且余宠不预收、逐宠计算再汇总、费用确认即离店而未付仍可挂单／实际时间停计／物品交还提醒已定。第14～18项日价更正／不分段／正日价及明确免单／离店后未付应收调整／已结算历史保护已定。挂单查询／人工联系及撤销按§4.6已定；特殊交接与离店时间等历史更正、已结算独立更正流程仍待决。§5.4健康资料／人工接收、特殊照护含代喂药／实际执行、异常沟通／实际处理与提前接走衔接已定。医疗处置／紧急升级、交接／责任转移及历史更正等剩余边界仍待决 | 阶段04/05/06/08；03a建议容量只提醒，加餐按普通销售、照护需要时另记，不恢复洗美硬名额 |
