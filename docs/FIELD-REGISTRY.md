@@ -702,6 +702,8 @@ AI拍照入库五项按03e§15.1.6／04§3.0.19.1：现场拍摄或相册、多�
 
 ## 13. 消息中心与微信通知（MSG）
 
+店员端本人通知设置按04§3.0.3.1／03f§11.1：保留staff_me.notification_settings，新增authorize_wechat_notifications本人主动操作ID；只管真实登录本人，不代其他员工／跨身份授权，不通过此页造Customer或恢复失效任职。站内按原业务事件生成普通／重要通知，012等级不可由用户改，无逐业务开关；业务短信暂未开放且无启用／队列，原登录验证不变。微信实际许可、具体模板／有效范围及发送结果分开，不将016～019发送审计当授权状态或新增永久总开关Bool；模板授权接口数据映射待技术阶段先注册，不从现有字段猜接通。725原字段身份类型状态保持，无逐业务开关或短信启用产品ID，原事件不发通知的例外及失败不影响业务／站内消息保持。
+
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
 | F-MSG-001 | `message_id` | S | ID | 单条站内消息。 |
@@ -1325,7 +1327,8 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 | `staff_me.employee_store_info` | 员工与门店信息 |
 | `staff_me.work_records` | 我的工作记录 |
 | `staff_me.performance` | 我的业绩 |
-| `staff_me.notification_settings` | 通知设置 |
+| `staff_me.notification_settings` | 我的／通知设置，仅本人微信主动授权入口、站内普通重要通知规则说明、短信暂未开放，无逐业务开关／自改等级 |
+| `staff_me.authorize_wechat_notifications` | 当前登录本人主动发起微信授权，按真实平台许可判断，不代他人／伪造永久许可或把发送审计当授权 |
 | `staff_me.account_security` | 账号与安全 |
 | `staff_me.help_feedback` | 帮助与反馈 |
 | `staff_me.logout` | 退出登录 |

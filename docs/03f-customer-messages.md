@@ -294,6 +294,23 @@ V1.0 为店员保留轻量“通知客户”能力，用于特殊业务情况，
 
 客户未授权或无法接收微信通知时，站内消息、订单状态、服务结果、食品品牌风险提醒等功能仍应正常工作。
 
+### 11.1 店员端本人通知设置与微信授权
+
+> status: confirmed
+> status_scope: staff_self_notification_settings_controls_only
+> notification_settings_source: 04_staff_miniapp_section_3_0_3_1
+> notification_settings_owner: current_authenticated_user_only
+> wechat_permission_source: actual_platform_permission
+> per_business_notification_switches: excluded
+> user_editable_notification_priority: false
+> business_sms_availability: not_available
+
+店员端“我的 → 通知设置”按04§3.0.3.1，只保留本人主动微信授权入口、原站内两档通知说明和业务短信“暂未开放”。老板不能替员工授权或更改他人通知设置；微信拒绝、失败或不可用不阻断业务与站内消息，不因页面操作创建新通知事件。消息等级继续用F-MSG-012，不能由设置页改等级或给各业务加开关，具体业务是否生成站内／尝试微信仍按原已确认事件及例外，不从“重要”推导强制微信送达。
+
+授权操作与真正的模板／次数或有效许可、发送尝试与成功分别判断，不用一次点击／发送成功或本地永久开关代表全部可用资格；实际模板与授权接口映射后续技术阶段按字段注册表收口，不伪造已经接通。页面只管理当前真实登录主体，不为员工创建虚假Customer关系以复用客户接收字段，也不因授权恢复失效任职或跨店访问。
+
+本节仅确认店员端本人设置，不新增顾客通知设置页、通知事件、模板群发或营销渠道；短信当前无启用控件／发送队列，03g原登录验证保持。F-MSG-016～019继续只记是否尝试和发送结果，不等于授权状态；需要新增授权数据契约时须先注册。字段仍725、原号名类型状态保持，平台真实许可／模板及其他未列技术待确认，不以需求审计当微信授权／送达实测。
+
 ## 12. 通知审计
 
 至少保存：
