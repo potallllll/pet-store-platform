@@ -2,7 +2,7 @@
 
 > status: mixed
 > status_scope: staff_requirements
-> confirmed_scope: posted_stock_intake_records_five_rules_and_staff_product_management_six_rules_and_two_intake_routes_current_no_membership_future_ai_gate_and_owner_wechat_distribution_and_no_staff_unused_invite_code_surfaces_and_owner_invite_creation_five_rules_fixed_one_generated_code_and_copy_share_result_and_customer_detail_redeem_delete_without_order_no_mistake_undo_cancel_full_refund_only_returns_and_history_and_all_coupon_and_activity_manual_redemption_and_manual_checkout_price_adjustment_and_single_invite_content_and_one_calendar_month_claimed_entitlement_validity_and_coupon_and_direct_service_product_activity_entitlement_then_instore_use_scope_and_single_use_fixed_72_hour_owner_create_only_invitation_codes_and_direct_customer_gift_coupon_quantity_deletion_and_coupon_management_manual_grant_five_rules_and_unified_customer_balance_edit_with_required_reason_no_separate_recharge_refund_workflow_and_reasoned_recharge_correction_by_owner_staff_and_super_admin_only_reversal_exceptions_and_recharge_record_document_creation_date_query_sort_entries_six_columns_mobile_date_filters_readonly_details_and_manual_recharge_without_packages_optional_bonus_coupon_and_required_gift_note_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_business_statistics_five_rules_employee_self_view_and_explicit_order_performance_attribution_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
+> confirmed_scope: original_intake_form_no_review_page_and_inventory_management_correction_and_posted_stock_intake_records_five_rules_and_staff_product_management_six_rules_and_two_intake_routes_current_no_membership_future_ai_gate_and_owner_wechat_distribution_and_no_staff_unused_invite_code_surfaces_and_owner_invite_creation_five_rules_fixed_one_generated_code_and_copy_share_result_and_customer_detail_redeem_delete_without_order_no_mistake_undo_cancel_full_refund_only_returns_and_history_and_all_coupon_and_activity_manual_redemption_and_manual_checkout_price_adjustment_and_single_invite_content_and_one_calendar_month_claimed_entitlement_validity_and_coupon_and_direct_service_product_activity_entitlement_then_instore_use_scope_and_single_use_fixed_72_hour_owner_create_only_invitation_codes_and_direct_customer_gift_coupon_quantity_deletion_and_coupon_management_manual_grant_five_rules_and_unified_customer_balance_edit_with_required_reason_no_separate_recharge_refund_workflow_and_reasoned_recharge_correction_by_owner_staff_and_super_admin_only_reversal_exceptions_and_recharge_record_document_creation_date_query_sort_entries_six_columns_mobile_date_filters_readonly_details_and_manual_recharge_without_packages_optional_bonus_coupon_and_required_gift_note_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_business_statistics_five_rules_employee_self_view_and_explicit_order_performance_attribution_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
 > pending_scope: all_other_staff_proposals_and_cross_store_risk_details
 > change_policy: record_required
 > development_readiness: blocked
@@ -723,7 +723,7 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 #### 3.0.19 商品入库／AI拍照入库，会员验证后置
 
 > status: mixed
-> confirmed_scope: manual_and_ai_photo_stock_intake_current_no_membership_check_human_review_existing_sku_or_complete_new_product_future_membership
+> confirmed_scope: manual_and_ai_photo_stock_intake_current_no_membership_original_form_explicit_posting_inventory_management_correction_and_future_membership
 > pending_scope: future_membership_commercial_terms_duplicate_documents_unit_conversion_cost_updates_and_remaining_technical_contracts
 > stock_intake_entries: [商品入库, AI拍照入库]
 > manual_stock_intake_entry: 业务/商品处理/商品管理/商品入库
@@ -733,15 +733,19 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 > stock_intake_membership_check_current_phase: not_required
 > stock_intake_future_paid_owner_type: store
 > stock_intake_future_feature_key: ai_stock_intake
-> stock_intake_review_before_posting: required
+> stock_intake_review_page: excluded
+> stock_intake_ai_result_destination: original_stock_intake_form
+> stock_intake_posting_trigger: explicit_one_click_intake
 
-商品管理设置两个平级入口：“商品入库”手工选择SKU、填实际入库量及可选进货价，核对确认，不要求拍照／AI；“AI拍照入库”拍摄进货单据AI识别、先人工核对修正再一键入库。两入口都由本店老板／有效员工使用，原SKU关联、新商品补齐必填后同次入库，新商品入10最终10。入库量增加库存，不作为盘点库存目标覆盖原总量。
+商品管理设置两个平级入口：“商品入库”手工选择SKU、填实际入库量及可选进货价，原表单点击“一键入库”，不要求拍照／AI；“AI拍照入库”拍摄识别后直接填回原入库表单，可修改并补齐必要信息，店员点击“一键入库”后才生效。取消独立核对页面、逐行核对勾选及二次核对步骤，不是AI识别完成自动入库。两入口都由本店老板／有效员工使用，原SKU关联、新商品补齐必填后同次入库，新商品入10最终10。入库量增加库存，不作为盘点库存目标覆盖原总量。
 
 当前按普通功能，不校验会员／付费、不要求有ai_stock_intake权益，非会员或原权益过期停用不应因此被禁用，也不伪造有效会员／要求后台先开通。门店任职、租户、SKU／数量／状态／版本及防重必须后端校验；关闭会员前置不关闭这些基础校验，也不改变养宠顾问原付费规则。
 
 后期会员只预留Store归属及ai_stock_intake功能语义，价格额度开通与启用时机另定，不阻塞本阶段普通功能；将来对AI入口及后端识别／AI来源确认入库统一增加验证，不能只锁按钮或把AI来源改manual绕过。手工入库未另确认不加会员限制，不重建库存或改已入库历史；本次范围变更不宣称阶段已切换为正式实现。
 
-两方式复用入库单／SKU／库存／前后历史与一致性，F-INTAKE-012 method区分manual／ai_photo；手工图片／AI原始数据可空，直接待核对，不伪造识别成功。人工确认才入库，失败无半单建档／库存；同单换入口、双击重试／并发／重复回调不能再加库存。进货价不自动改售价／成本或造财务，私有单据不对客公开，历史真实人时间保留。721字段及详细规则见03e§15.1／FIELD§11.1；AI技术、跨批次单据去重／单位换算／成本更新／更正等仍待收口，不以文档审计当真实功能测试。
+两方式复用入库单／SKU／库存／前后历史与一致性，F-INTAKE-012 method区分manual／ai_photo；手工图片／AI原始数据可空，直接待确认入库，不伪造识别成功；pending_review为原技术枚举，表示原表单待点击入库，不产生核对页。点击“一键入库”才入库，失败无半单建档／库存；同单换入口、双击重试／并发／重复回调不能再加库存。进货价不自动改售价／成本或造财务，私有单据不对客公开，历史真实人时间保留。721字段及详细规则见03e§15.1／FIELD§11.1；AI技术、跨批次单据去重／单位换算／成本更新等仍待收口，不以文档审计当真实功能测试。
+
+入库出错按03e§15.1.5，老板／有效员工自行到“业务／商品处理／商品管理／库存管理”使用原库存调整，填写当前正确库存目标；有后续出入库时不拿原入库数量覆盖当前量。原入库记录保留，后续调整记录前后数量／人／时间，不新增作废撤销流程；选错SKU核实后分别调相关库存，预占／可售及版本防重不放宽。库存管理复用staff_product.adjust_inventory，不另造账本，不因此开放原进货价／财务历史修改。
 
 #### 3.0.20 入库记录五项
 
@@ -756,13 +760,15 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 > stock_intake_records_filters: [date_range, stock_intake_method]
 > stock_intake_records_search: [product_name, barcode]
 > stock_intake_posted_original_editable: false
-> stock_intake_correction_policy: pending
+> stock_intake_correction_policy: inventory_management_adjustment
+> stock_intake_correction_entry: 业务/商品处理/商品管理/库存管理
+> stock_intake_original_void_workflow: excluded
 
-按03e§15.2，本店老板／有效员工可在“商品管理 → 入库记录”统一查商品入库及AI拍照入库的成功记录，不限本人经办；不把识别中、待核对或失败当已入库。列表显示入库时间、入库单号、商品摘要、入库方式、操作人，按010成功入库时间倒序；001作为单号，009真实确认人，不拿创建／票面日期／拍摄人替代。
+按03e§15.2，本店老板／有效员工可在“商品管理 → 入库记录”统一查商品入库及AI拍照入库的成功记录，不限本人经办；不把识别中、待点击入库或失败当已入库。列表显示入库时间、入库单号、商品摘要、入库方式、操作人，按010成功入库时间倒序；001作为单号，009真实确认人，不拿创建／票面日期／拍摄人替代。
 
 默认最近15个Asia/Shanghai业务自然日（含今天前14天），可改日期查更早，不是删除期限。筛日期／全部或两种方式，搜索商品名称／条码，逐次本店鉴权；方式012不为筛选修改。详情显示本次商品规格、数量、进货价、当次入库前后账面总库存及人时间，有照片可查看；手工无照片正常，未知进货价显示未填写、不补0。前后值取历史事实，不用今日库存倒算、不替代为可售／预占。
 
-已成功原记录只读，原始资料／数量价格方式时间不覆盖，作废及入错数量／选错商品如何纠正继续待确认，不默认加撤销／负数入库。查询与原图逐次校验任职租户对象，私有进货资料不对客；业务摘要不扩大原始审计可读权限。复用721字段及原SKU／审计，不造新账本；产品ID及详细映射见FIELD§11.1与03e§15.2。图片仅方案示意，不作为固定数据或已开发验收证据。
+已成功原记录只读，原始资料／数量价格方式时间不覆盖，入错数量／选错商品在库存管理自行调整并保留后续记录，不新增原单作废／撤销流程。查询与原图逐次校验任职租户对象，私有进货资料不对客；业务摘要不扩大原始审计可读权限。复用721字段及原SKU／审计，不造新账本；产品ID及详细映射见FIELD§11.1与03e§15.2。图片仅方案示意，不作为固定数据或已开发验收证据。
 
 ### 3.1 五个入口的建议职责
 
@@ -874,7 +880,7 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 | 客户 | 搜索/添加/详情、历史客户匹配异常、客户通知 | 客户 | 批量导入/复杂处理建议老板Web | 02§9、03g、03f |
 | 宠物 | 档案、基础/护理/寄养资料、体重、服务历史、当前食用品牌、行为与服务安全记录（跨店细节待确认） | 客户详情，或从洗美、业务/寄养带入 | 内部备注与客户资料权限分清，不替客户自动授权 | 01§5、03b、03h |
 | 会员 | 余额/本金/赠送/流水、逐次充值及可选赠送、充值记录查询、余额调整、优惠券查看与处理 | 客户详情按权限操作 | 充值不设套餐，有赠送备注必填，记录查询两入口与六列见§3.0.11～12／03c；订单日期为原充值单据生成日期；充值更正／撤销及超管异常边界见§3.0.13；当前余额修改／退还统一按§3.0.14，原流水不覆盖 | 01§8～9、03c |
-| 库存 | 商品总库存／预占／可售核对、补货盘点及手工／AI两种入库 | 业务/商品处理/商品管理，两种入库在其内 | 本店老板员工可调整，预占不覆盖；AI核对确认后一次入库，其他出入库更正／Web分工及技术契约待定 | 03e§15／15.1、§3.0.18／19 |
+| 库存 | 商品总库存／预占／可售核对、补货盘点及手工／AI两种入库 | 业务/商品处理/商品管理，两种入库在其内 | 本店老板员工在库存管理自行调整入库错误，预占不覆盖；AI填原表单点击后一次入库，无独立核对页；剩余Web分工及技术契约待定 | 03e§15／15.1、§3.0.18／19 |
 | 投诉回应 | 正式回应、证据、第三方佐证、补证、裁决/申诉状态 | 工作台待处理/其他；异常与临期/投诉回应；业务/消费争议（已确认） | 平台负责审核与裁决；本店动作基线见§6.1，其他动作权限与手机/Web分工待确认 | 03h、§6.1～6.3 |
 | 上门喂养 | 待确认、已确认、历史；仅确认／撤销 | 工作台待处理／业务/上门喂养 | 当前店确认后仅本店可看双方联系方式；修改与实际服务在线下，无进度跟踪 | 03j§8～9.3 |
 | 积分实物履约 | 本店已发货奖励、实际交付后登记已领取、历史 | 工作台/待处理/商品处理下的奖励自提；业务/商品处理/奖励自提 | 无奖励收货分类／到货确认／领取凭证；老板与有效员工沿03k登记真实领取，不做总仓发货或未决取消／退积分 | 02§2／4、03k |
@@ -991,7 +997,7 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 7. **交易与实物交接分开**：普通商品不新增独立备货或确认交付步骤，真实收款记账或明确确认免单后按03e完成销售、一次出库及券处理。客户端“已完成”只表示商品交易完成，不记录或推断顾客已取走；实物在线下交接。平台奖励自提核销仍按03k；实际照护需要时另记，不由销售推断。
 8. **需求不合并结算**：不同购买需求分别处理，同一顾客两次提交暂不合并结算；同一次购物车多个商品仍是一笔原需求／原订单，不拆成重复订单。不是寄养多宠合并结算或同宠洗美加护理原单加项，不扩展其他混单许可。
 
-复用原订单／明细／SKU、F-ORD-006／007／031原数量与快照、F-PROD-025保留截止、F-CORE-013原提交创建时间、F-ORD-032金额版本及F-AUD。选填原因复用F-AUD-009，字段是否必填按实际业务动作判断，不新建全局取消原因必填规则；查询组不是持久化的新状态。库存仍按03e确认自动预占、默认24小时保留、未结算取消／超时释放、收款／明确免单一次出库，重试与并发不重复。商品维护／手工库存及两种入库（当前无会员前置）按§3.0.18／19已定；其他库存更正／剩余手机Web分工、部分退款分配与账本更正仍按原DEC，不宣布整端解阻。
+复用原订单／明细／SKU、F-ORD-006／007／031原数量与快照、F-PROD-025保留截止、F-CORE-013原提交创建时间、F-ORD-032金额版本及F-AUD。选填原因复用F-AUD-009，字段是否必填按实际业务动作判断，不新建全局取消原因必填规则；查询组不是持久化的新状态。库存仍按03e确认自动预占、默认24小时保留、未结算取消／超时释放、收款／明确免单一次出库，重试与并发不重复。商品维护／手工库存及两种入库（当前无会员前置）按§3.0.18／19已定；入库错误由库存管理调整已定，剩余手机Web分工、部分退款分配与账本更正仍按原DEC，不宣布整端解阻。
 
 ### 3.9 已确认：上门喂养确认／撤销与店家联系方式权限
 
