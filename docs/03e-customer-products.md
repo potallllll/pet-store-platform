@@ -1,7 +1,7 @@
 # 03E 商品、购买需求、门店商品管理与入库
 
 > status: mixed
-> confirmed_scope: original_customer_purchase_rules_and_staff_product_management_six_rules_and_manual_and_ai_photo_intake_current_no_membership_check_future_membership_original_form_explicit_posting_and_inventory_management_correction_and_posted_intake_records_five_rules_and_ai_photo_usage_five_rules
+> confirmed_scope: original_customer_purchase_rules_and_staff_product_management_six_rules_and_manual_and_ai_photo_intake_current_no_membership_check_future_membership_original_form_explicit_posting_and_inventory_management_correction_and_posted_intake_records_five_rules_and_ai_photo_usage_five_rules_and_product_category_lifecycle_five_rules
 > pending_scope: stock_intake_remaining_technical_contracts_and_future_membership_commercial_terms
 > status_scope: full_document
 > change_policy: record_required
@@ -249,7 +249,7 @@ V1.0 默认值确定为 24 小时。
 5. **库存调整**：在商品管理的“库存管理”中，补货／盘点或入库错误可直接填写当前正确库存目标，保留前后数量、实际人及服务端时间，系统记实际差额，不重置已预占库存。账面总库存用F-PROD-026，已预占009保持，可售008由总库存扣预占派生；目标低于已预占时不能静默覆盖，应先处理原订单预占／缺货。调整提交时按当前真实库存与预占校验，不能用旧表单覆盖刚成交／预占；同次成功请求不重复调整。
 6. **上下架及历史**：支持上架／下架，下架不再接受新的购买；原订单和库存历史保留，不自动取消或改写已发生交易。有销售或库存记录的商品不物理删除。原订单继续办理时的状态校验仍按既有商品规则，不借本节绕过SKU合法性。
 
-本节商品主资料及库存仍是03e唯一来源。客户侧仅看库存状态，不公开精确库存、成本价或进货单；入库、售出和真实退货各自只记一次库存变化。原商品预占、超时释放、收款／明确免单出库及退货规则保持。分类维护、无历史商品删除和其余商品生命周期边界未列部分继续收口，不用字段存在补默认规则。
+本节商品主资料及库存仍是03e唯一来源。客户侧仅看库存状态，不公开精确库存、成本价或进货单；入库、售出和真实退货各自只记一次库存变化。原商品预占、超时释放、收款／明确免单出库及退货规则保持。分类维护／自动转移至其他、恢复上架及无历史商品删除按§15.3五项已确认；其余未列商品生命周期技术契约继续收口，不用字段存在补默认规则。
 
 
 ### 15.1 两种商品入库方式（当前普通功能，会员验证后置）
@@ -303,7 +303,7 @@ AI原始识别结果仅用于填入原入库表单，仍是不可信输入，不
 
 保留方式、图片（如有）、AI原始内容（仅AI来源）、人工确认行、SKU／新商品、前后数量及差额、真实人和服务端时间。入库只记录库存事实，不生成顾客消费、充值、业绩或供应商已付款，不自动建应付流程。单据图片／进货价只供本店有权人员，不向顾客当商品图或订单材料公开；原始审计读取权限不扩大，业务摘要按原资格提供。
 
-商品、库存和入库单唯一归Merchant，store_id是实际门店上下文；未来付费权益才按Store归属，不混同。复用F-PROD-001～026、F-INTAKE-001～013、原身份媒体及F-AUD，新手工方式不要求F-INTAKE-003图片／005AI原始数据，手工状态可直接进入pending_review，不伪装成AI已识别。当前字段722，剩余AI技术／图片限制、同图以外单据等价识别、单位换算、成本更新及其他数据契约仍需收口；会员仅为未来范围，原商品购买及其他业务规则保持。需求审计不是H5、AI识别或真实库存已实测。
+商品、库存和入库单唯一归Merchant，store_id是实际门店上下文；未来付费权益才按Store归属，不混同。复用F-PROD-001～026、F-INTAKE-001～013、原身份媒体及F-AUD，新手工方式不要求F-INTAKE-003图片／005AI原始数据，手工状态可直接进入pending_review，不伪装成AI已识别。当前字段725，剩余AI技术／图片限制、同图以外单据等价识别、单位换算、成本更新及其他数据契约仍需收口；会员仅为未来范围，原商品购买及其他业务规则保持。需求审计不是H5、AI识别或真实库存已实测。
 
 #### 15.1.5 入库错误在库存管理修改
 
@@ -332,7 +332,7 @@ AI原始识别结果仅用于填入原入库表单，仍是不可信输入，不
 
 上述允许继续仅限新建入库单的照片提醒，**不是允许原已posted入库单重入**：同一单的双击、超时重试、并发或重复识别回调仍恢复原结果、库存只增加一次。继续新单按原SKU／数量／版本／对象权限和一次确认规则生效，真实重复入错仍由库存管理纠正，不删原历史。
 
-图片引用复用F-INTAKE-003，服务端逐图内容指纹新增F-INTAKE-013，仅用于同一照片跨上传匹配本店原posted单001；不以文件名、上传链接、客户端自报重复或OCR商品文本作为可信判重。媒体编码／压缩后等价判同等技术策略待架构收口，禁止宣称跨拍同一物理票据全部识别。原识别005、来源012、行／SKU及审计复用，字段累计722，原721永久号逻辑名类型状态不变；图像不对客户公开。
+图片引用复用F-INTAKE-003，服务端逐图内容指纹新增F-INTAKE-013，仅用于同一照片跨上传匹配本店原posted单001；不以文件名、上传链接、客户端自报重复或OCR商品文本作为可信判重。媒体编码／压缩后等价判同等技术策略待架构收口，禁止宣称跨拍同一物理票据全部识别。原识别005、来源012、行／SKU及审计复用，字段累计725，原721永久号逻辑名类型状态不变；图像不对客户公开。
 
 ### 15.2 入库记录查看与查询
 
@@ -357,7 +357,29 @@ AI原始识别结果仅用于填入原入库表单，仍是不可信输入，不
 4. **详情**：展示本单号、方式、实际入库时间／操作人及每行商品、规格、入库数量、进货单价、入库前后库存；有进货单照片时可查看，无照片不阻断手工记录。明细沿本次已确认资料和原前后值呈现，入库前后是该次入库时的账面总库存事实，不从后来当前库存倒算，也不拿预占／可售替代。进货价未填写如实标“未填写”，不得补0、用售价或现SKU成本替代；图片和进货价仍限本店业务资格，非顾客商品图。列表日期及图片示例不是固定业务值，图片里的袋／罐等不新增单位换算规则。
 5. **原记录保护**：成功入库原记录只读，不直接改写原SKU、数量、价格、来源或时间，也不通过重新识别覆盖原库存；不提供删除已入库原记录的捷径。入错数量／选错商品按§15.1.5由老板／有效员工自行在库存管理调整，不新增原入库单作废／撤销流程，不自动回退已售／预占库存。原任职租户、版本防重和历史保护保持。
 
-复用F-INTAKE-001～013、F-PROD-001／002／004／011／016／026及F-AUD已保存前后值、身份和媒体映射，字段总数仍722；已确认业务摘要可供本店老板／有效员工核对，不扩大原始审计日志读取权限。页面产品ID为staff_product.intake_records、staff_product.query_intake_records和staff_product.intake_record_detail。本节只确认记录查询，不提前完成剩余AI、同图以外单据等价识别、单位换算、成本更新及历史缺来源迁移等剩余技术契约；库存错误的处理入口和方式已按§15.1.5确定。
+复用F-INTAKE-001～013、F-PROD-001／002／004／011／016／026及F-AUD已保存前后值、身份和媒体映射，字段总数仍725；已确认业务摘要可供本店老板／有效员工核对，不扩大原始审计日志读取权限。页面产品ID为staff_product.intake_records、staff_product.query_intake_records和staff_product.intake_record_detail。本节只确认记录查询，不提前完成剩余AI、同图以外单据等价识别、单位换算、成本更新及历史缺来源迁移等剩余技术契约；库存错误的处理入口和方式已按§15.1.5确定。
+
+### 15.3 商品分类、上下架及误建商品删除五项
+
+> status: confirmed
+> status_scope: product_categories_and_lifecycle_five_rules_only
+> product_category_entry: 业务/商品处理/商品管理/商品分类
+> product_category_actors: [merchant_owner, active_store_staff]
+> product_category_operations: [create, rename, reorder, delete]
+> product_category_delete_product_policy: auto_move_all_products_to_fallback_category
+> product_category_fallback_name: 其他
+> product_category_fallback_editable_name: false
+> product_category_fallback_deletable: false
+> product_restore_policy: reuse_original_product_and_sku_ids
+> unused_product_delete_policy: no_business_references_no_inventory_movements_and_all_sku_stock_and_reservations_zero
+
+1. **分类管理**：本店老板／有效员工均可新增、改名、调整商品分类顺序；分类自定义，如主粮、零食、用品，不把服务项目的洗护／美容／护理／商品四大类当商品分类或食品品牌厂家主资料。分类及商品仍唯一归Merchant，store_id是实际门店上下文，本店权限不开放跨店维护。
+2. **删除分类自动转移**：删除自定义分类时，该分类下全部商品自动转到本店固定兜底分类“其他”，包含下架商品，无需先逐个手动转移；空分类直接删除。转移只改变商品当前分类，不换商品／SKU、不改售价库存或上下架，不生成出入库及财务。系统为本店提供唯一兜底分类，以稳定product_category_id及product_category_is_fallback标识识别，名称固定“其他”，不能改名或删除，不用其他门店分类或仅按同名猜目标。删除前准确提示商品自动转移至其他；迁移及分类退出当前列表保持同一成功结果，失败不能留下部分商品无分类，重试不重复迁移。保留分类原身份和迁移／删除操作历史，不复用旧ID；历史订单／入库及审计原记录不级联删除或覆盖，物理存储策略在数据库阶段收口。
+3. **下架商品**：停止新的购买，既有订单继续按原流程办理，库存仍可查看、调整；不因下架清预占、自动取消历史订单或删除库存／销售记录。所有原合法SKU／状态／版本和财务校验仍保持。
+4. **恢复上架**：老板／有效员工均可将本店下架商品恢复上架，沿用原product_id和全部原SKU标识，不重新建档／复制库存；正常恢复仍校验当前对象合法性，不把已删除商品当可恢复的下架商品，也不恢复已结束订单。
+5. **删除误建商品**：仅未被任何业务引用、没有库存变动记录，且本商品全部SKU的账面总库存与预占均为0时允许老板／有效员工删除。服务项目关联、商品需求／订单、邀请码／活动及入库等任一业务引用均须按实际存在校验，不因未收款／已下架就算无引用；曾入库后再调0不符合无库存变动。有销售或库存历史的仍只能下架。提交时服务端复核全部SKU和最新引用／库存，与并发新引用或入库一致处理，旧页面不能越过条件；删除操作留实际人、时间和原对象标识，不清原操作历史，不复用ID。这里不提供删除后恢复功能，下架恢复使用第4项。
+
+复用F-PROD-003分类身份和020上下架、001／002商品SKU及026／009库存，新增027名称、028顺序、029兜底标识；分类记录引用原merchant_id执行隔离，不因名称相同共享分类。经办、时间、前后分类和删除记录沿F-AUD及F-CORE-010幂等，不新造审批／第二套商品库。字段累计725、原722永久号逻辑名类型状态保持；原商品六项、入库原表单／库存管理纠错、同图提醒和只读历史规则不变。剩余多规格生命周期迁移、数据库删除表示等技术契约仍待收口，不从本节推定整端已就绪。
 
 ## 16. V1.0 核心流程
 
