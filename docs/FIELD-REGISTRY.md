@@ -569,29 +569,30 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 
 ---
 
-### 11.1 商品管理与拍摄入库（STOCK_INTAKE）
+### 11.1 商品管理及手工／AI拍照入库（STOCK_INTAKE）
 
 商品管理按03e§15／04§3.0.18，老板与有效员工都可在业务／商品处理／商品管理维护本店主资料。名称004、分类003、各SKU售价006／初始总库存026必填，图片005、条码016、成本017、介绍010选填；默认单SKU，有多规格仍复用002／011。改售价不回写原单，有销售／库存历史不物理删除；手工库存调整只算差额，预占009不覆盖、008派生，旧表单不得覆盖成交／预占新值。业务前后数量摘要沿原对象和F-AUD，不新增第二套库存或逐员工审批。
 
-拍摄入库按03e§15.1／04§3.0.19：入库单唯一业务所有者为merchant_id（F-CORE-002），store_id是实际门店及权益上下文；每行唯一属于stock_intake_id，引用本店原sku_id，图片归本单而非商品图库。Store付费权益用F-ENT，不能由顾客会员、钱包、积分或广告资格替代。
+两种入库按03e§15.1／04§3.0.19：商品管理下“商品入库”手填、“AI拍照入库”识别后核对，当前均普通功能，不查会员／付费。入库单唯一归merchant_id，store_id为实际门店上下文；每行归stock_intake_id，引用本店原SKU。未来ai_stock_intake会员按Store归属，仅预留商业化语义，不要求当前有F-ENT记录、不伪造默认有效，也不影响pet_advisor校验。
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
-| F-INTAKE-001 | `stock_intake_id` | S | ID | 拍摄入库确认单稳定标识；同单只能正式入库一次，不能用消费order_id／历史IMPORT任务冒充。 |
+| F-INTAKE-001 | `stock_intake_id` | S | ID | 手工／AI来源共用入库确认单稳定标识，同单只能正式入库一次，不能换入口重复入库或用消费order_id／历史IMPORT任务冒充。 |
 | F-INTAKE-002 | `stock_intake_item_id` | S | ID | 本单明细行稳定标识，唯一归属001，不用图片页码／表格行号作为身份。 |
-| F-INTAKE-003 | `purchase_document_image_refs` | C | Ref[] | 本店拍摄的销货单等进货相关单据引用，商家私有，不能当F-PROD-005客户商品图片或绕过媒体归属。 |
-| F-INTAKE-004 | `stock_intake_status` | S | Enum | recognizing／pending_review／posted／failed；识别不等于入库，只有人工确认成功为posted，重复回调不重入库。 |
-| F-INTAKE-005 | `stock_intake_extracted_data` | S | Struct[] | AI原始识别行：商品名、规格、数量及进货价等原结果及缺失不确定事实，未核对不可信；原识别与人工最终内容分别保留，不把缺失猜成0或复写原图。 |
+| F-INTAKE-003 | `purchase_document_image_refs` | C | Ref[] | AI拍照入库的进货单据图引用；手工入库可无图片，不以其必填阻断。商家私有，不能当客户商品图；原媒体归属校验保持。 |
+| F-INTAKE-004 | `stock_intake_status` | S | Enum | recognizing／pending_review／posted／failed；手工直接待核对、不要求recognizing，AI识别不等于入库；两方式只在确认成功posted后一次更新库存。 |
+| F-INTAKE-005 | `stock_intake_extracted_data` | S | Struct[] | AI原始识别行及缺失不确定事实，核对前不可信，原结果与最终内容分开；手工来源可空，不伪造AI识别结果或补0。 |
 | F-INTAKE-006 | `stock_intake_target_mode` | C | Enum | 每条确认行existing_sku／new_sku；前者引用本店原F-PROD-002，后者补齐03e§15字段后同次建档入库，不造同义SKU。 |
 | F-INTAKE-007 | `stock_intake_quantity` | C | Int | 人工核对后的本行实际入库量，正整数；不是购物车数量／目标总库存。已有SKU按差额增加026，新商品首次库存只由此量形成一次，不先初始化再加一遍。 |
-| F-INTAKE-008 | `purchase_unit_price` | C | Money | 本行实际进货单价，识别后核对，可缺失保持未知，不虚填0／拿售价替代或从税费运费猜出；不自动变成006售价或017成本价，不凭此生成付款。 |
+| F-INTAKE-008 | `purchase_unit_price` | C | Money | 本行实际进货单价，手工填写或AI识别后核对，可缺失保持未知，不虚填0／拿售价替代或从税费运费猜出；不自动变成006售价或017成本价，不凭此生成付款。 |
 | F-INTAKE-009 | `stock_intake_confirmed_by_staff_id` | S | ID | 正式确认入库的本店实际老板／员工稳定staff_id，引用F-CORE-005，不能写成AI或原拍摄人冒充经办。 |
 | F-INTAKE-010 | `stock_intake_posted_at` | S | Datetime | 正式入库成功的服务端时间，不等于拍摄／AI识别／单据印刷日期或供应商付款时间。 |
 | F-INTAKE-011 | `stock_intake_row_version` | S | Int | 入库单识别核对／确认的当前版本；旧核对结果不能覆盖新修正／已入库状态，不能借F-ORD-032消费金额版本替代。 |
+| F-INTAKE-012 | `stock_intake_method` | C | Enum | manual=商品入库，ai_photo=AI拍照入库；由真实创建路径确定、保留来源，不另建库存或将同单切方式重入；旧记录缺来源的迁移先定，不默认manual或改来源。当前不做会员验证，未来不能把AI来源伪改manual绕过新增校验。 |
 
-商品主资料、确认行目标和数量、原识别结果及前后库存分开保存；SKU／新商品资料复用原F-PROD字段，身份／权限／媒体和F-CORE-010幂等、F-AUD前后值及真实人时间复用，不把库存数当作无历史可写数字。整单确认与新商品建档／库存更新需一致，失败无半单，成功重试恢复原结果；已posted单不能重复确认／重新识别改库存，成功重试仍校验任职本店并恢复原结果，不因随后会员到期伪报原入库失败。同单不同请求／员工并发也只入一次，不依赖前端按钮禁用。
+商品主资料、确认行目标和数量、原识别结果及前后库存分开保存；SKU／新商品资料复用原F-PROD字段，身份／权限／媒体和F-CORE-010幂等、F-AUD前后值及真实人时间复用，不把库存数当作无历史可写数字。整单确认与新商品建档／库存更新需一致，失败无半单，成功重试恢复原结果；已posted单不能重复确认／重新识别改库存，成功重试仍校验任职本店并恢复原结果；当前无会员状态阻断，未来验证也不能把原成功入库伪报失败。同单不同请求／员工并发也只入一次，不依赖前端按钮禁用。
 
-现有字段累计720；F-INTAKE只落实已确认主流程，不表示AI技术、会员定价次数／开通、跨批次重复单据检查、单位换算、成本更新、入库更正等已齐全。会员权益在识别与确认时均校验当前Store及有效状态，原AI草稿／已入库历史不因过期删除；单据／进货价不向顾客公开，不自动记顾客消费／充值／供应商已付款。
+现有字段累计721；当前两方式不要求会员／F-ENT，不关闭本店任职／数量状态／版本防重和私有媒体校验，不把AI技术、跨批次去重、单位换算／成本更新／入库更正等当已齐全。会员校验、定价额度及开通仅未来范围，不作为当前正常功能前置；将来仅AI入口及后端识别／AI来源确认链路统一接入，不只隐藏按钮，不改来源／已入库历史。单据／进货价不公开、不自动记顾客消费／充值／供应商已付款。
 
 ## 12. 订单、金额、付款与退款（ORDER / PAYMENT）
 
@@ -1041,10 +1042,10 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
 | F-ENT-001 | `feature_entitlement_id` | S | ID | 单条 Store Feature Entitlement。 |
-| F-ENT-002 | `owner_type` | C | Enum | 已确认pet_advisor及ai_stock_intake权益均固定store；不由顾客会员或Merchant购买关系替代Store归属。 |
+| F-ENT-002 | `owner_type` | C | Enum | 当前pet_advisor付费权益归store；ai_stock_intake未来会员也规划store，但当前两种入库不要求付费权益记录。 |
 | F-ENT-003 | `owner_id` | C | ID | 当前值必须等于对应 `store_id`；不能用 purchaser Merchant 替代资格归属。 |
 | F-ENT-004 | `purchaser_merchant_id` | C | ID | 购买 / 管理 / 审计关联，不参与替代 Store 资格判断。 |
-| F-ENT-005 | `feature_key` | C | Text | 已确认pet_advisor及ai_stock_intake两个独立付费功能；后者为门店平台会员拍摄入库，前者资格／顾客广告额度不能替代。价格套餐及购买续费另行确认。 |
+| F-ENT-005 | `feature_key` | C | Text | 当前生效付费功能pet_advisor；ai_stock_intake仅预留未来门店会员能力，当前手工／AI拍照入库不校验此权益、不假造有效记录。未来定价额度开通另确认，不影响顾问原校验。 |
 | F-ENT-006 | `entitlement_status` | C | Enum | 有效 / 过期 / 停用等权益状态。 |
 | F-ENT-007 | `enabled_by_merchant` | C | Bool | pet_advisor在有效平台权益前提下由老板决定是否向本店客户开启；不转义为ai_stock_intake店内开关，拍摄入库不新增此配置门槛。 |
 | F-ENT-008 | `starts_at` | C | Datetime | 权益开始时间。 |
@@ -1326,9 +1327,11 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 | `staff_product.adjust_inventory` | 手工补货／盘点目标库存调整，前后值及人时间留痕，不能覆盖预占 |
 | `staff_product.publish` | 本店商品上架，服务端校验当前资格和对象 |
 | `staff_product.unpublish` | 本店商品下架，新购买停止，历史订单及库存记录保留 |
-| `staff_product.photo_intake` | 商品管理／拍摄入库，老板／有效员工且当前Store有效ai_stock_intake权益 |
-| `staff_product.recognize_purchase_document` | 拍摄单据AI识别，只产待核对结果，不加库存或创建商品 |
-| `staff_product.confirm_photo_intake` | 人工核对后一次正式确认，可同次新商品建档入库，当前角色及付费权益复核 |
+| `staff_product.manual_intake` | 商品管理／商品入库，手工选SKU／填入库量及可选进货价，不要求拍图或AI |
+| `staff_product.confirm_manual_intake` | 手工来源确认，复用同一入库／SKU库存及防重，不以数量覆盖总库存 |
+| `staff_product.photo_intake` | 商品管理／AI拍照入库，老板／有效员工，当前无会员前置；保留原产品ID，不改造其他功能 |
+| `staff_product.recognize_purchase_document` | AI拍照入口识别，只产待核对数据，当前不校验会员、不直接加库存 |
+| `staff_product.confirm_photo_intake` | AI来源核对确认入库，当前无会员验证；同一单及新商品只入一次，后期会员验证再统一接入 |
 | `staff_owner.invite_code_creation` | 老板管理／创建邀请码页面，仅本店有效老板，内部菜单排序未定 |
 | `staff_owner.create_invite_code` | 创建提交，单内容／数量固定1／系统生成，不支持手工指定、启停或修改 |
 | `staff_owner.invite_code_result` | 本次成功创建结果页，码／内容／真实兑换截止及领取后一个月有效提示 |
