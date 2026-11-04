@@ -514,8 +514,8 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
 | F-INV-001 | `invite_code_id` | S | ID | 邀请码记录标识。 |
-| F-INV-002 | `invite_code` | C | Text | 客户输入的邀请码内容。必须属于当前 Merchant。 |
-| F-INV-003 | `bound_coupon_items` | C | Ref[]/Struct | 绑定优惠券及数量。 |
+| F-INV-002 | `invite_code` | C | Text | 客户输入的邀请码内容。老板生成／指定的码仅所属本店可兑换；沿F-CORE-002 merchant_id及F-CORE-003 store_id明确所属Merchant／Store，服务端校验当前店及本店Customer，不跨店或跨商户。 |
+| F-INV-003 | `bound_coupon_items` | C | Ref[]/Struct | 绑定所属本店优惠券及数量，兑换后券仍仅本店使用；不得绑定／发放其他店的券。 |
 | F-INV-004 | `invite_code_enabled` | C | Bool | 启用 / 停用。 |
 | F-INV-005 | `invite_code_starts_at` | C | Datetime | 生效时间。 |
 | F-INV-006 | `invite_code_expires_at` | C | Datetime | 失效时间。 |

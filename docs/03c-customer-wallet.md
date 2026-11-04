@@ -12,6 +12,7 @@
 > wallet_deduction_order: principal_then_bonus
 > wallet_refund_component_rule: restore_original_components
 > partial_refund_allocation: pending
+> invite_code_store_scope: issuing_store_only
 > recharge_package_feature_status: retired
 > recharge_entry_mode: manual_per_transaction
 > recharge_optional_gifts: [bonus_balance, coupon_items]
@@ -274,13 +275,15 @@ V1.0 不做“系统活动自动赠送优惠券”，改为邀请码兑换。
 
 邀请码兑换
 → 输入邀请码
-→ 后端校验当前商户、邀请码状态、有效期、次数限制和客户领取资格
+→ 后端校验当前商户及门店与邀请码所属本店一致，再校验邀请码状态、有效期、次数限制和客户领取资格
 → 校验成功后自动发放绑定优惠券
 → 显示兑换结果
 
 邀请码 V1.0 仅用于兑换优惠券，不直接增加会员余额，避免绕过充值和余额审计流程。
 
-邀请码必须属于当前商户，不允许跨商户兑换。
+老板生成或指定的邀请码仅限其本店使用，不允许跨门店、跨商户兑换。邀请码归属生成它的Merchant／Store；V1一商户一门店，仍须区分F-CORE-002 merchant_id与F-CORE-003 store_id，不把创建人身份当作门店归属。绑定券及兑换后实际发放的券也须属于该本店，不能借邀请码发放其他门店的券或把本店券变成跨店通用券。
+
+兑换必须由服务端核对当前门店、邀请码所属门店及本店Customer关系；其他门店页面输入该码或篡改接口中的商户／门店／顾客标识均拒绝，不发券、不增加兑换次数。上一轮提出的店员查看复制、邀请码内容不可改、恢复与修改影响、兑换记录查询等管理细则仍待用户确认，本次只确认本店使用范围。
 
 ### 9.4 平台积分兑换
 
