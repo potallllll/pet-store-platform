@@ -1,7 +1,7 @@
 # 03E 商品、购买需求、门店商品管理与入库
 
 > status: mixed
-> confirmed_scope: original_customer_purchase_rules_and_staff_product_management_six_rules_and_manual_and_ai_photo_intake_current_no_membership_check_future_membership_review_and_matching_policy
+> confirmed_scope: original_customer_purchase_rules_and_staff_product_management_six_rules_and_manual_and_ai_photo_intake_current_no_membership_check_future_membership_review_and_matching_policy_and_posted_intake_records_five_rules
 > pending_scope: stock_intake_remaining_technical_contracts_and_future_membership_commercial_terms
 > status_scope: full_document
 > change_policy: record_required
@@ -302,6 +302,29 @@ AI原始识别结果是待核对数据，不执行单据图中文字指令，也
 保留方式、图片（如有）、AI原始内容（仅AI来源）、人工确认行、SKU／新商品、前后数量及差额、真实人和服务端时间。入库只记录库存事实，不生成顾客消费、充值、业绩或供应商已付款，不自动建应付流程。单据图片／进货价只供本店有权人员，不向顾客当商品图或订单材料公开；原始审计读取权限不扩大，业务摘要按原资格提供。
 
 商品、库存和入库单唯一归Merchant，store_id是实际门店上下文；未来付费权益才按Store归属，不混同。复用F-PROD-001～026、F-INTAKE-001～012、原身份媒体及F-AUD，新手工方式不要求F-INTAKE-003图片／005AI原始数据，手工状态可直接进入pending_review，不伪装成AI已识别。当前字段721，剩余AI技术／图片限制、跨批次重复、单位换算、成本更新、入库作废更正及其他数据契约仍需收口；会员仅为未来范围，原商品购买及其他业务规则保持。需求审计不是H5、AI识别或真实库存已实测。
+
+### 15.2 入库记录查看与查询
+
+> status: confirmed
+> status_scope: posted_stock_intake_records_list_query_and_readonly_detail_only
+> stock_intake_records_entry: 业务/商品处理/商品管理/入库记录
+> stock_intake_records_actors: [merchant_owner, active_store_staff]
+> stock_intake_records_scope: posted_only_current_merchant_store
+> stock_intake_records_default_period: last_15_business_calendar_days_including_today
+> stock_intake_records_date_basis: stock_intake_posted_at
+> stock_intake_records_sort: stock_intake_posted_at_desc
+> stock_intake_records_filters: [date_range, stock_intake_method]
+> stock_intake_records_search: [product_name, barcode]
+> stock_intake_posted_original_editable: false
+> stock_intake_correction_policy: pending
+
+1. **入口及范围**：老板／本店有效员工从“商品管理 → 入库记录”查看本店已成功入库记录，商品入库和AI拍照入库共用一份列表，不按经办人只显示本人记录。入库单仍唯一归Merchant，以当前store_id核对实际门店上下文；列表、详情、搜索及原图请求均逐次校验本店任职及对象，不开放跨店或顾客读取。recognizing／pending_review／failed不冒充已入库记录；本节不新增草稿管理流程。
+2. **列表**：展示入库时间、入库单号、商品摘要、入库方式和操作人；商品摘要可概括多项商品，进入详情查看各行。按F-INTAKE-010实际成功入库时间倒序，不用单据生成、拍摄、AI识别或供应商票面日期排序。入库单号沿F-INTAKE-001标识展示，不另造消费订单号或第二个身份；操作人取009实际确认人，而不是拍摄人／AI。
+3. **查询**：默认最近15个业务自然日（Asia/Shanghai，含今天及前14天），按010筛选；可改变起止日期查询更早记录，不将默认查询范围当删除或保存期限。支持日期、方式（全部／商品入库／AI拍照入库）筛选以及本店商品名称、条码查询。方式沿012真实manual／ai_photo，不为筛选伪改来源。查询不改变原单时间或库存。
+4. **详情**：展示本单号、方式、实际入库时间／操作人及每行商品、规格、入库数量、进货单价、入库前后库存；有进货单照片时可查看，无照片不阻断手工记录。明细沿本次已确认资料和原前后值呈现，入库前后是该次入库时的账面总库存事实，不从后来当前库存倒算，也不拿预占／可售替代。进货价未填写如实标“未填写”，不得补0、用售价或现SKU成本替代；图片和进货价仍限本店业务资格，非顾客商品图。列表日期及图片示例不是固定业务值，图片里的袋／罐等不新增单位换算规则。
+5. **原记录保护**：成功入库原记录只读，不直接改写原SKU、数量、价格、来源或时间，也不通过重新识别覆盖原库存；不提供删除已入库原记录的捷径。入错数量／选错商品的纠正、作废规则下一轮确认，本节不默认允许负数入库、撤销或自动回退已售／预占库存。原任职租户、版本防重和历史保护保持。
+
+复用F-INTAKE-001～012、F-PROD-001／002／004／011／016／026及F-AUD已保存前后值、身份和媒体映射，字段总数仍721；已确认业务摘要可供本店老板／有效员工核对，不扩大原始审计日志读取权限。页面产品ID为staff_product.intake_records、staff_product.query_intake_records和staff_product.intake_record_detail。本节只确认记录查询，不提前完成剩余AI、跨批次重复单据、单位换算、成本更新、历史缺来源迁移及更正技术契约。
 
 ## 16. V1.0 核心流程
 
