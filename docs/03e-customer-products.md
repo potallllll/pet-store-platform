@@ -1,7 +1,7 @@
 # 03E 商品、购买需求、门店商品管理与入库
 
 > status: mixed
-> confirmed_scope: original_customer_purchase_rules_and_staff_product_management_six_rules_and_manual_and_ai_photo_intake_current_no_membership_check_future_membership_original_form_explicit_posting_and_inventory_management_correction_and_posted_intake_records_five_rules_and_ai_photo_usage_five_rules_and_product_category_lifecycle_five_rules
+> confirmed_scope: original_customer_purchase_rules_and_staff_product_management_six_rules_and_manual_and_ai_photo_intake_current_no_membership_check_future_membership_original_form_explicit_posting_and_inventory_management_correction_and_posted_intake_records_five_rules_and_ai_photo_usage_five_rules_and_product_category_lifecycle_five_rules_and_staff_product_list_five_rules
 > pending_scope: stock_intake_remaining_technical_contracts_and_future_membership_commercial_terms
 > status_scope: full_document
 > change_policy: record_required
@@ -380,6 +380,31 @@ AI原始识别结果仅用于填入原入库表单，仍是不可信输入，不
 5. **删除误建商品**：仅未被任何业务引用、没有库存变动记录，且本商品全部SKU的账面总库存与预占均为0时允许老板／有效员工删除。服务项目关联、商品需求／订单、邀请码／活动及入库等任一业务引用均须按实际存在校验，不因未收款／已下架就算无引用；曾入库后再调0不符合无库存变动。有销售或库存历史的仍只能下架。提交时服务端复核全部SKU和最新引用／库存，与并发新引用或入库一致处理，旧页面不能越过条件；删除操作留实际人、时间和原对象标识，不清原操作历史，不复用ID。这里不提供删除后恢复功能，下架恢复使用第4项。
 
 复用F-PROD-003分类身份和020上下架、001／002商品SKU及026／009库存，新增027名称、028顺序、029兜底标识；分类记录引用原merchant_id执行隔离，不因名称相同共享分类。经办、时间、前后分类和删除记录沿F-AUD及F-CORE-010幂等，不新造审批／第二套商品库。字段累计725、原722永久号逻辑名类型状态保持；原商品六项、入库原表单／库存管理纠错、同图提醒和只读历史规则不变。剩余多规格生命周期迁移、数据库删除表示等技术契约仍待收口，不从本节推定整端已就绪。
+
+### 15.4 店员商品管理列表与查询五项
+
+> status: confirmed
+> status_scope: staff_product_management_list_query_display_sort_and_detail_navigation_only
+> staff_product_list_entry: 业务/商品处理/商品管理
+> staff_product_list_actors: [merchant_owner, active_store_staff]
+> staff_product_list_tabs: [enabled, disabled]
+> staff_product_list_default_tab: enabled
+> staff_product_list_default_date_limit: none
+> staff_product_list_search: [product_name, barcode]
+> staff_product_list_filters: [product_category_id]
+> staff_product_list_sort: created_at_desc
+> staff_product_list_created_at_scope: product
+> staff_product_zero_stock_auto_unpublish: false
+> staff_product_multi_sku_display: expand_original_product_sku_rows
+> staff_product_detail_inventory: [on_hand_inventory_qty, reserved_inventory_qty, available_inventory_qty]
+
+1. **列表范围**：“商品管理”分“已上架／已下架”两组，默认已上架；查询本店当前商品主资料，不按经办人只显示本人商品，不套历史订单或入库记录最近15天范围。分组沿F-PROD-020 product_enabled，不新增商品状态；库存为0仍保持原上架状态，不自动下架。已上架与有货分开判断，可售为0时如实显示0，顾客购买仍沿原缺货校验，不因本节允许负库存销售。
+2. **查询**：支持商品名称、条码搜索及商品分类筛选，沿F-PROD-004／016／003；只查当前Merchant及实际Store有权对象，不以手机号／订单号代商品搜索或跨店找同名SKU。分类删除自动转其他后，当前商品按最新有效分类进入查询，已删除分类不能继续作为有效筛选目标；历史订单／入库原分类快照不因商品列表筛选改写。
+3. **列表内容**：展示商品名称、规格、售价、可售库存和上下架状态。单规格直接显示对应SKU的F-PROD-011／006／008及商品020，不将成本价／进货价当售价，也不将账面总量／预占当可售。这里是本店管理列表，精确库存仅向本店老板／有效员工提供，不改客户侧只展示库存状态的既有规则。
+4. **多规格商品**：商品主卡先标“多规格”，展开查看各原SKU的规格、售价和库存，不凭一种规格代替全部规格，也不混用不同规格的库存。详情可查看每SKU的总库存026、预占009、可售008（总量减预占），复用原product_id／sku_id及资料，不创建展示用平行SKU，不因展开触发入库／订单／库存修改。未列多规格迁移及计量换算技术仍按原待决范围。
+5. **排序与操作**：按原商品F-CORE-013 created_at完整创建时间倒序，不按入库、SKU新建、最近编辑或盘点时间冒充商品创建时间；修改资料或调库存不重写创建时间。点击商品进入原详情，再按既有权限和条件修改资料、调整库存或上下架，不在列表增加另一套绕过校验的操作。恢复上架、误建删除和有历史只能下架仍按§15.3，入库错误去库存管理仍按§15.1.5。
+
+查询、展开及详情均服务端校验当前有效任职、本店租户与对象，查询不修改商品或库存；读取失败不伪装库存为0或自动判下架。字段复用F-CORE-002／003／005／013及F-PROD现有项，累计725不新增长期字段；商品管理入口／列表复用staff_product.management，查询及详情产品ID为staff_product.query_products和staff_product.product_detail。原AI入库、分类兜底转移、只读入库历史及顾客展示边界保持，本节确认列表规则不代表H5或实际商品库存功能已验收。
 
 ## 16. V1.0 核心流程
 
