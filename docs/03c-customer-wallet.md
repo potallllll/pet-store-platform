@@ -1,7 +1,7 @@
 # 03C 客户端「我的钱包」模块
 
 > status: mixed
-> confirmed_scope: customer_detail_redeem_delete_without_order_no_mistake_undo_cancel_full_refund_only_returns_and_history_and_all_coupon_and_activity_manual_redemption_and_manual_checkout_price_adjustment_and_single_invite_content_and_one_calendar_month_claimed_entitlement_validity_and_coupon_and_direct_service_product_activity_entitlement_then_instore_use_scope_and_single_use_fixed_72_hour_owner_create_only_invitation_codes_and_direct_customer_gift_coupon_quantity_reduction_and_deletion_and_coupon_owner_management_active_staff_manual_grants_care_scope_template_lifecycle_and_issue_snapshots_and_unified_wallet_balance_edit_required_reason_without_separate_recharge_refund_and_reasoned_owner_staff_recharge_corrections_and_super_admin_reversal_exceptions_and_recharge_query_document_creation_date_sort_filter_entries_six_columns_mobile_date_filters_and_readonly_details_with_wallet_rules_manual_recharge_without_packages_optional_bonus_and_coupons_gift_note_required_principal_first_and_original_route_refunds
+> confirmed_scope: owner_invite_creation_five_rules_fixed_one_generated_code_and_copy_share_result_and_customer_detail_redeem_delete_without_order_no_mistake_undo_cancel_full_refund_only_returns_and_history_and_all_coupon_and_activity_manual_redemption_and_manual_checkout_price_adjustment_and_single_invite_content_and_one_calendar_month_claimed_entitlement_validity_and_coupon_and_direct_service_product_activity_entitlement_then_instore_use_scope_and_single_use_fixed_72_hour_owner_create_only_invitation_codes_and_direct_customer_gift_coupon_quantity_reduction_and_deletion_and_coupon_owner_management_active_staff_manual_grants_care_scope_template_lifecycle_and_issue_snapshots_and_unified_wallet_balance_edit_required_reason_without_separate_recharge_refund_and_reasoned_owner_staff_recharge_corrections_and_super_admin_reversal_exceptions_and_recharge_query_document_creation_date_sort_filter_entries_six_columns_mobile_date_filters_and_readonly_details_with_wallet_rules_manual_recharge_without_packages_optional_bonus_and_coupons_gift_note_required_principal_first_and_original_route_refunds
 > pending_scope: activity_data_and_return_linkage_contracts_and_partial_refund_channel_component_allocation_platform_exception_details_and_remaining_transaction_contracts
 > status_scope: full_document
 > change_policy: record_required
@@ -260,8 +260,8 @@ V1.0 支持以下四种来源：
 ### 9.3 邀请码兑换
 
 > status: mixed
-> confirmed_scope: single_content_coupon_or_service_or_product_activity_one_calendar_month_claimed_validity_owner_create_only_issuing_store_only_single_total_redemption_fixed_72_hours_all_coupon_and_activity_manual_redemption_and_manual_checkout_price_adjustment
-> pending_scope: activity_data_and_return_linkage_contracts_staff_code_read_copy_queries_and_invite_creation_entry
+> confirmed_scope: owner_invite_creation_five_rules_fixed_one_generated_code_and_copy_share_result_and_single_content_coupon_or_service_or_product_activity_one_calendar_month_claimed_validity_owner_create_only_issuing_store_only_single_total_redemption_fixed_72_hours_all_coupon_and_activity_manual_redemption_and_manual_checkout_price_adjustment
+> pending_scope: activity_entitlement_and_return_linkage_contracts_staff_code_read_copy_and_redemption_queries
 > invite_code_total_redemptions: 1
 > invite_code_validity_hours: 72
 > invite_code_validity_start: server_creation_time
@@ -269,6 +269,11 @@ V1.0 支持以下四种来源：
 > invite_code_lifecycle_controls: excluded
 > invite_code_supported_redemptions: [coupon, service_activity, product_activity]
 > invite_code_content_cardinality: exactly_one
+> invite_code_content_quantity: 1
+> invite_code_generation: server_generated_only
+> invite_code_create_entry: 老板管理/创建邀请码
+> invite_code_create_actor: merchant_owner
+> invite_code_result_actions: [copy, share]
 > invite_claimed_entitlement_initial_validity: one_calendar_month_from_successful_redemption
 > invite_activity_redemption_result: pending_use_entitlement
 > invite_activity_fulfillment: manual_redeem_by_owner_or_active_staff
@@ -283,7 +288,7 @@ V1.0 支持以下四种来源：
 
 V1.0 不做系统活动自动赠送优惠券，沿邀请码兑换。老板只创建本店邀请码，不提供启停／恢复／换码／调整活动或修改已创建码的流程，也不配置次数或期限。
 
-**每码只包含一个内容**：创建时只选一个本店优惠券兑换项目、服务活动或商品活动；不能把优惠券与活动混装，也不能绑定多个优惠券模板或多个服务／商品活动。服务／商品活动可直接兑换，不强制先转成券；单内容的既有数量含义不被擅自改写，数量不能用来夹带第二种内容或活动套餐。优惠券分支沿F-INV-003单一绑定项目及其原数量，不再允许多个模板；不把F-CPN-021独立人工赠券数量借作邀请码数量。
+**每码只包含一个内容**：创建时只选一个本店优惠券兑换项目、服务活动或商品活动；不能把优惠券与活动混装，也不能绑定多个优惠券模板或多个服务／商品活动。服务／商品活动可直接兑换，不强制先转成券；数量进一步固定为优惠券1张、服务1次或商品1份，不提供数量输入、批量或套餐组合。优惠券分支F-INV-003仅一个模板且数量为1；不把F-CPN-021独立人工赠券数量借作邀请码数量。
 
 **每码全部顾客合计一次**：一条码在所属本店全部顾客之间总共只可成功兑换一次，不是每位顾客各一次，也不是每张发出券各一次。不同顾客并发只允许一笔成功；同次已成功请求沿F-CORE-010恢复原结果，不重复发券或生成活动权益。失败不消耗资格或留下部分权益，普通输入／查看／越店或资格失败不计次；成功结果与唯一一次消耗一致保存。
 
@@ -295,13 +300,32 @@ V1.0 不做系统活动自动赠送优惠券，沿邀请码兑换。老板只创
 
 客户端“我的钱包 → 邀请码兑换”：输入码 → 服务端校验当前本店Merchant／Store／Customer、原资格、未兑及未到期、恰好一个合法兑换内容 → 成功取得兑换结果并消耗一次资格 → 显示结果及本次真实使用截止时间。服务／商品活动先生成待使用活动权益，本文称“活动券”，到店后由本店老板／有效员工手动点击“核销”；输入码时不直接生成待处理订单，领取／核销本身不标记实际服务、交付、收款或免单。此前原服务单／商品单关联的留痕方向保留，核销或删除不要求先开单／选择订单；仅退回券时需核对对应取消／全额退款及实际用券事实，原单关联技术映射仍待收口，不借此增加自动收银联动。普通护理仍不开放客户端预约。
 
-老板生成或指定的码、优惠券及活动均只限所属本店，沿F-CORE-002 merchant_id、003 store_id、004 customer_id校验，不把创建者身份当门店归属；他店输入或接口篡改拒绝，不产生权益或计次。
+系统为老板生成的邀请码及其优惠券／活动均只限所属本店，沿F-CORE-002 merchant_id、003 store_id、004 customer_id校验，不把创建者身份当门店归属；他店输入或接口篡改拒绝，不产生权益或计次。
 
 **所有优惠券与活动统一手动核销、结算改价**：本店老板／有效员工均可手动点击核销，无老板审批；只把该顾客本店具体未核销且未到期的优惠券／活动券记为已核销，保留实际核销人、服务端时间、原领取及状态历史。服务端校验当前身份／本店／顾客／券状态及截止；不同员工并发只成功一次，同次成功重试恢复原结果、不重复核销或更新首次核销时间。核销失败不改券，也不改订单或金额；顾客本人不能执行门店核销。
 
 所有优惠券和活动的免单或打折，均由门店在原订单结算时手动修改最终应收，沿03d§10.1原调价原因、前后金额及明确确认规则：免单改为0后仍须点击“确认免单”；打折直接填写协商后的最终应收，按实际收款记账。无需配置自动折扣／活动价格公式，不把活动券核销当付款，也不自动改应收、扣余额或计算实收业绩。结算改价不会自动核销任何优惠券／活动券，手动核销也不会自动完成结算；服务检查及状态、商品SKU库存和财务仍走原流程，不因核销额外占库或扣库，不重建独立库存／服务主资料。
 
-本次统一规则覆盖满减、金额抵扣、折扣等所有优惠券及所有活动，不按充值赠送／人工赠送／邀请码／积分兑换来源保留另一套自动计算流程。券类型、面额／折扣、门槛和适用范围保留作说明及门店核对，不再自动推荐最优惠券、算优惠／抵扣、选券锁定或随结算自动核销；服务端仍校验本店身份、对象、券状态及期限。不设置日常误点撤销或恢复期限；所有券仅在整单取消／全额退款时由门店手动退回，部分退款不退回，不借删除抹核销历史。活动配置、权益实例、领取与使用截止及原单关联等字段契约需先注册后实现，不把F-INV-003改成活动字段或复用券ID／订单ID冒充权益ID。老板创建沿原002／010／011及012选填备注，店员查看复制邀请码、独立邀请码兑换记录查询及邀请码创建入口位置仍待确认；券核销／删除入口已确认，不列回待决；不扩展员工创建权限。兑换通知仍沿03f当前页结果与站内记录，不另发微信通知。
+本次统一规则覆盖满减、金额抵扣、折扣等所有优惠券及所有活动，不按充值赠送／人工赠送／邀请码／积分兑换来源保留另一套自动计算流程。券类型、面额／折扣、门槛和适用范围保留作说明及门店核对，不再自动推荐最优惠券、算优惠／抵扣、选券锁定或随结算自动核销；服务端仍校验本店身份、对象、券状态及期限。不设置日常误点撤销或恢复期限；所有券仅在整单取消／全额退款时由门店手动退回，部分退款不退回，不借删除抹核销历史。本次创建类型及活动说明已注册F-INV-013／014，服务项目／SKU复用原字段；其余活动权益实例、领取与使用截止及原单关联等契约仍须先注册后实现，不把F-INV-003改成活动字段或复用券ID／订单ID冒充权益ID。老板创建入口及结果页复制／分享按下列五项已确认；普通员工查看复制邀请码或独立邀请码兑换记录查询仍待确认，不从老板复制分享权限继承。券核销／删除入口已确认，不列回待决，不扩展员工创建权限。兑换通知仍沿03f当前页结果与站内记录，不另发微信通知。
+
+
+#### 9.3.1 老板创建邀请码页面（五项已确认）
+
+> status: confirmed
+> status_scope: owner_invite_creation_form_quantity_generation_and_result_only
+> invite_code_create_entry: 老板管理/创建邀请码
+> invite_code_create_actor: merchant_owner
+> invite_code_content_quantity: 1
+> invite_code_generation: server_generated_only
+> invite_code_result_actions: [copy, share]
+
+1. **入口及权限**：“我的 → 老板管理 → 创建邀请码”，仅当前本店有效老板可创建；普通员工不能通过入口、旧页面或直接请求创建。原员工是否可查看／复制既有码仍未确认，本次不扩大。
+2. **填写兑换内容**：只选优惠券、服务活动、商品活动之一。优惠券选择本店已有可发放模板，服务选择本店既有服务项目，商品选择本店既有商品SKU；服务／商品填写简短活动说明，例如“洗护体验一次”“美容八折”，空白不算填写。不另建服务项目／SKU或活动套餐，也不因创建码发券、开单、预占／扣库存。
+3. **数量固定1**：优惠券1张、服务1次或商品1份，不显示数量输入；服务端同样拒绝多内容、数量不为1或其他店对象，不以隐藏输入代替校验。不改变独立人工赠券和充值赠券等其他场景的数量规则。
+4. **系统生成**：老板提交所选内容后，由服务端生成并保存邀请码，不支持手工指定／修改码内容。当前本店的码不得混同不同创建记录，生成算法／格式按后续技术契约收口。成功请求沿F-CORE-010恢复同一码和原创建／截止时间，不因重试生成第二码或重启72小时；失败不显示假成功。
+5. **结果页**：成功后显示邀请码、兑换内容及兑换截止时间，支持老板复制邀请码、分享；固定提示“领取后一个月有效”。兑换截止来自F-INV-006，不在未领取时伪造已领取权益的到期日期。复制／分享不消耗兑换次数、不发券、不重开72小时；分享给顾客不等于授予老板或员工权限，顾客兑换仍按本店、未兑换、72小时及原资格校验。
+
+创建类型用F-INV-013 invite_code_content_type，活动说明用014 invite_code_activity_description；优惠券沿003（单一模板且数量1），服务引用F-APPT-008 service_item_id、商品引用F-PROD-002 sku_id，不新造同义主资料ID。012备注仍选填，不拿备注代替服务／商品必填活动说明。原领取后一个日历月、门店手动核销／删除、结算手动改价、取消全额退款限定退回及历史规则保持；活动权益发放实例、分享载体和关联等剩余技术契约仍按注册表先收口，不把本页业务确认当整端已可正式实现。
 
 ### 9.4 平台积分兑换
 
