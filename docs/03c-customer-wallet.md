@@ -1,8 +1,8 @@
 # 03C 客户端「我的钱包」模块
 
 > status: mixed
-> confirmed_scope: all_coupon_and_activity_manual_redemption_and_manual_checkout_price_adjustment_and_single_invite_content_and_one_calendar_month_claimed_entitlement_validity_and_coupon_and_direct_service_product_activity_entitlement_then_instore_use_scope_and_single_use_fixed_72_hour_owner_create_only_invitation_codes_and_direct_customer_gift_coupon_quantity_reduction_and_deletion_and_coupon_owner_management_active_staff_manual_grants_care_scope_template_lifecycle_and_issue_snapshots_and_unified_wallet_balance_edit_required_reason_without_separate_recharge_refund_and_reasoned_owner_staff_recharge_corrections_and_super_admin_reversal_exceptions_and_recharge_query_document_creation_date_sort_filter_entries_six_columns_mobile_date_filters_and_readonly_details_with_wallet_rules_manual_recharge_without_packages_optional_bonus_and_coupons_gift_note_required_principal_first_and_original_route_refunds
-> pending_scope: activity_redemption_reversal_and_contracts_and_partial_refund_channel_component_allocation_platform_exception_details_and_remaining_transaction_contracts
+> confirmed_scope: customer_detail_redeem_delete_without_order_no_mistake_undo_cancel_full_refund_only_returns_and_history_and_all_coupon_and_activity_manual_redemption_and_manual_checkout_price_adjustment_and_single_invite_content_and_one_calendar_month_claimed_entitlement_validity_and_coupon_and_direct_service_product_activity_entitlement_then_instore_use_scope_and_single_use_fixed_72_hour_owner_create_only_invitation_codes_and_direct_customer_gift_coupon_quantity_reduction_and_deletion_and_coupon_owner_management_active_staff_manual_grants_care_scope_template_lifecycle_and_issue_snapshots_and_unified_wallet_balance_edit_required_reason_without_separate_recharge_refund_and_reasoned_owner_staff_recharge_corrections_and_super_admin_reversal_exceptions_and_recharge_query_document_creation_date_sort_filter_entries_six_columns_mobile_date_filters_and_readonly_details_with_wallet_rules_manual_recharge_without_packages_optional_bonus_and_coupons_gift_note_required_principal_first_and_original_route_refunds
+> pending_scope: activity_data_and_return_linkage_contracts_and_partial_refund_channel_component_allocation_platform_exception_details_and_remaining_transaction_contracts
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -253,7 +253,7 @@ V1.0 支持以下四种来源：
 
 操作明确到当前本商户／顾客的实际coupon_instance_id，不按平台User汇总或跨店删券；减少至0即移除本次对应可操作赠券，不能仅改一个“总券数”留下仍可核销的原券。删除数量从本次移除的具体实例派生，不借coupon_grant_quantity当剩余持券数或新增随意可写的总券数字段。增加券仍用原赠券动作，不通过改数量绕过启用模板及发放条件。
 
-手工删除作用于未使用的持有赠券：删除与手动核销均校验当前状态，不能借删除撤销已核销事实；历史旧锁定状态不直接忽略，迁移处置需单独收口，不新建锁定。已使用券仍按之前的超管异常边界处理，不撤销既有消费。服务端提交时校验当前身份／本店顾客／具体券状态，不能让旧页面删除刚被手动核销的券；失败不部分改资产，重复成功请求不再减少数量，不能删错其他顾客或相同名称下不同实际实例。
+手工删除作用于未使用的持有赠券：删除与手动核销均校验当前状态，不能借删除撤销已核销事实；历史旧锁定状态不直接忽略，迁移处置需单独收口，不新建锁定。除§11实际整单取消／全额退款时手动退回的例外外，已使用券仍按原超管异常边界处理，不借删除撤销既有消费。服务端提交时校验当前身份／本店顾客／具体券状态，不能让旧页面删除刚被手动核销的券；失败不部分改资产，重复成功请求不再减少数量，不能删错其他顾客或相同名称下不同实际实例。
 
 界面“删除”将持有实例沿F-CPN-013记removed，退出可用券列表，可用数量F-WAL-005按剩余真实可用实例重新计算；原模板、原发放来源、赠送事实及本次操作历史保留，不物理抹账。模板仍不提供删除，顾客持券可删除与模板无删除是两个对象。删赠券不自动撤销原充值／兑换、不改本金或赠送余额、不退积分／生成收退款，也不自动补发新券；顾客按原资产权限查看最新结果，内部审计权限不扩大。具体规则见04§3.0.16。
 
@@ -261,7 +261,7 @@ V1.0 支持以下四种来源：
 
 > status: mixed
 > confirmed_scope: single_content_coupon_or_service_or_product_activity_one_calendar_month_claimed_validity_owner_create_only_issuing_store_only_single_total_redemption_fixed_72_hours_all_coupon_and_activity_manual_redemption_and_manual_checkout_price_adjustment
-> pending_scope: activity_redemption_reversal_and_contracts_staff_read_copy_record_queries_and_entry_placement
+> pending_scope: activity_data_and_return_linkage_contracts_staff_code_read_copy_queries_and_invite_creation_entry
 > invite_code_total_redemptions: 1
 > invite_code_validity_hours: 72
 > invite_code_validity_start: server_creation_time
@@ -291,9 +291,9 @@ V1.0 不做系统活动自动赠送优惠券，沿邀请码兑换。老板只创
 
 **领取所得权益初始有效期统一为一个月**：本次明确包括邀请码领到的优惠券、服务活动权益和商品活动权益，均从服务端兑换成功并取得权益的同一时刻起算，不从码创建、打开页面、到店或首次使用起算。一个月按Asia/Shanghai顺延一个日历月、保留时分秒；下月无对应日期取下月最后一天同一时刻。比如11月4日10:00领取，12月4日10:00到期；1月31日领取，取2月最后一天同一时刻。活动券以店员点击核销时服务端成功处理的时间校验，等于或晚于截止则拒绝核销；开单、开始服务或旧页面不能占住／延长核销资格。服务跨过到期时刻不改变券核销规则，已成功核销的券不会因后续到期再次改变状态；所有普通优惠券亦按手动核销时间校验，不再新建锁定延期；历史合法延期保留。
 
-这一个月与邀请码的72小时是两个期限：在码有效期内领取后，即使邀请码随后到期，已领取权益仍按自身期限使用。邀请码来源优惠券发放时，F-CPN-010取本次成功领取时间、011初始值取顺延一个月；该来源规则优先于模板默认期限，保存到本次实例的发放快照，不改模板本身、不扩展到充值赠送／人工赠送／平台积分兑换等其他来源，也不批量回写历史已发实例。所有券按§10～11手动核销，不再产生新的选券锁定／暂停延期；历史已经合法延长的截止不回退。普通优惠券退款原则仍按§11，活动券误核销撤销、取消／退款后的处理仍待确认。
+这一个月与邀请码的72小时是两个期限：在码有效期内领取后，即使邀请码随后到期，已领取权益仍按自身期限使用。邀请码来源优惠券发放时，F-CPN-010取本次成功领取时间、011初始值取顺延一个月；该来源规则优先于模板默认期限，保存到本次实例的发放快照，不改模板本身、不扩展到充值赠送／人工赠送／平台积分兑换等其他来源，也不批量回写历史已发实例。所有券按§10～11手动核销，不再产生新的选券锁定／暂停延期；历史已经合法延长的截止不回退。普通优惠券退款原则仍按§11，活动券同样仅在整单取消／全额退款时可退回，部分退款不退回、不设日常误点撤销，详见§11。
 
-客户端“我的钱包 → 邀请码兑换”：输入码 → 服务端校验当前本店Merchant／Store／Customer、原资格、未兑及未到期、恰好一个合法兑换内容 → 成功取得兑换结果并消耗一次资格 → 显示结果及本次真实使用截止时间。服务／商品活动先生成待使用活动权益，本文称“活动券”，到店后由本店老板／有效员工手动点击“核销”；输入码时不直接生成待处理订单，领取／核销本身不标记实际服务、交付、收款或免单。此前原服务单／商品单关联的留痕方向保留，具体关联入口和记录时机仍待收口，不借此推导自动收银联动。普通护理仍不开放客户端预约。
+客户端“我的钱包 → 邀请码兑换”：输入码 → 服务端校验当前本店Merchant／Store／Customer、原资格、未兑及未到期、恰好一个合法兑换内容 → 成功取得兑换结果并消耗一次资格 → 显示结果及本次真实使用截止时间。服务／商品活动先生成待使用活动权益，本文称“活动券”，到店后由本店老板／有效员工手动点击“核销”；输入码时不直接生成待处理订单，领取／核销本身不标记实际服务、交付、收款或免单。此前原服务单／商品单关联的留痕方向保留，核销或删除不要求先开单／选择订单；仅退回券时需核对对应取消／全额退款及实际用券事实，原单关联技术映射仍待收口，不借此增加自动收银联动。普通护理仍不开放客户端预约。
 
 老板生成或指定的码、优惠券及活动均只限所属本店，沿F-CORE-002 merchant_id、003 store_id、004 customer_id校验，不把创建者身份当门店归属；他店输入或接口篡改拒绝，不产生权益或计次。
 
@@ -301,7 +301,7 @@ V1.0 不做系统活动自动赠送优惠券，沿邀请码兑换。老板只创
 
 所有优惠券和活动的免单或打折，均由门店在原订单结算时手动修改最终应收，沿03d§10.1原调价原因、前后金额及明确确认规则：免单改为0后仍须点击“确认免单”；打折直接填写协商后的最终应收，按实际收款记账。无需配置自动折扣／活动价格公式，不把活动券核销当付款，也不自动改应收、扣余额或计算实收业绩。结算改价不会自动核销任何优惠券／活动券，手动核销也不会自动完成结算；服务检查及状态、商品SKU库存和财务仍走原流程，不因核销额外占库或扣库，不重建独立库存／服务主资料。
 
-本次统一规则覆盖满减、金额抵扣、折扣等所有优惠券及所有活动，不按充值赠送／人工赠送／邀请码／积分兑换来源保留另一套自动计算流程。券类型、面额／折扣、门槛和适用范围保留作说明及门店核对，不再自动推荐最优惠券、算优惠／抵扣、选券锁定或随结算自动核销；服务端仍校验本店身份、对象、券状态及期限。活动券误点后是否可撤销、取消／中止／退款后的券处理继续待确认，不自行实现自动恢复或借删除抹历史。活动配置、权益实例、领取与使用截止及原单关联等字段契约需先注册后实现，不把F-INV-003改成活动字段或复用券ID／订单ID冒充权益ID。老板创建沿原002／010／011及012选填备注，店员查看复制、独立兑换记录查询及具体入口位置仍待确认；不扩展员工创建权限。兑换通知仍沿03f当前页结果与站内记录，不另发微信通知。
+本次统一规则覆盖满减、金额抵扣、折扣等所有优惠券及所有活动，不按充值赠送／人工赠送／邀请码／积分兑换来源保留另一套自动计算流程。券类型、面额／折扣、门槛和适用范围保留作说明及门店核对，不再自动推荐最优惠券、算优惠／抵扣、选券锁定或随结算自动核销；服务端仍校验本店身份、对象、券状态及期限。不设置日常误点撤销或恢复期限；所有券仅在整单取消／全额退款时由门店手动退回，部分退款不退回，不借删除抹核销历史。活动配置、权益实例、领取与使用截止及原单关联等字段契约需先注册后实现，不把F-INV-003改成活动字段或复用券ID／订单ID冒充权益ID。老板创建沿原002／010／011及012选填备注，店员查看复制邀请码、独立邀请码兑换记录查询及邀请码创建入口位置仍待确认；券核销／删除入口已确认，不列回待决；不扩展员工创建权限。兑换通知仍沿03f当前页结果与站内记录，不另发微信通知。
 
 ### 9.4 平台积分兑换
 
@@ -328,19 +328,36 @@ V1.0 不做系统活动自动赠送优惠券，沿邀请码兑换。老板只创
 
 当前单据金额以F-ORD-010原始应收、013人工调价差额、014最终应收及015实收保存；所有优惠所致减价只记入013一次，不再单列自动优惠／券优惠后再重复扣减。F-ORD-011／012退役保留历史、禁止新业务写入，不能挪作第二份人工调价。历史已有折扣明细仍保留，不按新口径重算旧单。
 
-券说明和发放快照保留，用于门店核对优惠内容、门槛、适用范围及有效期；不限额调价资格不扩大券范围，也不授予跨店／顾客自核销权限。原每笔消费最多使用一张普通优惠券的原则保留，不新增自动叠加或按多券反算优惠；关联入口和时机仍待细化，不把独立核销强行塞回自动收银步骤。
+券说明和发放快照保留，用于门店核对优惠内容、门槛、适用范围及有效期；不限额调价资格不扩大券范围，也不授予跨店／顾客自核销权限。原每笔消费最多使用一张普通优惠券的原则保留，不新增自动叠加或按多券反算优惠。核销／删除入口按§11，不要求先开单或选择订单；退回券的原消费与取消／退款关联技术契约仍须收口，不把独立核销强行塞回收银步骤。
 
-## 11. 全部优惠券与活动的手动核销及退款边界
+## 11. 优惠券／活动券直接核销、删除与退回
 
-本店老板／有效员工手动点击具体优惠券／活动券的“核销”，无需老板审批；服务端校验当前有效身份、本店顾客归属、未核销未删除、实际未过期及原使用资格，成功标记已核销并保存核销人、服务端时间、前后状态及原领取历史。普通券时间沿F-CPN-017，操作者沿原审计；活动券实例及核销字段仍按注册表先收口。顾客不能自行执行门店核销。
+> status: confirmed
+> status_scope: coupon_activity_actions_and_cancel_full_refund_only_return_business_rules
+> coupon_action_entry: 顾客详情/优惠券或活动券
+> coupon_action_actors: [merchant_owner, active_store_staff]
+> coupon_action_order_selection: not_required_for_redeem_or_delete
+> coupon_mistake_redemption_undo: excluded
+> coupon_return_mode: manual_only_for_cancelled_or_fully_refunded_order
+> coupon_return_on_partial_refund: excluded
+> coupon_return_validity: preserve_original_deadline
+> coupon_operation_history: preserve_actor_time_and_prior_records
 
-核销仅改变券的使用事实，不自动改金额／收付款／扣会员余额／占扣库存／完成服务或交付；调价、收款、确认免单和订单超时也不自动核销券。发券与核销是两个不同动作，已确认充值／邀请码／积分成功后按规则发券的流程不因此取消。并发核销／删除只受理一个合法状态转换，同次成功重试恢复原结果，不重复核销、不重写首次时间；失败不部分更新券或原单。
+**入口**：“顾客详情 → 优惠券／活动券”直接点击具体券的“核销”或“删除”，本店老板／有效员工均可操作，无老板审批；不要求先开单、先结算或选择订单。原会员资产优惠券入口如保留，仅打开同一顾客同一份券数据，不复制券或另建操作账本。顾客不能执行门店核销／删除。
 
-不再创建“选券锁定→结算核销→取消解锁”流程，F-CPN-016／019／020退役D保留历史禁新写；已锁定枚举仅供历史读取。新操作以手动核销成功时服务端当前截止判断，开单或开始服务不暂停计时，不再产生锁定触发的新延期；历史合法延期后的有效截止及原记录保留，不回退或批量改写。已有旧锁定数据若需迁移，应先确认迁移方案，不靠忽略历史状态放行。
+**核销**：服务端校验当前有效身份、本店顾客及具体券归属、未核销未删除、实际未过期及原资格，成功记为已核销并保存实际核销人、服务端时间、前后状态及原领取历史。普通券时间沿F-CPN-017，操作者沿原审计；活动券实例及核销字段仍须先注册。核销只改变券使用事实，不改金额、资金、库存、服务或交付，不重新计算优惠；结算手动改价、付款或确认免单也不会自动核销。
 
-既有普通优惠券退款原则保留：已明确关联原消费的券，整单取消／全额退款时仍在有效期则恢复，部分退款不恢复；这不表示取消原充值／邀请码／积分兑换，不自动返积分、补发新券或重启期限。独立手动核销如何关联取消／退款并执行恢复、误点撤销入口与时序仍待确认，未关联券不得按顾客或金额猜测恢复，也不能借删除抹核销历史。活动券取消／中止／退款后的处理仍待确认，不自行套普通券退款规则。
+**删除**：可直接处理本店顾客尚未核销的具体持有优惠券／活动券，包括已过期但未核销的券；已核销的不能借删除撤销使用事实，模板和历史仍保留。普通券沿F-CPN-013记removed，退出可使用列表并按原历史分组展示，F-WAL-005按剩余真实可用实例计算；活动券删除状态／历史沿自身实例契约先注册，不借普通券ID冒充。删除不撤原充值／邀请码／积分兑换，不退积分或资金，不自动补发／延长期限。原赠券减量／删除的原因要求沿§9.2.1，本轮不新增日常核销或活动券删除的原因必填；实际对象、人、时间及前后状态均留痕。
 
-零元免单仍是明确结算、实收为0，不是付款；免单不会代替核销或改变券状态。已核销券不能由订单未付款超时任务“解锁”／复活，券状态改变也不能撤销真实财务或服务事实。
+**不设误点撤销**：没有日常“撤销核销”操作、借误点恢复状态／重新设置期限的流程；已核销、删除和退回记录均不物理清除。原充值更正／撤销遇已用券等超管异常边界仍保留，不能用本入口伪造未用券、改消费历史或把失败撤销标成功。
+
+**仅整单取消／全额退款时可退回券**：所有普通优惠券与活动券采用同一规则，本店老板／有效员工手动“退回券”，无需老板审批；必须对应已实际成立的原整单取消或全额退款，并核对本店顾客具体已核销券确为该业务实际使用的券，不能从顾客或金额猜测关联，也不要求之前核销时先选订单。部分退款不退回，单纯中止、误点或一般更正不能作为退回依据。无需另设通用撤销核销／改有效期功能，不因退款记账自动退回所有券。
+
+退回只改变该券当前使用状态、保留原券实例和原有效截止，不补发一张新券，不重新开始一个月、不退原兑换积分或重开邀请码资格；未过期恢复可使用，已经过期则显示已过期，不能再核销。记录原核销人／时间、退回人／时间及对应取消／全额退款事实；旧记录不删除，不把退回操作伪装成从未核销。合法退回后再次实际核销须再校验当前期限，保留上一轮核销和退回历史；同一请求重试不改本轮首次核销／退回时间。
+
+核销／删除／退回均服务端按当前状态转换；并发只受理一个合法结果，成功重试恢复原结果，失败不部分改券或原单。退回与取消／退款／原核销的稳定关联、活动券实例及事件映射等数据契约仍需先注册，不从已确认业务规则推断技术契约已经完整。
+
+不再创建选券锁定／结算核销／取消解锁或锁定触发的新延期；F-CPN-016／019／020为D仅历史读，旧锁定数据迁移先收口。历史合法延期后的实际截止保留，不批量回退；所有券按手动核销成功时校验截止。零元免单仍沿03d§10.1明确确认，无实际收款不能凭免单退现金／余额；券状态改变不撤销真实财务或服务事实。
 
 ## 12. 客户端优惠券展示
 
