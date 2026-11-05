@@ -169,7 +169,7 @@ V1.0 注册主流程：
 → 系统生成有效12小时的邀请二维码 / 链接
 → 店员使用微信扫码 / 打开链接
 → 店员按03g§3.1完成微信登录及必要手机号认证（手机号冲突先处理换绑）
-→ 确认加入该门店
+→ 查看门店名称、地址及本人认证手机号，填写员工称呼后点击“确认加入”
 → 系统以 `staff.merchant_id` 建立 Staff 的唯一租户归属，并以 `staff_store_assignment.store_id` 表达可工作的门店范围；V1.0 虽为一商户一门店，也不得用 `Merchant / Store` 单一模糊字段代替二者
 → 自动取得当前统一店员业务权限
 → 店员开始使用店员端
@@ -177,21 +177,42 @@ V1.0 注册主流程：
 ### 6.0 员工入职邀请有效期与无撤销规则
 
 > status: confirmed
-> status_scope: staff_invitation_twelve_hour_expiry_and_no_owner_revocation
+> status_scope: staff_invitation_twelve_hour_single_use_no_revocation_and_explicit_join_with_staff_display_name
 > confirmed_by: user
 > confirmed_on: 2026-11-05
 > staff_invitation_validity_hours: 12
 > staff_invitation_expiry_anchor: server_successful_creation_time
 > staff_invitation_owner_revocation: excluded
+> staff_invitation_successful_join_limit: 1
+> staff_join_confirmation: explicit_user_action
+> staff_display_name_required: true
+> staff_display_name_default: available_wechat_nickname
 > staff_invitation_expiry_boundary: now_greater_than_or_equal_to_expires_at
 
 - 邀请自服务端成功创建起连续12小时有效，截止复用staff_invitation_expires_at；恰好达到截止即不能再确认加入。扫码、打开、分享、完成登录或同次创建重试均不重新计时，不能在到期前打开后到期提交时继续加入。
 - 老板没有撤销邀请按钮，也不提供撤销接口、删除邀请使其失效、提前结束或重建邀请使旧邀请提前失效的替代操作；未使用邀请只能等待原截止自动过期。邀请到期不撤销此前已成功建立的员工关系。
-- 本次只确认时限和无老板撤销操作；邀请使用资格、成功使用状态、实际使用人／时间及返聘历史继续按本节和§6.1，不从顾客活动邀请码复制72小时、兑换次数或活动权益规则。
+- 每份邀请只允许一名员工成功加入；使用成功后即已使用，不能再为其他人新增员工关系。未使用邀请按原12小时截止过期，不因登录、失败提交或重复扫码提前消耗；成功使用后的历史及返聘按§6.1保留，不从顾客活动邀请码复制72小时或活动权益规则。
 - 保留创建人、创建时间、原截止、真实使用人／时间与结果审计；失败／重复请求不假记加入、不重复建立任职。已存在的历史“已撤销”记录如有，只读保留且仍不可使用，不重新启用，也不为新邀请生成可撤销状态或操作。
 - 邀请尚未过期不代表无条件取得任职；确认时仍须微信登录、手机号认证、当前老板／商户／门店有效及一员工只能在一家门店任职等原校验。资格不符是拒绝加入，不以新增老板撤销流程处理。
 
 字段沿F-STAFF-005～010及原CORE／审计；本节不增加新的邀请菜单、到期短信或业务通知流程。顾客活动邀请码、佐证邀请与本节是不同对象，各自时限及撤回规则不受影响。
+
+### 6.0.1 员工确认加入页面与称呼
+
+> status: confirmed
+> status_scope: employee_invitation_single_use_confirmation_page_and_required_display_name
+> confirmed_by: user
+> confirmed_on: 2026-11-05
+> join_page_content: [门店名称, 门店地址, 本人认证手机号, 员工称呼]
+> join_action_label: 确认加入
+> staff_display_name_field: staff_display_name
+> canonical_staff_identity: staff_id
+
+1. **单人使用与防重**：以原staff_invitation_id记录使用，只有真实成功加入才写已使用、实际使用人／时间；使用完成与建立／关联本次任职一致成功，失败不消耗邀请。不同用户并发使用同一邀请，以服务端先成功者为准，另一人提示“邀请已使用”，不能创建第二名员工；同次成功请求重试返回原结果，不因之后已使用／过期改报失败，也不重建员工；历史成功重试不复活后来停用／移出的关系或旧会话，访问仍校验当前资格。已在本店的有效员工提示“已加入”，不新增任职或再次消耗；原一人一店、停用须老板恢复、移出须新邀请的规则保持，不能靠重复扫码自动恢复停用员工。
+2. **明确加入**：邀请页显示该邀请实际门店的当前有效名称、地址和当前User本人认证手机号；手机号来自服务端认证，不是可手填的入职身份或老板号码。扫码、登录或认证本身不入职，用户点击“确认加入”后服务端重验邀请原截止、是否已使用、当前账号／门店资格及一人一店等约束，再关联员工身份。未加入前只显示必要邀请信息，不开放门店私有经营数据；认证返回原邀请页继续，若已失效则明确提示，不跳过确认。
+3. **员工称呼**：确认加入时staff_display_name必填，去除首尾空白后不得为空；有当前微信实际可用昵称则默认带入，可在本表单修改。拿不到昵称时由员工手填，不填虚构昵称、不因拒绝昵称授权阻止手填；本轮不增头像或昵称授权必经流程。已识别的返聘原员工优先带入原称呼，仍关联原staff_id，不用新昵称自动覆盖历史身份。
+4. **展示与身份分开**：员工列表、订单中的员工、工作记录及业绩人员称呼统一引用此字段；不同员工可同名，身份、权限、归属及返聘均按原稳定User／staff_id，不按称呼、号码文本或昵称合并。历史已有人员快照和实际经办不回写、不因称呼变化重归属；旧数据缺称呼时不得猜配或批量冒充已补齐，具体迁移先核实。其他原页面字段可见性不变，不能借统一称呼向顾客公开员工手机号。
+5. **实现范围**：复用原邀请、任职、CORE010防重和原审计；新增F-STAFF-015、员工加入确认页staff_invitation.join_confirmation及确认动作staff_invitation.accept，不增加老板审批／撤销或配置权限。昵称读取及来源映射、称呼长度限制、入职后独立修改菜单及权限等未列技术／交互细节后续确认，本轮不据此扩张。邀请页三个内容及加入前称呼只服务本次明确邀请，不提供任意手机号查找员工身份。
 
 ### 6.1 被删除员工重新回本店入职
 
