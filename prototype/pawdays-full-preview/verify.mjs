@@ -8,6 +8,9 @@ const homeHeaderStart = js.indexOf('"customer-home"', renderHeaderStart);
 const homeHeader = js.slice(homeHeaderStart, js.indexOf('"customer-appointment"', homeHeaderStart));
 const homeBody = js.slice(js.indexOf("function customerHome"), js.indexOf("function riskCard"));
 const washDetail = js.slice(js.indexOf("function staffWashDetail"), js.indexOf("function staffCustomers"));
+const customerPets = js.slice(js.indexOf("function customerPets"), js.indexOf("function customerWallet"));
+const staffDisputes = js.slice(js.indexOf("function staffDisputes"), js.indexOf("function staffOrders"));
+const staffCustomerDetail = js.slice(js.indexOf("function staffCustomerDetail"), js.indexOf("function staffMe"));
 
 const checks = [
   ["HTML language", html.includes('lang="zh-CN"')],
@@ -29,6 +32,13 @@ const checks = [
   ["Compact dispute module", css.includes('.risk-card-compact') && css.includes('.risk-preview')],
   ["Small store switch with full touch target", css.includes('.home-store-switch') && css.includes('min-height:44px') && css.includes('font-size:11px')],
   ["Seven-day response", js.includes('7天回应')],
+  ["Four dispute groups", ["待回应","补充材料中","待平台裁决","已结束"].every(group => staffDisputes.includes(group))],
+  ["Dispute filters and three-day evidence", staffDisputes.includes('手机号／争议编号') && staffDisputes.includes('3天补证') && staffDisputes.includes('逾期优先')],
+  ["Food responsibility split", staffDisputes.includes('仅本店销售或处理行为部分生成7天回应') && staffDisputes.includes('厂家暂未回应／平台核查中')],
+  ["Customer risk records hidden", customerPets.includes('顾客端不显示任何已审核或未审核顾客风险') && !customerPets.includes('顾客风险 · 顾客相关')],
+  ["Unified cross-store risk sections", staffCustomerDetail.includes('宠物护理注意事项') && staffCustomerDetail.includes('顾客风险 · 顾客相关') && staffCustomerDetail.includes('顾客风险 · 宠物相关') && !staffCustomerDetail.includes('宠物行为与服务安全')],
+  ["Read-only staff food brand", staffCustomerDetail.includes('当前食用品牌（只读）') && staffCustomerDetail.includes('主人暂未填写') && !staffCustomerDetail.includes('edit-food-brand')],
+  ["Risk submit review simulation", js.includes('data-form="customer-risk"') && js.includes('原型未连接真实审核后台')],
   ["No native dialog calls", !/(?:window\.)?(?:alert|confirm|prompt)\s*\(/.test(js)],
   ["No raw innerHTML assignment", !/\.innerHTML\s*=/.test(js)],
   ["Global scrollbar", css.includes('scrollbar-color') && css.includes('::-webkit-scrollbar-thumb')],

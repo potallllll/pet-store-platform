@@ -5,7 +5,7 @@
 > pending_scope: entries_marked_P
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: [DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-FOOD-RESP-01, DEC-RISK-UI-01, DEC-FOOD-HEAT-01, DEC-FEED-02, DEC-POINTS-02, DEC-LAUNCH-01, DEC-STAFF-01, DEC-STAFF-02, DEC-STAFF-03, DEC-STAFF-04, DEC-STAFF-05, DEC-STAFF-06, DEC-STAFF-07, DEC-STAFF-08, DEC-STAFF-09]
+> blocked_by: [DEC-COMPLAINT-07, DEC-COMPLAINT-08, DEC-RISK-01, DEC-PETSAFETY-01, DEC-EVIDENCE-01, DEC-STORE-CLAIM-01, DEC-RISK-UI-01, DEC-FOOD-HEAT-01, DEC-FEED-02, DEC-POINTS-02, DEC-LAUNCH-01, DEC-STAFF-01, DEC-STAFF-02, DEC-STAFF-03, DEC-STAFF-04, DEC-STAFF-05, DEC-STAFF-06, DEC-STAFF-07, DEC-STAFF-08, DEC-STAFF-09]
 > version: V1.0
 > registry_owner: project_requirements
 > canonical_logical_field_source: true
@@ -25,7 +25,7 @@
 
 本文件冻结的是**逻辑字段标识**。阶段 09 数据库设计可决定物理表、索引、存储类型和必要拆表，但默认应沿用这里的逻辑字段名；如果物理列名不同，必须建立显式映射，不得重新定义字段含义。
 
-宠物当前食用品牌与食品品牌 / 厂家主资料的字段存在，不代表授予店员维护权；明确禁止店员维护，见03b§4.4。当前阶段投诉等业务短信暂未开放、不发送，入口／状态显示“暂未开放”，不排队重试或以后自动补发；食品风险仍另行形成店员待办，见03f§13.2～13.3；争议待办归属争议门店；未来如另行确认开放投诉短信，接收方向仍为争议门店注册号码（不授权当前发送），不另设独立争议通知号码；食品风险初次归属按03f§13.3：未明确争议店由平台承接原案暂不派店，之后平台据事实明确店再派，同案同店不重复；基础知悉记录按§14.4.1已登记；普通通知／重要通知与误点恢复轮次按§14.4.1已登记；食品风险内部备注填错由门店联系客服、无门店直接修改入口；已派后改店／多店、平台备注纠错等剩余技术字段后续先登记，不复用微信发送字段或主人消息去重键。
+宠物当前食用品牌与食品品牌／厂家主资料的字段存在，不代表授予店员维护权；当前品牌仅允许本店原有权老板／员工只读，禁止店员新增、修改、删除或由寄养粮食、商品购买、历史导入自动回填，见03b§4.4。当前阶段投诉等业务短信暂未开放、不发送，入口／状态显示“暂未开放”，不排队重试或以后自动补发；食品风险仍另行形成店员待办，见03f§13.2～13.3；争议待办归属争议门店；未来如另行确认开放投诉短信，接收方向仍为争议门店注册号码（不授权当前发送），不另设独立争议通知号码；食品风险初次归属按03f§13.3：未明确争议店由平台承接原案暂不派店，之后平台据事实明确店再派，同案同店不重复；基础知悉记录按§14.4.1已登记；普通通知／重要通知与误点恢复轮次按§14.4.1已登记；食品风险内部备注填错由门店联系客服、无门店直接修改入口；已派后改店／多店、平台备注纠错等剩余技术字段后续先登记，不复用微信发送字段或主人消息去重键。
 
 业务规则仍由对应正式需求文档负责；本文件不利用字段表擅自确认原本处于 pending 的权限、金额、截止时间、状态迁移或审批规则。
 
@@ -356,14 +356,14 @@ F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型
 | F-PET-040 | `media_sort_order` | S | Int | 同一服务 / 对比组中的稳定排序。 |
 | F-PET-041 | `media_asset_ref` | S | Ref | 图片 / 视频资源引用。 |
 | F-PET-042 | `social_public_allowed` | D | Bool | 已退役宠物交友照片公开字段；仅用于旧数据迁移，不得在新业务继续写入。 |
-| F-PET-043 | `pet_safety_profile_id` | S | ID | 宠物行为与服务安全档案标识。 |
+| F-PET-043 | `pet_safety_profile_id` | S | ID | 既有宠物服务安全细节标识；现行产品中只能作为统一“顾客风险”的宠物相关细节，不得恢复独立跨店分类／菜单。 |
 | F-PET-044 | `pet_behavior_tag_keys` | S | Text[]/Struct | 标准化服务行为标签，如怕吹风、抗拒剪指甲、护食、挣脱倾向等。 |
 | F-PET-045 | `pet_behavior_source_type` | S | Enum | `owner_reported / staff_observed / incident_recorded / verified_by_multiple_services`。 |
 | F-PET-046 | `pet_behavior_last_observed_at` | S | Datetime | 最近观察 / 确认该行为的时间。 |
 | F-PET-047 | `pet_behavior_source_store_id` | S | ID | 行为记录来源门店；不因此授予该门店读取其他商户资料权限。 |
 | F-PET-048 | `pet_behavior_source_service_record_id` | S | ID | 关联真实服务事件时使用。 |
-| F-PET-049 | `cross_store_safety_share_status` | P | Enum | 跨门店安全档案共享状态；可见范围和主人授权受 DEC-PETSAFETY-01 阻塞。 |
-| F-PET-050 | `pet_safety_review_status` | P | Enum | 平台跨店共享审核状态；审核规则未完全冻结。 |
+| F-PET-049 | `cross_store_safety_share_status` | P | Enum | 旧宠物安全共享状态候选；不得新建独立共享生命周期，宠物相关顾客风险统一按F-CRISK授权／查询规则，迁移映射仍待登记。 |
+| F-PET-050 | `pet_safety_review_status` | P | Enum | 旧宠物安全审核状态候选；不得绕过统一顾客风险客服审核或生成第二审核流。 |
 | F-PET-051 | `current_food_brand_id` | C | ID | 当前食用的标准宠物食品品牌；0～1 个。作为食品风险订阅主匹配键。 |
 | F-PET-052 | `current_food_brand_display_name` | S | Text | 当前客户端显示品牌名称。 |
 | F-PET-053 | `current_food_brand_input_type` | S | Enum | `catalog / custom`；标准列表或“其他”自定义输入。 |
@@ -792,7 +792,7 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-CMP-011 | `complaint_published_at` | S | Datetime | 基础审核通过后公开时间。 |
 | F-CMP-012 | `complaint_workflow_status` | S | Enum | 提交、等待回应、补证、待裁决等流程状态；不得替代平台结论。 |
 | F-CMP-013 | `business_response_status` | S | Enum | pending / responded / overdue；首次正式回应受理成功即responded，与补证流程同次更新，不清除F-CMP-018历史逾期，不代表已解决或平台结论。 |
-| F-CMP-014 | `response_due_at` | C | Datetime | 基础审核通过、投诉对象正确且完成有效通知后由平台生成的7天正式回应截止。04§6.1.1工作台争议卡片／业务列表／详情顶部唯一取本值重点展示，并按服务端当前时间派生真实剩余时间；不新增第二deadline或持久化倒计时，不随打开／换员工／通知重试重置。无值不伪填7天／逾期，不扩展食品多主体待决期限。 |
+| F-CMP-014 | `response_due_at` | C | Datetime | 基础审核通过、投诉对象正确且完成有效通知后由平台生成的7天正式回应截止。04§6.1.1工作台争议卡片／业务列表／详情顶部唯一取本值重点展示，并按服务端当前时间派生真实剩余时间；不新增第二deadline或持久化倒计时，不随打开／换员工／通知重试重置。食品投诉只有明确涉及门店销售／处理行为的门店部分使用本值，品牌／厂家后台部分不借此生成门店逾期。 |
 | F-CMP-015 | `response_position` | C | Enum | 认可 / 部分认可 / 不认可 / 无法确认；首次正式回应必填，成功后原值保留，不覆盖编辑／删除，不作为追加说明字段。 |
 | F-CMP-016 | `business_response_text` | C | Text | 首次正式回应必填正文；无回应草稿，成功后原文保留，不覆盖／删除。后续说明用F-EVD-007追加，不建第二可覆盖正文，原附件关联保留。 |
 | F-CMP-017 | `business_responded_at` | S | Datetime | 服务端首个成功正式回应时间，与已回应／补证流程及F-CMP-019同次记录；不因补充、换员工、重复／并发或通知重试重置。 |
@@ -927,15 +927,15 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-REV-022 | `reviewed_at` | S | Datetime | 审核完成时间。 |
 | F-REV-023 | `review_upload_idempotency_key` | S | Text | 重复上传同一审核文件 / 结果的幂等键。 |
 
-### 14.6 跨门店顾客客观风险事件（CUSTOMER_RISK）
+### 14.6 跨门店统一顾客风险（CUSTOMER_RISK）
 
-> 产品原则已确认“共享客观风险事件，不共享主观人格评价”，并已确认查询额度、授权撤回、身份冲突阻断、无条件申诉、12个月跨店展示、3年受限留存与到期处置。风险事件的完整提交／审核模型与业务自动影响仍受 DEC-RISK-01 阻塞；仅标记为 P 的字段不得实现成正式规则。
+> 产品原则已确认“共享客观风险事件，不共享主观人格评价”。统一顾客风险包含顾客相关和宠物相关两种对象，不再设置独立宠物安全跨店分类；已确认提交人员／材料、客服审核、审核前撤回重提、审核后联系客服、顾客不可见、门店展示字段、查询额度、授权撤回、身份冲突、无条件申诉、12个月展示及3年受限留存。现有字段不足以直接证明统一对象的数据库／API映射已完成，F-CRISK-001～007及F-PET-049～050仍按P处理，实施前须登记映射，不得临时新造同义字段。
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
 | F-CRISK-001 | `customer_risk_event_id` | P | ID | 平台级客观风险事件。 |
-| F-CRISK-002 | `risk_subject_user_id` | P | ID | 被记录的 Platform User。 |
-| F-CRISK-003 | `risk_event_type` | P | Enum | 爽约、拒付、威胁、已核验恶意退款等客观事件类型。 |
+| F-CRISK-002 | `risk_subject_user_id` | P | ID | 被记录的 Platform User；宠物相关记录仍归属该主人主体，但必须另关联有权的具体Pet，具体映射实施前登记。 |
+| F-CRISK-003 | `risk_event_type` | P | Enum | 爽约、拒付、威胁、已核验恶意退款，以及真实服务中的宠物挣脱、咬人／抓伤、护食等客观事件类型；不得存人格标签。 |
 | F-CRISK-004 | `risk_event_source_merchant_id` | P | ID | 来源 Merchant。 |
 | F-CRISK-005 | `risk_event_source_store_id` | P | ID | 来源 Store。 |
 | F-CRISK-006 | `risk_event_business_id` | P | ID | 关联预约 / 订单 / 服务等事实对象。 |
@@ -1466,12 +1466,12 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 
 以下字段族当前不得被“字段注册表存在”误认为需求已确认：
 
-- `F-PET-049`～`050`：宠物行为安全档案跨店共享与审核，受 `DEC-PETSAFETY-01` 阻塞；
+- `F-PET-049`～`050`：旧宠物安全独立共享／审核候选已被统一顾客风险产品分类取代，当前不得新写为第二套生命周期；既有数据迁移及与F-CRISK的技术映射受`DEC-RISK-01`阻塞，`DEC-PETSAFETY-01`仅继续约束宠物护理注意事项；
 - `F-EVD-011`：第三方证据权重模型，受 `DEC-EVIDENCE-01` 阻塞；
 - `F-RISK-007`：不同门店来源具体加权系数尚未冻结；3条独立投诉硬门槛不受该字段影响；
 - `F-RISK-018`：问题热度具体数值范围 / 公式受 `DEC-FOOD-HEAT-01` 阻塞；
 - `F-REV-016`～`017`：跨店审核结果可见范围 / 有效期按对应风险业务 DEC 确认；
-- `F-CRISK-001`～`007`：跨门店顾客客观风险事件的完整提交／审核与自动业务影响受 `DEC-RISK-01` 阻塞；`F-CRISK-008`～`050`只落实已确认的申诉、查询额度、授权撤回、身份冲突、保存期限和到期处置，不代表事件提交权限或其他自动业务影响已确认；新老顾客的新增／预约阅读和查询不可用继续按04§3.7／6.5.1，不开放共享取数；
+- `F-CRISK-001`～`007`：统一顾客风险的提交人员、材料、客服审核、顾客不可见和门店最小展示产品规则已确认，但顾客／宠物对象关系、审核／撤回／驳回持久化及既有F-PET安全数据迁移的完整API／数据库映射仍受`DEC-RISK-01`阻塞；`F-CRISK-008`～`050`落实申诉、查询额度、授权撤回、身份冲突、保存期限和到期处置，不授权猜测未登记字段或其他自动业务影响；新增／预约提醒继续按04§3.7／6.5.1；
 - `F-FEED-022`／`024`／`025`／`028`／`029`／`032`已退役；F-FEED-026／027及033～035为已确认范围。上门喂养仅DEC-FEED-02的地理技术／异常界面剩余，不从D字段恢复旧操作；
 - `F-RWD-027`自提720小时截止、028改店退役、029～030完成来源及系统默认时间已按03k§8确认；DEC-POINTS-02仅剩平台异常技术；
 - 启动广告具体秒数默认值/范围受 `DEC-LAUNCH-01` 阻塞；字段存在但不能写死运营常数；
@@ -1547,7 +1547,7 @@ Pending 字段确认后：
 
 - 原 F-SOC 字段保留永久注册号但退役，禁止新业务复用。
 - 新增 F-CMP / F-EVD / F-RISK / F-REV / F-CRISK 字段族。
-- 新增 F-PET-043～050 宠物行为与服务安全档案字段。
+- 历史新增F-PET-043～050用于宠物行为／服务安全；现行产品已将相关跨店内容并入统一顾客风险，043～048只作宠物相关细节，049～050不得新建独立生命周期，迁移映射按§14.6与§25。
 - 固定 7 天回应、3 天补证、单审核员裁决、2天/3条集中反馈和2个月风险提示所需逻辑字段。
 - 未确认的跨店共享可见性、证据权重和来源加权系数继续标 P。
 

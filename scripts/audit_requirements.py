@@ -170,7 +170,11 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     for rel, required in {
         "docs/03c-customer-wallet.md": ("coupon_return_mode: excluded",),
         "docs/03d-customer-orders.md": ("payment_special_correction_flows: excluded",),
-        "docs/03h-customer-risk-feedback.md": ("cross_store_risk_submission_review: customer_service_required",),
+        "docs/03h-customer-risk-feedback.md": ("cross_store_risk_submission_review: customer_service_required",
+                                                  "customer_risk_customer_visibility: excluded_reviewed_and_unreviewed",
+                                                  "risk_submission_actors: [merchant_owner, active_store_staff]",
+                                                  "cross_store_shared_sections: [宠物护理注意事项, 顾客风险]",
+                                                  "customer_risk_download_export_share: excluded"),
         "docs/04-staff-miniapp.md": ("boarding_settlement_time_confirmation: explicit_separate_check_in_and_checkout_block",
                                      "boarding_settlement_time_correction: allowed_before_payment_or_waiver_recalculate_preserve_history"),
     }.items():
@@ -430,10 +434,10 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     for key, expected in {
         "status": "mixed",
         "confirmed_scope": "all_customer_creation_and_appointment_reminder_acknowledgement_deduplication_failure_continuation_and_audit",
-        "pending_scope": "other_unconfirmed_risk_business_effects_pet_safety_sharing_and_detail_ui",
+        "pending_scope": "other_unconfirmed_risk_business_effects_and_technical_mapping",
         "reminder_triggers": "[新增顾客, 确认预约]",
         "reminder_presentation": "separate_dialog",
-        "reminder_content": "[宠物注意事项, 风险提示]",
+        "reminder_content": "[宠物护理注意事项, 顾客风险]",
         "reminder_customer_scope": "all_new_and_returning_customers_at_confirmed_business_triggers",
         "customer_local_truth_verification_required": "false",
         "customer_creation_reminder_timing": "after_explicit_customer_save_success",
