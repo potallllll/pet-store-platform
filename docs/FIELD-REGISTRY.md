@@ -85,7 +85,7 @@
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
-| F-CORE-001 | `platform_user_id` | S | ID | 平台自然人 User 唯一标识。03m 中旧写法 `user_id` 统一映射到此字段。不得用 Customer 代替。 |
+| F-CORE-001 | `platform_user_id` | S | ID | 平台自然人User稳定唯一标识；03g§3.1按已认证手机号识别账号、明确换绑微信仍沿用原值，不使用手机号／微信标识重建。03m旧user_id统一映射此字段，不得用Customer代替。 |
 | F-CORE-002 | `merchant_id` | C | ID | Merchant / Tenant 唯一标识，是商户私有数据的核心租户隔离字段。V1 一商户一门店，但仍不得与 `store_id` 混用。 |
 | F-CORE-003 | `store_id` | C | ID | Store 唯一标识。表达实际门店上下文、权益归属和可工作门店，不等于 Merchant。 |
 | F-CORE-004 | `customer_id` | C | ID | 某Merchant的客户业务记录／关系标识，可在线下先建且关联Platform User可以为空；完成安全绑定后仍使用同一customer_id。余额、优惠券、门店订单等归属该关系。 |
@@ -165,8 +165,8 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
-| F-AUTH-001 | `verified_mobile` | C | Text | 已完成所有权验证的手机号。用于联系方式和当前 Merchant 历史 Customer 匹配，不是平台唯一主身份。 |
-| F-AUTH-002 | `mobile_verified_at` | S | Datetime | 当前手机号最近一次成功验证时间。 |
+| F-AUTH-001 | `verified_mobile` | C | Text | 已完成所有权验证的登录手机号；按03g§3.1查找其绑定账号及当前有效老板／员工关系，无有效经营身份进入客户端；也用于联系方式和当前Merchant历史Customer匹配。稳定主键仍CORE001，不从手填电话或门店注册号码获取登录权限，不按同号合并Customer。 |
+| F-AUTH-002 | `mobile_verified_at` | S | Datetime | 当前手机号最近一次服务端成功验证时间；当前微信绑定有效且已有认证时可复用认证结果，新微信不能直接继承旧微信的认证状态，须认证号码并确认换绑。 |
 | F-AUTH-003 | `current_store_id` | S | ID | 当前客户端门店上下文；切店后全部门店私有数据必须整体切换。 |
 | F-AUTH-004 | `last_valid_store_id` | S | ID | 无明确外部目标的普通冷启动可使用的最近有效门店。失效时不得伪造默认门店。 |
 | F-AUTH-005 | `customer_binding_status` | S | Enum | User ↔ Customer 关系状态，例如未建立 / 已绑定 / 候选冲突 / 已绑定其他 User / 待人工处理。具体存储枚举阶段 09 收口。 |
@@ -181,10 +181,14 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 | F-AUTH-014 | `entry_target_id` | S | ID/Text | 原始业务目标标识；验证 / 广告结束后必须恢复，不得一律跳首页。 |
 | F-AUTH-015 | `entry_target_store_id` | S | ID | 原目标真实所属门店；本次有效目标优先于历史门店。 |
 | F-AUTH-016 | `reduce_motion_enabled` | C | Bool | “减少动态效果”用户设置，控制现行模块的非必要位移动画；品牌Banner等已确认轮播遵循10a/10b，不据此恢复已退役社交轮播或确认风险模块轮播。 |
-| F-AUTH-017 | `account_status` | S | Enum | User 账号当前状态；注销与退出会话分开。 |
-| F-AUTH-018 | `session_status` | S | Enum | 当前登录 Session 有效性；退出登录只结束 Session，不删除业务数据。 |
+| F-AUTH-017 | `account_status` | S | Enum | User账号当前状态；注销与退出会话分开，认证／换绑不自动恢复停用账号、员工或门店。 |
+| F-AUTH-018 | `session_status` | S | Enum | 当前登录Session有效性；退出登录只结束Session、不删除业务数据，03g§3.1成功换绑须使旧微信原会话失效，旧缓存不能继续授予权限。 |
 
 ---
+
+小程序登录／身份与换绑唯一业务来源是03g§3.1，经营关系来源是02及F-STAFF；CORE001固定平台账号、CORE005员工、CORE006老板账号及CORE007角色语义不变。手机号确定“查找哪个账号及其当前有效关系”，不是以号码作为业务外键；无经营身份的客户端不是新增CORE007经营角色。新微信认证号码＋明确确认后沿原账号换绑、旧微信解绑及会话失效，保留客户／订单／业绩／作者等历史身份，不改变租户归属；原AUTH005～012专用于Customer绑定，不能复用为老板／员工登录换绑状态或证明。
+
+本次业务规则不新增永久字段，累计仍728；真实微信标识及作用域、微信账号绑定与版本、认证证明、会话关联／失效及异常多账号的数据契约在阶段09／11实施前另行登记。未登记不臆造OpenID映射或把手机号认证时间当无限期身份凭证，不因当前表存在AUTH字段宣称已完成换绑技术设计。原用户微信换绑不等于不同既有User的账号合并或跨店冲突解除。
 
 ## 5. 店员归属、邀请与当前已确认导航（STAFF）
 
@@ -1343,7 +1347,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 | `staff_me.performance` | 我的业绩 |
 | `staff_me.notification_settings` | 我的／通知设置，仅本人微信主动授权入口、站内普通重要通知规则说明、短信暂未开放，无逐业务开关／自改等级 |
 | `staff_me.authorize_wechat_notifications` | 当前登录本人主动发起微信授权，按真实平台许可判断，不代他人／伪造永久许可或把发送审计当授权 |
-| `staff_me.account_security` | 账号与安全 |
+| `staff_me.account_security` | 账号与安全；统一微信登录／手机号认证／身份识别／确认换绑见03g§3.1及04§3.0.3.4，其余未列安全设置仍待定 |
 | `staff_me.help_feedback` | 我的／帮助与反馈，简短操作说明及使用反馈文字必填截图选填，服务端真实门店提交人时间，成功提示交平台查看处理 |
 | `staff_me.submit_help_feedback` | 提交本次产品使用反馈，身份资源及正文校验／幂等，失败保留输入，不造投诉／消息／工单进度 |
 | `staff_me.logout` | 退出登录 |
