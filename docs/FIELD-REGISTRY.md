@@ -192,6 +192,8 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 
 ## 5. 店员归属、邀请与当前已确认导航（STAFF）
 
+入职邀请02§6.0／04§3.0.4.3已确认12小时有效及无老板撤销：CORE013为该邀请首次服务端成功创建时间，STAFF006保存原截止，CORE010保证创建重试返回原邀请和原时限。005～010不改永久号／逻辑名／状态标记／类型，007历史已撤销值仅兼容读取不再新建；不注册撤销按钮／接口／同义字段，不从F-INV顾客活动码或F-EVD佐证卡复制生命周期。仍728字段；未过期仍须原门店／身份资格，资格失败不假标过期或加入成功，不新增到期通知。
+
 > `04-staff-miniapp.md` 已确认范围以该文档confirmed_scope及已确认子节为准，含§3.0导航、洗美分组、客户页结构、“我的”、老板／员工管理、统一店员资格及记录可见性，§3.0.6～3.0.9的门店资料／营业设置／项目分类与生命周期／全部到店整单调价及免单，§3.2工作台分组顺序及§6.1、§6.5已确认职责。护理执行流程、其他菜单和未决业务仍按对应DEC收口；本注册表不授予业务权限。
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
@@ -200,9 +202,9 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 | F-STAFF-002 | `staff_store_assignment_id` | C | ID | 店员可工作门店关系记录标识；删除终止旧关系并保留历史，回原店返聘建立本轮有效关系并仍关联原staff_id；V1同一员工同时至多一家有效门店。 |
 | F-STAFF-003 | `staff_store_id` | C | ID | Staff 当前唯一可工作 Store。 |
 | F-STAFF-004 | `staff_status` | C | Enum | active / disabled / removed，分别为有效在职／停用／移出本店名单；后两者均禁止本店访问并失效会话，历史身份及业务引用保留。disabled可由老板恢复；removed回本店须新邀请被有效接受，沿用原staff_id进入active并追加任职关系及审计。变为disabled／removed不自动清空或转移原订单F-ORD-038；有效人员可继续原业务及收退款、后续实款归原员工，老板可查历史并明确更正。新归属选择仅active，老板纠正本店历史订单可选原历史身份，见04§3.0.10。 |
-| F-STAFF-005 | `staff_invitation_id` | S | ID | 店员邀请记录。 |
-| F-STAFF-006 | `staff_invitation_expires_at` | C | Datetime | 邀请失效时间。 |
-| F-STAFF-007 | `staff_invitation_status` | C | Enum | 邀请有效 / 已使用 / 已撤销 / 已过期等状态。 |
+| F-STAFF-005 | `staff_invitation_id` | S | ID | 店员入职邀请记录，区别于顾客活动邀请码及佐证邀请；12小时／无撤销按02§6.0，原身份及使用历史保留。 |
+| F-STAFF-006 | `staff_invitation_expires_at` | C | Datetime | 自原邀请服务端成功创建时间CORE013起连续12小时的截止；服务端当前时间达到或超过即拒绝确认加入，打开分享认证或同次重试不重置。 |
+| F-STAFF-007 | `staff_invitation_status` | C | Enum | 入职邀请有效／已使用／已过期等真实状态；不提供老板撤销或生成新已撤销操作。历史已撤销值如有仅只读保留、不得使用或重新启用；未使用邀请只按原12小时截止过期。到期不终止已建立任职。 |
 | F-STAFF-008 | `staff_invitation_created_by` | C | ID | 创建邀请的老板/授权主体。 |
 | F-STAFF-009 | `staff_invitation_used_by` | C | ID | 实际使用邀请加入的用户。 |
 | F-STAFF-010 | `staff_invitation_used_at` | C | Datetime | 邀请使用时间。 |
@@ -1411,7 +1413,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 | `staff_owner.disable_service_item` | 服务项目管理内／停用项目，仅本店老板，不物理删除或自动取消旧预约 |
 | `staff_owner.restore_service_item` | 服务项目管理内／恢复已停用服务项目，仅本店老板，沿用原service_item_id和历史 |
 | `staff_owner.employee_list` | 员工管理／员工列表 |
-| `staff_owner.invite_employee` | 员工管理／邀请员工 |
+| `staff_owner.invite_employee` | 员工管理／邀请员工；入职邀请12小时有效，无老板撤销按钮／接口，完整规则见02§6.0／04§3.0.4.3 |
 | `staff_owner.disable_employee` | 员工列表内／停用员工 |
 | `staff_owner.remove_employee` | 员工列表内／删除员工，逻辑移出本店名单 |
 | `staff_owner.restore_employee` | 员工列表内／恢复员工，适用于被停用记录 |
