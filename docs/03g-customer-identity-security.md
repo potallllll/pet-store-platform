@@ -3,7 +3,7 @@
 > status: mixed
 > status_scope: full_document
 > confirmed_scope: existing_identity_rules_global_unique_verified_mobile_account_rebind_or_change_mobile_and_customer_authorized_current_store_history_import
-> pending_scope: shared_history_import_detailed_mapping_source_amendment_refresh_authorization_withdrawal_and_legacy_identity_mapping_contracts
+> pending_scope: shared_history_import_detailed_mapping_source_amendment_refresh_support_handled_authorization_disposition_and_legacy_identity_mapping_contracts
 > change_policy: record_required
 > development_readiness: partial
 > blocked_by: [DEC-STAFF-09]
@@ -137,7 +137,7 @@
 
 > status: mixed
 > confirmed_scope: verified_account_unique_customer_confirms_current_store_import_of_profiles_and_customer_visible_service_history_only
-> pending_scope: exact_field_and_source_target_mapping_source_updates_after_import_withdrawal_of_import_authorization_and_legacy_identity_resolution_contracts
+> pending_scope: exact_field_and_source_target_mapping_source_updates_after_import_support_handled_authorization_disposition_and_legacy_identity_resolution_contracts
 > change_policy: record_required
 > development_readiness: partial
 > blocked_by: [DEC-STAFF-09]
@@ -151,13 +151,16 @@
 > history_import_merchant_self_authorization: excluded
 > history_import_financial_effects: excluded
 > history_import_risk_quota_reuse: excluded
+> history_import_customer_self_revoke: excluded
+> history_import_authorization_change_channel: contact_customer_service
 
 - 当前手机号完成认证且关联稳定User后，只有对本人实际有权读取的其他门店记录，才提示“其他门店有您的服务记录，是否一键导入本店？”。明确展示目标门店，顾客本人选择确认后，授权本次允许的顾客／宠物档案与服务护理历史导入当前Merchant；不因手机号匹配、登录、查看提示或门店点击而自动导入，不将授权给当前店扩大为所有门店可查。
 - 全平台同手机号一个登录账号；各门店仍通过自身Customer关系记录资金及交易。其他门店订单金额、钱包、充值、商户券／活动资产和内部备注始终不导入、不互通。服务历史只包含原业务允许顾客本人看的内容；终止服务不可向顾客展示的过程／照片、原件及审计不能借导入绕过，也不直接返回原完整Customer／Pet实体。
 - 导入以原User、原服务记录与来源门店为依据，保留真实来源／原发生时间，不按昵称或手填电话猜同人同宠。新建或复用目标店的Customer关系不得复制／合并来源钱包；旧档案及历史保留，旧重复关系／宠物映射未明确时不得猜配。
 - 成功导入只形成目标店有授权的历史视图／资料关联，不生成本店新服务完成、消费订单、实收、退款、充值、积分或员工业绩，不把其他门店服务当本店已履约。重复确认／请求重试沿原导入请求恢复结果，同一源记录不重复导入或复制原业务事实，记录本人、目标店、授权和导入范围及服务端时间。
 - 本流程与03h的“服务履约风险记录”独立：风险记录仍按双方门店授权、顾客分项同意、每月3次等现行规则；本次导入不充当风险共享同意、解除身份冲突或重置额度，也不将该限额套到普通历史导入。
-- 授权撤回后的已导入资料处置、来源记录修改后的更新方式、源宠物到目标档案映射、字段白名单／媒体访问及历史冲突迁移须按DEC-STAFF-09在实现前明确；本轮不擅定永久全量同步或跨店修改源记录权限。拒绝、未认证或失败不导入，失败不假成功／建立本店新成交。
+- 顾客不提供自行撤销本次跨店资料导入授权的按钮、接口或其他自助入口；需要变更／撤销授权须本人联系客服，由客服受理处理。联系客服不自动代表已经撤销；具体处理资格、处理结果和已导入资料处置按DEC-STAFF-09在平台设计中明确，不擅定永久共享或自动删除历史。此限制仅针对本节普通档案／历史导入，03h服务履约风险共享原有分项授权及撤回规则独立保持。
+- 来源记录修改后的更新方式、源宠物到目标档案映射、字段白名单／媒体访问及历史冲突迁移仍按DEC-STAFF-09在实现前明确。拒绝、未认证或失败不导入，失败不假成功／建立本店新成交。
 
 F-CSH-001 customer_history_import_id固定导入业务标识；F-CSH-002 source_service_record_ids记录本次授权导入的原服务引用集合。唯一目标归属复用CORE002 merchant_id，当前店CORE003、本人CORE001、目标Customer CORE004及CORE010防重／CORE013成功创建时间／原AUD审计；完整映射先注册后实现，不复用历史订单Excel导入F-IMP或风险授权字段。
 

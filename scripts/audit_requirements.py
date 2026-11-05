@@ -133,13 +133,15 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
             add(results, "error", "registry.retired_field", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must remain registered as D (retired)")
 
     # Keep the confirmed batch rules distinct from remaining implementation contracts.
-    for field_id, required_status in {"F-RWD-027": "C", "F-CSH-001": "S", "F-CSH-002": "S"}.items():
+    for field_id, required_status in {"F-RWD-025": "D", "F-RWD-027": "C", "F-RWD-028": "D", "F-RWD-029": "S", "F-RWD-030": "S", "F-CSH-001": "S", "F-CSH-002": "S"}.items():
         row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
         if len(row.split("|")) < 5 or row.split("|")[3].strip() != required_status:
             add(results, "error", "batch.registry_status", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must be {required_status}")
     identity = current_text["docs/03g-customer-identity-security.md"]
     for required in ("history_import_confirmer: authenticated_customer_self",
-                     "verified_mobile_account_uniqueness: one_active_platform_account"):
+                     "verified_mobile_account_uniqueness: one_active_platform_account",
+                     "history_import_customer_self_revoke: excluded",
+                     "history_import_authorization_change_channel: contact_customer_service"):
         if required not in identity:
             add(results, "error", "identity.batch_rules", Path("docs/03g-customer-identity-security.md"), f"missing {required}")
     risk = current_text["docs/03h-customer-risk-feedback.md"]
@@ -148,9 +150,21 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     reward_text = current_text["docs/03k-customer-loyalty-points.md"]
     for required in ("reward_pickup_validity_hours_after_shipment: 720",
                      "reward_pickup_expiry_anchor: warehouse_shipped_at",
-                     "reward_unclaimed_expiry_action: automatic_cancel_without_points_return"):
+                     "reward_unclaimed_expiry_action: default_mark_received_without_points_return"):
         if required not in reward_text:
             add(results, "error", "reward.pickup_expiry", Path("docs/03k-customer-loyalty-points.md"), f"missing {required}")
+
+    # Newly confirmed simplifications must not reopen retired flows.
+    for rel, required in {
+        "docs/03c-customer-wallet.md": ("coupon_return_mode: excluded",),
+        "docs/03d-customer-orders.md": ("payment_special_correction_flows: excluded",),
+        "docs/03h-customer-risk-feedback.md": ("cross_store_risk_submission_review: customer_service_required",),
+        "docs/04-staff-miniapp.md": ("boarding_settlement_time_confirmation: explicit_separate_check_in_and_checkout_block",
+                                     "boarding_settlement_time_correction: allowed_before_payment_or_waiver_recalculate_preserve_history"),
+    }.items():
+        for token in required:
+            if token not in current_text[rel]:
+                add(results, "error", "simplified.confirmed_rules", Path(rel), f"missing {token}")
 
     # Check the confirmed subsection, not the staff document's still-mixed overall status.
     staff_path = Path("docs/04-staff-miniapp.md")
@@ -270,18 +284,21 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     reward_meta = dict(META_RE.findall(reward_section)) if "## 8. " in rewards else {}
     for key, expected in {
         "status": "confirmed",
-        "status_scope": "physical_reward_shipment_and_manual_pickup_without_receipt_or_credential",
+        "status_scope": "physical_reward_shipment_actual_or_timeout_default_pickup_without_cancellation_receipt_or_credential",
         "reward_store_receipt_confirmation": "retired",
         "reward_store_receipt_todo": "excluded",
         "reward_pickup_credential": "retired",
         "reward_pickup_scan_or_code_required": "false",
-        "reward_pickup_confirmation": "manual_after_actual_handover",
+        "reward_pickup_confirmation": "manual_actual_handover_or_timeout_default",
         "reward_pickup_roles": "[merchant_owner, active_store_staff]",
         "reward_pickup_store_scope": "selected_pickup_store_only",
         "reward_pickup_start_state": "warehouse_shipped_and_not_canceled",
         "reward_arrival_auto_inference": "excluded",
         "reward_arrival_auto_notification": "excluded",
-        "reward_fulfillment_states": "[待总仓发货, 已发往门店, 已领取, 已取消]",
+        "reward_manual_cancellation": "excluded_before_and_after_shipment",
+        "reward_disabled_store_reassignment": "excluded",
+        "reward_disabled_store_contact": "customer_service_phone_call",
+        "reward_fulfillment_states": "[待总仓发货, 已发往门店, 已领取]",
     }.items():
         if reward_meta.get(key) != expected:
             add(results, "error", "reward.simplified_pickup", reward_path, f"section 8 {key} must be {expected}")
@@ -669,7 +686,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "boarding_segmented_pricing": "excluded",
         "boarding_store_price_change_effect": "no_automatic_change_to_current_stay",
         "boarding_zero_daily_rate": "excluded_use_final_zero_explicit_waiver",
-        "boarding_departed_unpaid_adjustment": "final_receivable_only_preserve_rate_nights_and_checkout",
+        "boarding_departed_unpaid_adjustment": "settlement_time_reconfirmation_recalculates_nights_other_adjustments_final_receivable_only",
         "boarding_settled_direct_edit": "forbidden_paid_or_waived",
         "boarding_rate_correction_version": "reuse_order_amount_version",
         "boarding_pet_base_amount": "own_daily_rate_times_own_billable_nights",

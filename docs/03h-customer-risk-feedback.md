@@ -754,6 +754,19 @@ AI 可以用于内容分类、摘要、重复检测和风险提示，但 V1.0 �
 - 不把未核验主张写成经核验事实，不省略已知处理结果，不把顾客投诉行为本身当成负面履约记录。
 - 授权撤回、标识冲突、服务履约记录申诉及保存期限按§10.1.1～10.1.4执行。宠物护理注意事项的具体接收门店、严重事件保留和宠物信息纠错仍须由DEC-PETSAFETY-01细化；服务履约记录的12个月／3年规则不得擅自套用到宠物护理分项。
 
+### 10.4 跨店风险提交必须经客服审核
+
+> status: confirmed
+> status_scope: customer_service_review_gate_for_customer_performance_and_pet_safety_cross_store_submissions
+> confirmed_by: user
+> confirmed_on: 2026-11-05
+> cross_store_risk_submission_review: customer_service_required
+> cross_store_risk_visibility_before_approval: excluded
+
+所有拟进入跨店共享的服务履约风险记录和宠物行为／服务安全记录，提交后必须经平台客服审核，通过后才可按各自授权及可见范围进入跨店结果。门店提交、保存本店记录或自行确认不等于客服审核通过；未审核、审核不通过的提交不得跨店展示，也不能凭本店老板身份绕过审核。审核记录保留提交依据、审核结果、真实处理人和时间；客服审核不代替主人分项同意、双方门店授权、有效期限或现有申诉规则，不把公开消费争议的审核流程直接套作本节所有字段。
+
+客服承担平台审核职责；具体如何映射现有平台角色／权限及提交人员、材料、纠错／撤回页面等剩余契约继续按DEC-RISK-01、DEC-PETSAFETY-01及阶段05／08收口，不自行新增独立客服系统角色或给普通店员平台审核权限。
+
 ## 11. 当前待决项
 
 - `DEC-COMPLAINT-07`：2 个月集中反馈提示有效期内再次触发时，是否重新计算有效期。
