@@ -107,6 +107,18 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     current_files = [path for path in (root / "docs").rglob("*.md") if "history" not in path.parts]
     current_text = {path.relative_to(root).as_posix(): path.read_text(encoding="utf-8") for path in current_files}
 
+    for rel, required in {
+        "docs/03-customer-miniapp.md": "顶部唯一门店栏 → 当前服务",
+        "docs/03i-customer-screen-blueprint.md": "附近小区的人都在买",
+        "docs/10a-customer-ui-design-system.md": "附近小区的人都在买",
+        "docs/10b-customer-homepage-ui-spec.md": "首页正文起点与门店信息去重",
+        "docs/10c-customer-launch-cover-ad-ui-spec.md": "顶部唯一门店栏 → 当前服务",
+    }.items():
+        if required not in current_text[rel]:
+            add(results, "error", "home.latest_layout", Path(rel), f"missing current homepage rule: {required}")
+    if "| C-HOME-03 | 有服务首屏与顶部唯一门店栏 |" not in current_text["docs/03i-customer-screen-blueprint.md"]:
+        add(results, "error", "home.acceptance_name", Path("docs/03i-customer-screen-blueprint.md"), "C-HOME-03 must use the unique store header rule")
+
     appointment = current_text["docs/03a-customer-appointment.md"]
     if metadata(appointment).get("status") != "confirmed" or "DEC-APPT-01" in metadata(appointment).get("blocked_by", ""):
         add(results, "error", "appointment.decision", Path("docs/03a-customer-appointment.md"), "DEC-APPT-01 must remain confirmed and unblocked")
@@ -201,8 +213,14 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     goods_section = staff.split("### 3.8 ", 1)[-1].split("\n### 3.9 ", 1)[0].split("\n## 4.", 1)[0]
     goods_meta = dict(META_RE.findall(goods_section)) if "### 3.8 " in staff else {}
     workbench_section = staff.split("### 3.2 ", 1)[-1].split("\n### 3.3 ", 1)[0]
-    if dict(META_RE.findall(workbench_section)).get("active_services_order") != "[今日洗美, 在住寄养, 其他服务]":
+    workbench_meta = dict(META_RE.findall(workbench_section))
+    if workbench_meta.get("active_services_order") != "[今日洗美, 在住寄养, 其他服务]":
         add(results, "error", "goods.workbench_no_execution", staff_path, "workbench must not restore the retired snack execution group")
+    if workbench_meta.get("quick_actions_order") != "[查客户／宠物, 临时开单, 寄养入住, 会员开单]":
+        add(results, "error", "staff.latest_order_entries", staff_path, "workbench quick actions must use temporary/member ordering in the confirmed order")
+    wash_page_section = staff.split("#### 3.0.1 ", 1)[-1].split("\n#### 3.0.2 ", 1)[0]
+    if dict(META_RE.findall(wash_page_section)).get("wash_groom_create_entries") != "[临时开单, 会员开单]":
+        add(results, "error", "staff.wash_order_entries", staff_path, "wash page must expose temporary/member ordering only")
     for key, expected in {
         "status": "confirmed",
         "status_scope": "product_request_handling_including_boarding_snack_sales_only",
@@ -486,6 +504,10 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "service_state_values": "[not_started, in_progress, completed, cancelled, interrupted]",
         "pre_service_check_required": "true",
         "service_photo_required": "false",
+        "service_photo_positions": "[skin, ears, eyes, mouth, nails, coat, full_body]",
+        "service_photo_stages": "[before, after]",
+        "service_photo_slot_count": "14",
+        "service_photo_partial_save": "allowed",
         "service_result_publish": "on_service_completion",
         "multi_pet_order_model": "one_customer_one_order_independent_pet_service_records",
         "multi_pet_settlement": "together_no_per_pet_split_or_installments",
@@ -527,6 +549,9 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "partial_refund_allocation": "confirmed",
         "partial_refund_channel_allocation": "manual_original_channel_amounts",
         "wallet_partial_refund_order": "principal_remaining_then_bonus_remaining",
+        "service_photo_positions": "[skin, ears, eyes, mouth, nails, coat, full_body]",
+        "service_photo_stages": "[before, after]",
+        "service_photo_required": "false",
     }.items():
         if detail_meta.get(key) != expected:
             add(results, "error", "wash_groom.confirmed_details", staff_path, f"section 4.4 {key} must be {expected}")
@@ -542,12 +567,24 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         if allocation_meta.get(key) != expected:
             add(results, "error", "refund.allocation_rules", staff_path, f"section 4.4.1 {key} must be {expected}")
 
+    entry = staff.split("### 4.1 ", 1)[-1].split("\n### 4.1.1 ", 1)[0]
+    entry_meta = dict(META_RE.findall(entry)) if "### 4.1 " in staff else {}
+    for key, expected in {
+        "service_entry_modes": "[temporary_order, member_order]",
+        "temporary_order_customer_input": "mobile_or_wechat_at_least_one",
+        "member_order_customer_input": "select_existing_current_store_customer",
+        "member_order_manual_mobile_or_wechat": "excluded",
+        "service_entry_shared_order_model": "true",
+    }.items():
+        if entry_meta.get(key) != expected:
+            add(results, "error", "staff.order_entry_modes", staff_path, f"section 4.1 {key} must be {expected}")
+
     care = staff.split("### 4.5 ", 1)[-1].split("\n### 4.6 ", 1)[0].split("\n## 5.", 1)[0]
     care_meta = dict(META_RE.findall(care)) if "### 4.5 " in staff else {}
     for key, expected in {
         "status": "confirmed",
         "status_scope": "care_twelve_item_workflow_only",
-        "care_create_entry": "工作台/到店开单/护理",
+        "care_create_entry": "工作台/临时开单或会员开单/护理",
         "care_record_entry": "业务/订单与收银",
         "care_workbench_service_group": "服务中/其他服务",
         "care_workbench_exception_group": "异常与临期/其他异常",

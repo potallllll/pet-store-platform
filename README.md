@@ -11,8 +11,11 @@
 - 当前阶段、状态例外与待决项：[docs/REQUIREMENTS-STATUS.md](docs/REQUIREMENTS-STATUS.md)
 - DeepSeek执行标准与提示词：[执行标准](docs/execution/deepseek-execution-standard.md) · [可复制提示词](docs/execution/deepseek-start-prompt.md)
 - 店员端需求分析：[讨论稿](docs/04-staff-miniapp.md)
+- 双端交互验收原型：[prototype/pawdays-full-preview](prototype/pawdays-full-preview/README.md)
 
 具体业务规则只以 `docs/README.md` 指向的正式模块文档为准。本文件不复制当前阶段、业务结论或冲突处理规则，避免入口摘要与正式文档发生漂移。
+
+`prototype/` 只用于交互与页面验收；原型可运行不等于小程序后端、微信能力、权限或财务规则已经完成。
 
 ## 计划组成
 
