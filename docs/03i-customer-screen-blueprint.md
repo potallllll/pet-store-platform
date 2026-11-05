@@ -1,8 +1,8 @@
 # 03I 客户端「页面蓝图与关键交互验收场景」
 
 > status: mixed
-> confirmed_scope: self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_staff_business_statistics_and_performance_visibility_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_current_page_map_confirmed_care_twelve_boarding_sixteen_pricing_checkout_departure_unpaid_hold_and_other_confirmed_interactions
-> pending_scope: risk_visual_unresolved_03h_remaining_care_edges_interruption_label_remaining_mixed_business_checkout_ai_version_contract_partial_refund_allocation_remaining_ledger_corrections_and_remaining_boarding_rate_changes_boarding_followup_reminders_special_handover_and_corrections
+> confirmed_scope: confirmed_partial_refund_manual_original_channel_amounts_and_wallet_principal_remaining_first_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_staff_business_statistics_and_performance_visibility_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_current_page_map_confirmed_care_twelve_boarding_sixteen_pricing_checkout_departure_unpaid_hold_and_other_confirmed_interactions
+> pending_scope: risk_visual_unresolved_03h_remaining_care_edges_interruption_label_remaining_mixed_business_checkout_ai_version_contract_remaining_ledger_corrections_and_remaining_boarding_rate_changes_boarding_followup_reminders_special_handover_and_corrections
 > status_scope: full_document
 > retired_acceptance_ids: [C-BOARDING-03, C-BOARDING-04, C-BOARDING-05]
 > change_policy: record_required
@@ -917,6 +917,8 @@ C-BOARDING-03／04／05为已退役的独立执行验收编号，保留编号供
 
 ---
 
+- C-ORDER-01补验03c§5.1部分退款：原钱包60（本金40＋赠送20）／微信40，第一次退30可填钱包20＋原微信10，钱包恢复本金20；第二次钱包退30恢复本金20＋赠送10，之后各原剩余额只钱包赠送10／微信30。覆盖全部消费业务引用同算法、不同原渠道金额自主填写而不按比例、不加新渠道／账户；金额合计不等于本次总额／负数／单渠道或分项超剩额／未知原扣款拒绝，当前余额或新充值不改变原可退额度。老板与有效员工均可无审批、原因必填，草稿无真实结果、外部线下实际退款与钱包实际入账分开、真实日期归原业绩员工；同请求重试一次结果、不同请求并发不超退、失败无半流水。原实付／归属及服务状态不被退款重写，部分退款不退券，不自动回库或替代充值余额修改；原C-ID不变，文档不是功能passed证据。
+
 ### 14.1 唯一验收 ID 索引
 
 本表是客户端验收编号的唯一语义定义。各详细文档的标题和表格均为本表的引用 / 场景补充，不得自行给既有编号改含义；新增场景先更新本表。组合场景须记录其各子场景结果，不能用一次总通过掩盖子场景未执行。业务规则仍由来源文档负责，本索引不另定权限或金额政策。
@@ -1017,7 +1019,7 @@ C-BOARDING-03／04／05为已退役的独立执行验收编号，保留编号供
 
 - C-APPT-01增加04§3.7／03a§11.7接单子场景：门店拒绝和建议改期分别验证原因省略／空值／空字符串、快捷项未选及“其他”无补充文字均可合法提交；有填只展示真实内容，无填不补理由，原挂单／退款／调价原因仍必填。明天到店但当前待门店处理的申请进入工作台，待顾客接受新时间不计入；有效／超时／已取消按原状态分类，业务三组及日期／类型筛选不新增状态，期望到店相同按提交先后排序，原预约承诺不被改期显示或排序覆盖。内部实际处理人／时间正确、客户不见员工个人联系方式，老板／有效员工均可处理、越店或失效身份拒绝。有实际有权查看提醒，展示／关闭不算阅读，明确已阅读后仍须合法确认；无提醒不造阅读记录。共享提醒暂不可用则统一提示可继续，无需门店核验资料或人工核对即可继续合法预约且不可用记录保留，不生成无风险／查询成功；授权撤回／额度耗尽／身份冲突仍不得返回共享数据、合并身份或重置次数，不暴露可枚举差异。本店身份／营业关闭／6小时／状态／版本失败仍拒绝，重试／并发不重复确认／通知／额度，阅读和选择继续不创建服务／入住／收款。新增顾客保存后提醒及新老顾客的同次去重／变化重读／新业务再提醒按04§6.5.1补验，不将本项记为已执行功能验收。
 
-- C-ORDER-01与C-BOARDING-01补验04§4.6：护理完成／中止且实际费用明确后可手动挂单，缺原因拒绝，不因选填联系备注为空阻止；未结束不得预收、不扩展商品。跨天记录持续在本店业务挂单列表，历史欠款不每日重放工作台，默认按挂单时间由早到晚，类型及未解除／已解除筛选、本店联系方式／宠物昵称／订单号搜索正确；从未挂单订单不混入已解除历史，搜索不越店，寄养只原批且余宠不变。门店自行联系，不自动生成催款短信／微信、费用或跨天取消，备注及实际联系时间不向顾客／跨店公开。原批核对全额实际收款、最多两种方式，内部本金／赠送算一种，不足额不标整批已付，不加分期／部分还款。误挂撤销回待结算，原应收／订单／真实服务及离店状态不变，挂单和撤销历史可追溯，不能变成已付／免单／无欠款；收款／免单先成功的旧撤销拒绝财务回退，撤销先成功后仍可正常从原待结算收款。并发／重试不重复实收、扣余额、解除或收入；已结算改账、退款分配等未决规则继续阻塞，本条不是功能已通过证据。
+- C-ORDER-01与C-BOARDING-01补验04§4.6：护理完成／中止且实际费用明确后可手动挂单，缺原因拒绝，不因选填联系备注为空阻止；未结束不得预收、不扩展商品。跨天记录持续在本店业务挂单列表，历史欠款不每日重放工作台，默认按挂单时间由早到晚，类型及未解除／已解除筛选、本店联系方式／宠物昵称／订单号搜索正确；从未挂单订单不混入已解除历史，搜索不越店，寄养只原批且余宠不变。门店自行联系，不自动生成催款短信／微信、费用或跨天取消，备注及实际联系时间不向顾客／跨店公开。原批核对全额实际收款、最多两种方式，内部本金／赠送算一种，不足额不标整批已付，不加分期／部分还款。误挂撤销回待结算，原应收／订单／真实服务及离店状态不变，挂单和撤销历史可追溯，不能变成已付／免单／无欠款；收款／免单先成功的旧撤销拒绝财务回退，撤销先成功后仍可正常从原待结算收款。并发／重试不重复实收、扣余额、解除或收入；部分退款分配按03c§5.1已定，已结算改账等其余未决规则继续阻塞，本条不是功能已通过证据。
 
 - C-BOARDING-01增加04§5.4健康／特殊照护／异常子场景：无疫苗资料或照片仍可按真实核对和门店决定办理，未提供／待核实不默认为已完成疫苗，已提供也不等于医学核实通过；缺必需入住检查仍拒绝确认。代喂药仅在特殊照护，主人文字要求、门店接收与实际执行分开，长期用药有值／未确认不默认接收或已经执行，系统／AI不得生成修改方案；无独立喂药菜单／订单／第四个日常快捷动作。逐宠实际内容／时间／执行人留痕，补录人／时间分离，无图可保存，重复请求不生成重复事件／动态，不跨宠套用或造销售／库存／余额变动。异常须真实时间／观察／处理记录，照片选填、不强填诊断；已联系／暂未联系上和主人明确决定如实记录，未联系上不生同意，电话／通知成功／已读／保存沟通不关闭，仍须实际处理结果与明确标记。内部沟通／健康资料不因勾选通知进入顾客或跨店响应，顾客可见动态关闭提醒仍可查看。异常提前接走按真实离店停计，不因异常自动免单／退款／结束或影响余宠；医疗处置／紧急升级等剩余DEC继续阻塞，不把本项记成已执行功能验收。
 
@@ -1037,7 +1039,7 @@ C-BOARDING-03／04／05为已退役的独立执行验收编号，保留编号供
 
 - C-ORDER-01补验04§4.4洗美中止：空说明／无照片／无新增过程可保存中止，不要求完成前复检或写completed_at伪装完成；顾客页面及详情接口均无本次中止过程、照片／检查时间轴、普通完成结果或AI任务入口，不用旧结果冒充本次完成。站内／微信／短信不产生中止通知、发送任务或假成功；原合法消息保留，独立收款等真实事件仍按原规则。门店已发生检查／素材及原审计留存，开始前检查和必要异常决定不因此免除；逐宠独立、不影响余宠，权限／版本／重试校验保持。中止说明复用F-AUD-009选填；收费仍按实际应收及独立收费原因，不自动收退款。精确中止状态文案及寄养等未列边界仍待确认；洗美／护理取消中止后均按04§4.4重新开单，不恢复原服务，不改原ID／交付结果。
 
-- 洗美逐项验：六项未检查拒绝开始、异常／无法检查记录主人真实决定、完成前复检、无图完成／普通结果立即可见、逐宠状态／整单金额、正常服务不预收／中止明确金额例外、全未开始取消无收费／无免单成交。未结算重开空原因可成功、已结算拒绝，旧结果与新版通知／已读不串、AI权益不重置。未付不自动挂单、手动挂单空原因拒绝、顾客内部备注隐藏、记清收款／免单自动解除；改0保存不结算、明确免单后才waived。全部消费最多两种支付（余额内部分账算一种）；消费退款老板／有效员工均可、无老板审批，消费先扣本金再扣赠送，退款按原付款渠道／原账户退回，未实收／超剩余额拒绝，草稿不算已退。即时／晚记账均仅一次更新余额／流水／适用库存，退款不自动回库、真实退货才联动，余额不足不能负数；未记账不伪造客户端成功，不产生外部支付接口或回调。中止标签／混合业务／部分退款分配及其余更正等未决子项保持blocked。
+- 洗美逐项验：六项未检查拒绝开始、异常／无法检查记录主人真实决定、完成前复检、无图完成／普通结果立即可见、逐宠状态／整单金额、正常服务不预收／中止明确金额例外、全未开始取消无收费／无免单成交。未结算重开空原因可成功、已结算拒绝，旧结果与新版通知／已读不串、AI权益不重置。未付不自动挂单、手动挂单空原因拒绝、顾客内部备注隐藏、记清收款／免单自动解除；改0保存不结算、明确免单后才waived。全部消费最多两种支付（余额内部分账算一种）；消费退款老板／有效员工均可、无老板审批，消费先扣本金再扣赠送，退款按原付款渠道／原账户退回，未实收／超剩余额拒绝，草稿不算已退。即时／晚记账均仅一次更新余额／流水／适用库存，退款不自动回库、真实退货才联动，余额不足不能负数；未记账不伪造客户端成功，不产生外部支付接口或回调。部分退款按03c§5.1补验如下；中止标签／混合业务及其余更正等未决子项保持blocked。
 - 启动覆盖分享 / 通知冷启动、后台恢复、广告无填充 / 失败、登录返回、目标无效及跨门店权限。
 - 加餐覆盖普通商品成交、零元明确免单及一次出库、结算不自动生成照护、手动喂食无需先收款及免单后不被未付款超时取消；积分覆盖最后一份库存并发、取消与核销竞态及补偿处理中。
 - C-ORDER-01补验04§3.0.10归属更正：结算前后员工仅能转出服务端当前038为本人的订单，老板可更正本店全部；空原因、跨店、非本人／已转出后反悔直接API、只靠原开单人／收款人或可读原详情均不能改他人归属。最小目标员工列表不泄露目标业绩／管理资料，初次默认／商品确认选择不额外强制更正原因。已结算用独立动作，修改038后整单已发生实收／退款及后续退款按原实际日期归新员工，实收依据实际付款（报价100、改价实际收80只计80；未付／免单无实收），不变全店各期合计、资金／金额／服务或经办身份。旧／新归属、人／时间／原因留存，参与员工仅本人调入调出摘要，调出不重复当前业绩或授予他人当前详情，原审计仍受限。并发A转B／A转C仅一成功，最新038及032版本控制、成功推进版本，旧成功请求重试返原有权结果不再转移／重算，退款并发不得把实收与退款拆归两人；统计读一致归属快照。历史缺归属回填继续待决，失效员工接续按下项已定，原ID／追踪不改，不把文档审计当已执行功能验收。

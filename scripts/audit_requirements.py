@@ -460,7 +460,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         if wash_meta.get(key) != expected:
             add(results, "error", "wash_groom.confirmed_flow", staff_path, f"section 4.3 {key} must be {expected}")
 
-    details = staff.split("### 4.4 ", 1)[-1].split("\n### 4.5 ", 1)[0].split("\n## 5.", 1)[0]
+    details = staff.split("### 4.4 ", 1)[-1].split("\n### 4.4.1 ", 1)[0].split("\n### 4.5 ", 1)[0].split("\n## 5.", 1)[0]
     detail_meta = dict(META_RE.findall(details)) if "### 4.4 " in staff else {}
     for key, expected in {
         "reopen_allowed": "unsettled_order_only",
@@ -487,10 +487,23 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "refund_auto_restock": "false",
         "wallet_deduction_order": "principal_then_bonus",
         "wallet_refund_component_rule": "restore_original_components",
-        "partial_refund_allocation": "pending",
+        "partial_refund_allocation": "confirmed",
+        "partial_refund_channel_allocation": "manual_original_channel_amounts",
+        "wallet_partial_refund_order": "principal_remaining_then_bonus_remaining",
     }.items():
         if detail_meta.get(key) != expected:
             add(results, "error", "wash_groom.confirmed_details", staff_path, f"section 4.4 {key} must be {expected}")
+
+    allocation = staff.split("### 4.4.1 ", 1)[-1].split("\n### 4.5 ", 1)[0]
+    allocation_meta = dict(META_RE.findall(allocation)) if "### 4.4.1 " in staff else {}
+    for key, expected in {
+        "status": "confirmed",
+        "canonical_rule_source": "03c_section_5_1",
+        "partial_refund_channel_allocation": "manual_original_channel_amounts",
+        "wallet_partial_refund_order": "principal_remaining_then_bonus_remaining",
+    }.items():
+        if allocation_meta.get(key) != expected:
+            add(results, "error", "refund.allocation_rules", staff_path, f"section 4.4.1 {key} must be {expected}")
 
     care = staff.split("### 4.5 ", 1)[-1].split("\n### 4.6 ", 1)[0].split("\n## 5.", 1)[0]
     care_meta = dict(META_RE.findall(care)) if "### 4.5 " in staff else {}
@@ -757,7 +770,9 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         "refund_auto_restock": "false",
         "wallet_deduction_order": "principal_then_bonus",
         "wallet_refund_component_rule": "restore_original_components",
-        "partial_refund_allocation": "pending",
+        "partial_refund_allocation": "confirmed",
+        "partial_refund_channel_allocation": "manual_original_channel_amounts",
+        "wallet_partial_refund_order": "principal_remaining_then_bonus_remaining",
     }.items():
         if ledger_meta.get(key) != expected:
             add(results, "error", "ledger.confirmed_rules", orders_path, f"section 1.1 {key} must be {expected}")
@@ -765,12 +780,14 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     wallet_path = Path("docs/03c-customer-wallet.md")
     wallet_meta = metadata(current_text[wallet_path.as_posix()])
     if wallet_meta.get("status") != "mixed" or "DEC-STAFF-05" not in wallet_meta.get("blocked_by", ""):
-        add(results, "error", "wallet.allocation_pending", wallet_path, "unresolved partial refund allocation must remain explicit and blocked")
+        add(results, "error", "wallet.remaining_blockers", wallet_path, "remaining wallet ledger correction decisions must remain explicit and blocked")
 
     for key, expected in {
         "wallet_deduction_order": "principal_then_bonus",
         "wallet_refund_component_rule": "restore_original_components",
-        "partial_refund_allocation": "pending",
+        "partial_refund_allocation": "confirmed",
+        "partial_refund_channel_allocation": "manual_original_channel_amounts",
+        "wallet_partial_refund_order": "principal_remaining_then_bonus_remaining",
     }.items():
         if wallet_meta.get(key) != expected:
             add(results, "error", "wallet.confirmed_rules", wallet_path, f"{key} must be {expected}")

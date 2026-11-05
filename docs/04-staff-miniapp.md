@@ -2,7 +2,7 @@
 
 > status: mixed
 > status_scope: staff_requirements
-> confirmed_scope: owner_current_employee_list_three_columns_and_self_only_display_name_edits_without_required_reason_and_automatic_audit_and_staff_invitation_single_use_explicit_join_page_and_required_staff_display_name_and_staff_invitation_twelve_hour_expiry_without_owner_revocation_and_wechat_login_verified_mobile_role_resolution_and_explicit_rebinding_and_minimal_staff_help_instructions_text_feedback_optional_images_and_platform_receipt_and_employee_self_work_records_owner_store_default_four_columns_and_actual_paid_price_and_self_only_wechat_authorization_and_rule_generated_inapp_notifications_sms_unavailable_settings_and_owner_all_store_order_access_and_direct_original_order_attribution_changes_without_handover_workflow_and_owner_system_audit_readonly_log_view_and_reconciliation_via_existing_statistics_and_mobile_tabular_io_excluded_web_future_design_and_no_independent_day_end_close_shift_handover_or_cash_count_and_existing_statistics_and_one_spec_per_product_only_and_simple_inventory_view_edit_and_automatic_audit_without_movement_query_page_and_staff_product_management_list_five_rules_and_product_category_lifecycle_five_rules_and_ai_photo_intake_usage_five_rules_and_original_intake_form_no_review_page_and_inventory_management_correction_and_posted_stock_intake_records_five_rules_and_staff_product_management_six_rules_and_two_intake_routes_current_no_membership_future_ai_gate_and_owner_wechat_distribution_and_no_staff_unused_invite_code_surfaces_and_owner_invite_creation_five_rules_fixed_one_generated_code_and_copy_share_result_and_customer_detail_redeem_delete_without_order_no_mistake_undo_cancel_full_refund_only_returns_and_history_and_all_coupon_and_activity_manual_redemption_and_manual_checkout_price_adjustment_and_single_invite_content_and_one_calendar_month_claimed_entitlement_validity_and_coupon_and_direct_service_product_activity_entitlement_then_instore_use_scope_and_single_use_fixed_72_hour_owner_create_only_invitation_codes_and_direct_customer_gift_coupon_quantity_deletion_and_coupon_management_manual_grant_five_rules_and_unified_customer_balance_edit_with_required_reason_no_separate_recharge_refund_workflow_and_reasoned_recharge_correction_by_owner_staff_and_super_admin_only_reversal_exceptions_and_recharge_record_document_creation_date_query_sort_entries_six_columns_mobile_date_filters_readonly_details_and_manual_recharge_without_packages_optional_bonus_coupon_and_required_gift_note_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_business_statistics_five_rules_employee_self_view_and_explicit_order_performance_attribution_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
+> confirmed_scope: confirmed_partial_refund_manual_original_channel_amounts_and_wallet_principal_remaining_first_and_owner_current_employee_list_three_columns_and_self_only_display_name_edits_without_required_reason_and_automatic_audit_and_staff_invitation_single_use_explicit_join_page_and_required_staff_display_name_and_staff_invitation_twelve_hour_expiry_without_owner_revocation_and_wechat_login_verified_mobile_role_resolution_and_explicit_rebinding_and_minimal_staff_help_instructions_text_feedback_optional_images_and_platform_receipt_and_employee_self_work_records_owner_store_default_four_columns_and_actual_paid_price_and_self_only_wechat_authorization_and_rule_generated_inapp_notifications_sms_unavailable_settings_and_owner_all_store_order_access_and_direct_original_order_attribution_changes_without_handover_workflow_and_owner_system_audit_readonly_log_view_and_reconciliation_via_existing_statistics_and_mobile_tabular_io_excluded_web_future_design_and_no_independent_day_end_close_shift_handover_or_cash_count_and_existing_statistics_and_one_spec_per_product_only_and_simple_inventory_view_edit_and_automatic_audit_without_movement_query_page_and_staff_product_management_list_five_rules_and_product_category_lifecycle_five_rules_and_ai_photo_intake_usage_five_rules_and_original_intake_form_no_review_page_and_inventory_management_correction_and_posted_stock_intake_records_five_rules_and_staff_product_management_six_rules_and_two_intake_routes_current_no_membership_future_ai_gate_and_owner_wechat_distribution_and_no_staff_unused_invite_code_surfaces_and_owner_invite_creation_five_rules_fixed_one_generated_code_and_copy_share_result_and_customer_detail_redeem_delete_without_order_no_mistake_undo_cancel_full_refund_only_returns_and_history_and_all_coupon_and_activity_manual_redemption_and_manual_checkout_price_adjustment_and_single_invite_content_and_one_calendar_month_claimed_entitlement_validity_and_coupon_and_direct_service_product_activity_entitlement_then_instore_use_scope_and_single_use_fixed_72_hour_owner_create_only_invitation_codes_and_direct_customer_gift_coupon_quantity_deletion_and_coupon_management_manual_grant_five_rules_and_unified_customer_balance_edit_with_required_reason_no_separate_recharge_refund_workflow_and_reasoned_recharge_correction_by_owner_staff_and_super_admin_only_reversal_exceptions_and_recharge_record_document_creation_date_query_sort_entries_six_columns_mobile_date_filters_readonly_details_and_manual_recharge_without_packages_optional_bonus_coupon_and_required_gift_note_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_business_statistics_five_rules_employee_self_view_and_explicit_order_performance_attribution_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_global_two_notification_levels_and_sections_3_0_3_2_3_7_3_8_3_9_4_5_4_6_5_1_5_2_5_4_6_1_6_5_and_confirmed_parts_of_4_1_4_3_4_4_except_explicit_remaining_workflow_edges
 > pending_scope: all_other_staff_proposals_and_cross_store_risk_details
 > change_policy: record_required
 > development_readiness: blocked
@@ -571,7 +571,7 @@ F-STAFF-015 staff_display_name仅为当前员工称呼，员工列表／订单�
 - 原价、优惠、调价差额、最终应收分别保存，不改全店项目参考价、SKU售价或其他订单。保存前展示修改前／后金额并明确确认；原因必填，使用上述快捷原因，“其他”须补充文字，记录操作人和服务端时间，重试不重复加差额。
 - 最终应收为0时必须明确执行“确认免单”，仅输入0或显示0不等于已结算。老板和有效员工均可办理，原因／操作人／时间保留；最终应收、实收、收入均为0，payment_status=waived，不伪造现金／微信等付款记录、不扣会员余额。非零应收不能执行免单，已经实际收款的订单不能直接改成免单。
 - 免单成功与真实收款成功同样锁定本单金额，收款／免单／调价等并发只允许一个合法金额版本转换成功。免单不取消订单，不自动完成护理／洗美、交付或投喂；商品订单仍在03e既有成交节点一次正式出库，收入为0。
-- 金额、库存、券、通知与顾客展示按03d§1.1／10.1／12及03e；手动挂单、最多两种支付及无需老板审批的消费退款按§4.4。财务只作线下交易记账，不接外部通道；其他业务结算时序、除§4.5同宠洗美护理加项外的未决混合单、部分退款分配及账本更正仍待DEC-STAFF-05，不由不限额推定全部已就绪。
+- 金额、库存、券、通知与顾客展示按03d§1.1／10.1／12及03e；手动挂单、最多两种支付及无需老板审批的消费退款按§4.4。财务只作线下交易记账，不接外部通道；部分退款按03c§5.1已定；其他业务结算时序、除§4.5同宠洗美护理加项外的未决混合单及账本更正仍待DEC-STAFF-05，不由不限额推定全部已就绪。
 
 #### 3.0.10 经营统计与员工业绩
 
@@ -1322,7 +1322,7 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 7. **交易与实物交接分开**：普通商品不新增独立备货或确认交付步骤，真实收款记账或明确确认免单后按03e完成销售、一次出库及券处理。客户端“已完成”只表示商品交易完成，不记录或推断顾客已取走；实物在线下交接。平台奖励自提核销仍按03k；实际照护需要时另记，不由销售推断。
 8. **需求不合并结算**：不同购买需求分别处理，同一顾客两次提交暂不合并结算；同一次购物车多个商品仍是一笔原需求／原订单，不拆成重复订单。不是寄养多宠合并结算或同宠洗美加护理原单加项，不扩展其他混单许可。
 
-复用原订单／明细／SKU、F-ORD-006／007／031原数量与快照、F-PROD-025保留截止、F-CORE-013原提交创建时间、F-ORD-032金额版本及F-AUD。选填原因复用F-AUD-009，字段是否必填按实际业务动作判断，不新建全局取消原因必填规则；查询组不是持久化的新状态。库存仍按03e确认自动预占、默认24小时保留、未结算取消／超时释放、收款／明确免单一次出库，重试与并发不重复。商品维护／手工库存及两种入库（当前无会员前置）按§3.0.18／19已定；入库错误由库存管理调整已定，剩余手机Web分工、部分退款分配与账本更正仍按原DEC，不宣布整端解阻。
+复用原订单／明细／SKU、F-ORD-006／007／031原数量与快照、F-PROD-025保留截止、F-CORE-013原提交创建时间、F-ORD-032金额版本及F-AUD。选填原因复用F-AUD-009，字段是否必填按实际业务动作判断，不新建全局取消原因必填规则；查询组不是持久化的新状态。库存仍按03e确认自动预占、默认24小时保留、未结算取消／超时释放、收款／明确免单一次出库，重试与并发不重复。商品维护／手工库存及两种入库（当前无会员前置）按§3.0.18／19已定；入库错误由库存管理调整已定，部分退款按03c§5.1已定，剩余手机Web分工与账本更正仍按原DEC，不宣布整端解阻。
 
 ### 3.9 已确认：上门喂养确认／撤销与店家联系方式权限
 
@@ -1387,7 +1387,7 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 | 开单／服务 | 五态，未结算可重新处理且原因选填 | 项目按每宠进度管理，不额外工序打卡 | 跨类型混合单及其他未列状态更正；取消／中止后重新开单已定 |
 | 服务前检查 | 六项强制，异常／无法检查先告知主人决定 | 真实结果、不默认正常，完成前简短复检 | 检查异常具体交互等契约细化，不作医疗判断 |
 | 结果发布 | 完成发布；已完成允许补图／改普通说明，含已结算，原因选填、全店有效人员可办、顾客默认最新且历史留存 | 补改不重开／不发通知／不改账，AI由顾客主动选择并校验原资格；重开再完成仍按原完成通知 | 中止标签、其他更正及AI新素材再分析版本契约 |
-| 收款／挂单 | 正常完成或中止费用明确后结算，全未开始取消不收费；财务只记账 | 未付先待结算、手动挂单必填原因，记清收款／免单后自动解除 | 混合业务、部分退款分配及其余账本更正；挂单提醒／催款细节 |
+| 收款／挂单 | 正常完成或中止费用明确后结算，全未开始取消不收费；财务只记账 | 未付先待结算、手动挂单必填原因，记清收款／免单后自动解除 | 混合业务及其余账本更正；挂单提醒／催款细节；部分退款按03c§5.1已定 |
 | 离店 | 无确认接走，原待交付已改待结算 | 不伪造已接走，不用离店字段判定能否重开 | 不影响寄养离店／奖励自提登记 |
 
 上表只索引已确认与待决范围，洗美正常完成后收款及中止实际收费例外按§4.4执行，不预收；不将本轮顺序扩展商品／加餐／寄养／护理。
@@ -1436,8 +1436,8 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 ### 4.4 已确认：洗美第二批流程细则及剩余问题
 
 > status: mixed
-> confirmed_scope: completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_approved_wash_groom_batches_and_offline_financial_ledger_with_staff_refunds_and_automatic_asset_updates
-> pending_scope: interruption_client_label_remaining_unlisted_state_corrections_remaining_mixed_business_checkout_except_same_pet_wash_groom_care_add_on_ai_version_contract_partial_refund_allocation_hold_reminders_and_remaining_ledger_corrections
+> confirmed_scope: confirmed_partial_refund_allocation_as_03c_section_5_1_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_approved_wash_groom_batches_and_offline_financial_ledger_with_staff_refunds_and_automatic_asset_updates
+> pending_scope: interruption_client_label_remaining_unlisted_state_corrections_remaining_mixed_business_checkout_except_same_pet_wash_groom_care_add_on_ai_version_contract_hold_reminders_and_remaining_ledger_corrections
 > blocked_by: [DEC-STAFF-04, DEC-STAFF-05]
 > confirmed_by: user
 > confirmed_on: 2026-10-22
@@ -1492,7 +1492,9 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 > refund_auto_restock: false
 > wallet_deduction_order: principal_then_bonus
 > wallet_refund_component_rule: restore_original_components
-> partial_refund_allocation: pending
+> partial_refund_allocation: confirmed
+> partial_refund_channel_allocation: manual_original_channel_amounts
+> wallet_partial_refund_order: principal_remaining_then_bonus_remaining
 > breed_unknown_values_allowed: [混种, 不详]
 
 - **重新处理**：只有尚未结算的订单可将已完成宠物服务重新处理为服务中；原因选填，不能因空原因拒绝，但始终审计操作者、时间、前后版本。重开与本节洗美中止操作说明均选填；取消、调价、退款、项目／时间更正及中止收费的独立原因要求仍按原动作，不把这些条件前置为保存中止状态的必填说明。财务尚未录入不等于真实款项不存在，不能因重开抹去已经发生的线下交易或重复收款。已结算不重开原单，须另开服务或适用更正，不解锁旧金额。
@@ -1513,11 +1515,25 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 - **多宠结果与重新发布**：订单按宠物分别显示项目、进度和普通结果，整单统一总金额，不生成逐宠付款入口。重新处理后顾客显示服务中，旧普通结果保留历史但不作为当前最终；再次完成形成新结果版本并可再发送一次完成通知，同一状态转换重试不重复发。AI权益不自动重置，不因重开删旧报告、自动AI或反复要求广告；涉及新素材版本再次分析的资格／复用细节仍按AI原规则及后续契约收口。
 - **财务定位与组合记账（全部门店消费订单）**：财务仅作线下交易账本，老板／有效员工可即时或工作结束后录入，实际交易时间与录入时间区分；预约确认、六项检查、服务状态及结果仍及时操作。洗护／美容／护理／寄养／商品同次结算最多两种真实支付方式，按F-PAY-003不同方式计数、合计等于应收；余额内部本金／赠送算一种。一种亦可，本条不授予任意按宠分次付款或商品／服务混合单许可；寄养分批离店分别结算另按§5.2；无实际付款不填拆分。不接外部收银或支付／退款接口，不设计外部通道失败、未知结果或自动退款恢复流程，内部余额／流水仍真实更新且不重复扣增。
 - **消费退款无需老板审批**：本店老板和有效员工均可登记退款，原因必填、保留原单／金额／实际经办人／实际退款时间和录入时间。不设置老板审批、拒绝理由或撤回批准。同单最多一份未完成退款录入，完成且仍有可退金额可再登记；不退超过已实收扣除已退的剩余额，不改原实付，免单无款可退。
-- **本金先扣／退款原路**：消费使用会员余额先扣本金、不足再扣赠送，分别记录原实际扣款。退款全部按原付款渠道／原账户：钱包退原钱包、本金退本金／赠送退赠送；微信／支付宝退各原付款账户，现金退现金，其他付款按原渠道。不改退另一渠道、不将赠送转本金或余额提现。组合全退按各原渠道剩余实付，部分退款在原渠道及本金／赠送间的分配仍待03c§5／DEC-STAFF-05，不推定比例或先后次序。
+- **本金先扣／退款原路**：消费使用会员余额先扣本金、不足再扣赠送，分别记录原实际扣款。退款全部按原付款渠道／原账户：钱包退原钱包、本金退本金／赠送退赠送；微信／支付宝退各原付款账户，现金退现金，其他付款按原渠道。不改退另一渠道、不将赠送转本金或余额提现。组合全退按各原渠道剩余实付，部分退款按03c§5.1已定：分别填写各原渠道金额，不超各自原付减已退；仅钱包本次退款系统先退原剩余本金、再退原剩余赠送，合计本次钱包退款，不按比例或用当前余额倒算。
 - **退款记账与联动**：外部款项在线下核实并原路退回后登记，系统不接外部退款接口；原余额部分在本次确认时实际入原钱包并形成流水，确认后自动更新订单／流水／适用库存，券依03c§11原退款原则及手动关联恢复契约处理，不能假定结算自动核销。退款不是退货，真实收回且可再次销售才按原SKU登记回库、无需老板逐单审批。不得错充其他顾客、重复入账、超各原渠道已付未退金额或改写服务／投喂事实，按03d§1.1／12；不扩展充值退款、任意改余额或积分补偿。
 - **项目／品种**：不另设每个项目的开始／完成状态，以每宠整体进度判断可否直接移除；服务中不直接删已有项，误加走有原因的更正，保留原关联及金额历史。品种确不明确可填混种／不详，仍保留猫／狗／其他类型，不强迫猜测或AI识别；客户端首次建档品种选填不变。
 
-前一批20题及补充已确认规则与本轮明确变更按本节执行，不恢复外部支付通道或退款审批。挂单查询／人工联系及误挂撤销按§4.6已确认，中止顾客标签仍待决；商品退款不自动回库及真实退货联动仅按已确认范围。其他未列状态更正、除§4.5同宠洗美护理加项外的未决混合业务、AI版本契约、部分退款分配和其余账本更正仍待对应DEC，不以默认值或Mock绕过，不宣称整端已就绪。
+前一批20题及补充已确认规则与本轮明确变更按本节执行，不恢复外部支付通道或退款审批。挂单查询／人工联系及误挂撤销按§4.6已确认，中止顾客标签仍待决；商品退款不自动回库及真实退货联动仅按已确认范围。其他未列状态更正、除§4.5同宠洗美护理加项外的未决混合业务、AI版本契约和其余账本更正仍待对应DEC；部分退款分配按03c§5.1已定，不以默认值或Mock绕过，不宣称整端已就绪。
+
+### 4.4.1 全部门店消费订单部分退款分配
+
+> status: confirmed
+> status_scope: partial_refund_allocation_for_all_store_consumption_orders
+> confirmed_by: user
+> confirmed_on: 2026-11-05
+> canonical_rule_source: 03c_section_5_1
+> partial_refund_channel_allocation: manual_original_channel_amounts
+> wallet_partial_refund_order: principal_remaining_then_bonus_remaining
+
+原退款录入由本店老板／有效员工填写各原付款渠道本次退多少，无老板审批；合计等于本次退款，各项不超过原付款扣除已确认退款的剩余额，不能另选未实际用过的渠道或账户。钱包本次退款系统先恢复本单原扣未退本金、不足再恢复原扣未退赠送，不按原支付比例或当前余额算，不允许手改赠送为本金；多次退款不重置原额度。完整算法、例子、确认／并发和字段只读03c§5.1。
+
+退款原因必填，只有真实确认的退款计入原订单归属员工及实际退款日期的退款业绩，实收及原归属规则保持，不算退款经办人负业绩；部分退款不退券。外部原路退款线下进行，钱包确认时真实入账，草稿不算已退，失败不半加款，重试／并发不重复或超退。充值余额仍“修改余额”，不扩大任意余额改写／混单／积分权限，不自动回库或重开服务；其余账本更正和DEC不整体解阻。复用原PAY／WAL／ORD、原退款入口及审计，无新字段／菜单，仍729；文档同步不代表真实退款测试。
 
 ### 4.5 已确认：护理开单12项轻量流程
 
@@ -1573,7 +1589,7 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 7. **完成前确认**：必须真实确认有无新增异常；无新增可直接确认，有新增必须说明，不再重复整套前检查，照片仍选填。不能用自动填false或收款代替完成确认。
 8. **顾客查看**：完成后即发布本宠普通护理结果，顾客可从同一服务订单／宠物服务记录查看项目、真实结果及护理注意事项，不等财务记账。没有照片／普通过程文字如实展示，不编造“正常”；内部备注／员工评价／原始审计不公开。不新增护理AI报告或广告解锁任务，也不把本节当作已确认跨店共享范围。
 9. **多宠**：同一顾客可一单多宠，每宠独立service_record_id／pet_id、项目和进度；一宠完成／取消不覆盖其他宠物，最后一起结算，不跨顾客合单或按宠分次收款。与洗美／商品／寄养的其他组合仍按第3项及未决边界，不扩大为任意混单。
-10. **收款时点**：正常护理完成后才收款，不预收；财务按03d§1.1只记账，可即时或工作结束后录入，不接在线支付。多宠均结束且取消／中止费用明确后一起结算；未记账如实保留服务已完成与未结算，不提前写已付。原整单调价、明确免单、最多两种支付、先本金后赠送、无老板审批且原路退款等统一规则不变，本节不补部分退款算法；护理挂单／人工联系按§4.6已确认。
+10. **收款时点**：正常护理完成后才收款，不预收；财务按03d§1.1只记账，可即时或工作结束后录入，不接在线支付。多宠均结束且取消／中止费用明确后一起结算；未记账如实保留服务已完成与未结算，不提前写已付。原整单调价、明确免单、最多两种支付、先本金后赠送、无老板审批且原路退款等统一规则不变，部分退款算法统一按03c§5.1，不另定护理例外；护理挂单／人工联系按§4.6已确认。
 11. **取消与中止**：全部宠物均未开始就取消时不收费、保留取消记录，不伪造免单成交。已开始后中止的操作说明选填，空说明允许保存，不强制过程／补图或完成前复检；顾客无本次中止过程／过程照片或检查时间轴，不发布普通完成结果，站内／微信／短信均不发中止消息，店内既有真实检查／素材和操作历史保留。开始前必要检查／异常主人决定不免除，不假记完成或实收；如收费仍由店员明确实际应收及独立收费原因后结算，不自动按比例计算，也不假记完成；费用明确且同单其余服务结束后可按中止例外结算。中止不是自动退款、冲正或库存回退。
 12. **重新处理**：已完成且尚未结算的护理可重新处理回服务中，原因选填但必须留操作记录；已结算不得重开原单或解锁历史金额。旧结果保留历史、当前不再冒充最终完成结果，再次完成后发布真实当前结果、形成新完成事件并生成一次重要通知，仍须完成前新增异常确认；取消／中止后不恢复原服务，要开始须按§4.4重新开单／新服务记录，重新检查和手动开始，误点也不例外。
 
@@ -1581,7 +1597,7 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 
 **独立护理消息（2026-11-02确认）**：本轮仅指开始、正常完成／重新完成、完成后补图／普通文字更正；分别为普通通知、重要通知、普通通知。每次真实成功的开始／完成事件或一次实际有内容变化的补改保存生成一条站内消息；同时沿原规则，在已授权且微信渠道可用时尝试微信通知，不因发送失败回滚真实业务。草稿、仅打开、无内容变化的重复保存、失败请求及同次请求重试不重复发；补改重试复用原F-AUD稳定请求／事件并关联F-SVC-019版本，不用F-SVC-023伪造新完成轮次。新消息按自身F-MSG已读状态判断，旧服务已查看不等于新补改消息已读；补改不重置原023／024完成／查看轮次，也不冒充顾客已看新增内容。中止护理不生成任何渠道中止消息；短信当前按03f§13.2暂未开放。仅同宠洗美的护理加项仍复用洗美对象／进度，不额外发送第二套护理消息，洗美补改仍按§4.4不通知，不扩展其他取消／更正事件。
 
-护理前检查复用F-SVC-016～019／021，完成前确认复用F-SVC-022，普通结果／版本复用F-SVC-008／023～024；六项F-SVC-020仍只用于洗美，不为护理再造同义检查字段。护理挂单／人工联系及撤销按§4.6；护理开始／完成／再次完成及正常完成后补图／普通文字更正消息按本节已确认，取消／中止后按§4.4新开单，其他未列状态／内容更正仍按DEC-STAFF-04／05；洗美中止的顾客精确文案、AI版本契约、寄养流程和部分退款分配均未因此解阻。
+护理前检查复用F-SVC-016～019／021，完成前确认复用F-SVC-022，普通结果／版本复用F-SVC-008／023～024；六项F-SVC-020仍只用于洗美，不为护理再造同义检查字段。护理挂单／人工联系及撤销按§4.6；护理开始／完成／再次完成及正常完成后补图／普通文字更正消息按本节已确认，取消／中止后按§4.4新开单，其他未列状态／内容更正仍按DEC-STAFF-04／05；洗美中止的顾客精确文案、AI版本契约、寄养其余未决流程不因此解阻；部分退款分配按03c§5.1本轮确认。
 
 ### 4.6 已确认：挂单查询、补记收款与误挂撤销
 
@@ -1621,7 +1637,7 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 7. **原批次一次记清，不新增分期**：每个原结算批次按当前合法最终应收核对全额实际收款后确认，仍最多两种支付方式、会员余额内部本金／赠送算一种。暂不增加分期或分几次还款，不以不足额付款标记原批已付；不能因晚记账／补记再生成新寄养、第二笔相同收款或重复收入。最终应收调整、明确免单、实际交易时间、先本金后赠送及财务锁定沿原规则，未实际收款／明确免单不伪造已结算；成功后自动解除挂单并留历史。
 8. **误挂可撤销标记**：本店老板／有效员工可对仍在挂单且未结算的原记录撤销挂单标记，回到待结算，保留原挂单原因、挂单及撤销操作／时间／前后状态；不要求新增老板审批或撤销原因必填。只移除挂单标记，不删订单、不改应收、不生成付款／免单、不解除欠款，不重新打开已完成服务或将已离店寄养恢复在住。实际收款／免单、撤销、调价并发须校验原范围、当前状态和金额版本；收款／免单已先成功的旧撤销请求不得改回未付款或覆盖历史，重试不重复动作。
 
-原F-ORD-034／035承接当前标记／挂单时间，原F-AUD记录挂单、撤销、解除前后值／人／时间／幂等；补充联系备注和实际联系时间的唯一字段见FIELD-REGISTRY§12。业务历史摘要依原工作记录权限提供，不授予员工读取原始系统审计日志的新权限。未确认的服务状态联动、已结算更正、部分退款分配等仍待对应DEC，不因本节确认恢复删除订单或任意冲正。
+原F-ORD-034／035承接当前标记／挂单时间，原F-AUD记录挂单、撤销、解除前后值／人／时间／幂等；补充联系备注和实际联系时间的唯一字段见FIELD-REGISTRY§12。业务历史摘要依原工作记录权限提供，不授予员工读取原始系统审计日志的新权限。未确认的服务状态联动、已结算更正等仍待对应DEC；部分退款按03c§5.1已定，不因本节确认恢复删除订单或任意冲正。
 
 ## 5. 寄养入住、照护与离店结算（已确认范围及剩余边界）
 
@@ -1757,7 +1773,7 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 15. **一次寄养一个日价**：本次不做按日期／阶段分段计价。第14项更正后的价格适用于整次寄养，不仅适用于更正后的晚数；门店中途涨价不自动影响已入住记录，协商优惠仍可在结算时调整最终应收，不据此新增房型、旺季价表或复杂套餐。
 16. **日价不可为0，免费在结算办理**：入住及更正日价均须大于0。免费寄养沿用03d§10.1：将本批最终应收调整为0后明确点击“确认免单”，保留原日价、实际晚数、基础金额与调价记录；不得以日价0、未填默认0或仅输入最终0代替免单。不跨03:00为0晚、寄养基础费0仍合法，不因日价大于0收取最低一晚；最终0应收仍须明确免单，不造付款或扣余额。
 17. **已离店未收款只调最终应收**：第10项已确认离店费用后、尚未收款／确认免单时，发现费用错误或协商优惠，按03d§10.1及原原因／前后金额／版本规则调整原本批最终应收（F-ORD-013／014）；保留离店确认时的日价、晚数、基础金额与快照，不直接改写F-ORD-008／009或实际接走时间。顾客订单展示真实基础费用、适用优惠／调价及最终应收，不公开内部审计。挂单不解除这种锁定，也不因调价重启在住或计费；实际离店时间始终为停止计费时间。此项只批准收款前应收调整，不批准离店时间或照护历史更正。
-18. **已收款／免单不直接改账**：已实际收款或明确免单成功后，不直接修改原日价、晚数、最终应收、实收或原账单记录。发现错误应进入关联原记录的独立更正／退款流程、保留原记录；已确认退款规则继续按03d§12，具体账本更正、免单后重新收费及部分退款分配仍待DEC-STAFF-05／06，不通过重开、覆盖历史或伪造付款绕过。
+18. **已收款／免单不直接改账**：已实际收款或明确免单成功后，不直接修改原日价、晚数、最终应收、实收或原账单记录。发现错误应进入关联原记录的独立更正／退款流程、保留原记录；已确认退款规则继续按03d§12，部分退款分配按03c§5.1已定，具体账本更正及免单后重新收费仍待DEC-STAFF-05／06，不通过重开、覆盖历史或伪造付款绕过。
 
 计费示例（均为北京时间，不含人工调价或其他独立费用）：
 
@@ -2149,7 +2165,7 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 | DEC-STAFF-02 | pending | §4.1基础资料、洗美／护理同客多宠一单独立进度／一起结算、同宠洗美护理原单加项已定；§5.1寄养多宠各自独立入住／位置／时间已定，§5.2同店同客可一起结算、逐宠本次日价与实际晚数计算已定。新增顾客保存后提醒／失败直接继续及重复频率按§6.5.1已定；其他未决混单、复杂复用／绑定冲突仍待细化 | 阶段04/06，与03g核对；不扩大到商品／寄养混单或自动合并顾客 |
 | DEC-STAFF-03 | pending | 争议待办归属争议门店及§3.2.1三步流转／单卡去重／跨天保留已定；§3.7预约待处理／阅读确认／共享提醒不可用选择继续已定；§5.1寄养异常由员工实际处理并填写结果后明确关闭，已读／通知不关闭已定。食品风险初次归属／平台暂承接及同案同店不重复按03f§13.3已定，§13.3.1全店有效人员知悉／基本可见范围／无领取转交审批／移卡留历史已定；订单归属由老板查看本店全部订单并在原单直接更改、不做交接流程按§3.0.4.2已定；已派后改店／多店、其他非订单待办归属、领取／转交／责任转移、多人处理及其余通知任务关系仍待决 | 阶段04/06/08；不回退寄养异常已确认范围 |
 | DEC-STAFF-04 | pending | §3.0.1另三列表的范围／升序排序、手机号及类型筛选、最终应收列／待确认／整单标签、跨天保留／不套历史15天、原详情办理／无列表一键完成收款五项已定；洗美历史已完成／取消／中止均可查、未结算双入口同原单、默认15天／手机号／类型状态日期筛选与只显示整单最终应收已定； §4.3／4.4洗美及§4.5护理12项已定：独立护理五态、简短强制前检查／主人决定／完成前确认、照片备注选填、本人普通结果、未结算重开；同宠洗美加护理不降低洗美六项。洗美中止说明选填／顾客无过程／无中止通知已定；正常已完成的补图／普通文字更正含已结算已定：全店有效人员无审批、原因选填、历史保留／默认最新、不重开不改账不通知，AI由顾客选择；顾客精确标签、其他未列状态／内容更正、其他护理取消／更正事件消息、AI新素材再次分析版本契约等其余细节仍待决；护理开始普通／完成重要／补改普通、中止不通知及完成后补改权限按§4.5已定，取消／中止后不恢复原服务、包括误点都重新开单按§4.4已定，寄养不照搬 | 阶段04/06，与03/03i联动；不回退已确认洗美或护理规则 |
-| DEC-STAFF-05 | pending | 洗美收费／挂单及护理正常完成后收费／中止实际费用／全未开始取消不收费／多宠一起结算已定；统一明确免单、最多两种支付、先本金后赠送、无老板审批且原路退款、自动资产联动不变。寄养§5.2过夜计数／实际离店结算、入住逐宠设置日价及同店同客多宠一起结算、分批接走分别结算已定，离店费用确认即离店、未付可手动挂单原因必填且按实际时间停计已定；第14～18项离店确认前留痕更正整次正日价、不分段／不自动涨价、免费走明确免单、离店未付只调最终应收及已结算不直接改账已定；§4.6挂单查询／人工联系、护理挂单及误挂撤销已定；原充值更正及有条件撤销按§3.0.13已定：老板／有效员工可改本金赠送券、原因必填留历史，需撤回的余额不足或券已用门店无法撤销、仅超管异常处理；当前余额修改／充值余额退还统一入口按§3.0.14已定，原因必填、差额留痕；超管具体数据处理及其余未决结算时序、混合业务、部分退款分配和其他账本更正仍待决；外部支付通道及失败恢复不在V1范围 | 阶段04/06/08；只记账、服务及时操作，不造收款／完成／退款，不扩展充值退款／任意改余额／积分权限 |
+| DEC-STAFF-05 | pending | 洗美收费／挂单及护理正常完成后收费／中止实际费用／全未开始取消不收费／多宠一起结算已定；统一明确免单、最多两种支付、先本金后赠送、无老板审批且原路退款、自动资产联动不变。寄养§5.2过夜计数／实际离店结算、入住逐宠设置日价及同店同客多宠一起结算、分批接走分别结算已定，离店费用确认即离店、未付可手动挂单原因必填且按实际时间停计已定；第14～18项离店确认前留痕更正整次正日价、不分段／不自动涨价、免费走明确免单、离店未付只调最终应收及已结算不直接改账已定；§4.6挂单查询／人工联系、护理挂单及误挂撤销已定；原充值更正及有条件撤销按§3.0.13已定：老板／有效员工可改本金赠送券、原因必填留历史，需撤回的余额不足或券已用门店无法撤销、仅超管异常处理；当前余额修改／充值余额退还统一入口按§3.0.14已定，原因必填、差额留痕；组合部分退款原渠道各自填金额及钱包先退原剩余本金再赠送按03c§5.1已确认；超管具体数据处理及其余未决结算时序、混合业务和其他账本更正仍待决；外部支付通道及失败恢复不在V1范围 | 阶段04/06/08；只记账、服务及时操作，不造收款／完成／退款，不扩展充值退款／任意改余额／积分权限 |
 | DEC-STAFF-06 | pending | §5.1寄养16项及用户第11项修正已定：实际到店确认、时间／单宠防重、多宠独立、简单位置、简短入住检查、本次资料／明确同步、饮食核实／随带物品、单表单三动作→时间→选填照片、逐宠无配额、可见性独立、异常明确处理、到期仅提醒。§5.2北京时间03:00过夜计数（入住排除／离店包含）、0晚无寄养费、实际离店结算、延期／提前离店据实重算已定。本店员工入住逐宠设置日价及同店同客多宠一起结算、分批接走分别结算且余宠不预收、逐宠计算再汇总、费用确认即离店而未付仍可挂单／实际时间停计／物品交还提醒已定。第14～18项日价更正／不分段／正日价及明确免单／离店后未付应收调整／已结算历史保护已定。挂单查询／人工联系及撤销按§4.6已定；特殊交接与离店时间等历史更正、已结算独立更正流程仍待决。§5.4健康资料／人工接收、特殊照护含代喂药／实际执行、异常沟通／实际处理与提前接走衔接已定。医疗处置／紧急升级、交接／责任转移及历史更正等剩余边界仍待决 | 阶段04/05/06/08；03a建议容量只提醒，加餐按普通销售、照护需要时另记，不恢复洗美硬名额 |
 | DEC-STAFF-07 | pending | 统一店员资格、停用恢复、删除仅移出、返聘新邀请关联原身份、工作记录／业绩／审计可见性及取消提成已确认；门店资料由老板提交、平台管理员审核及营业执照仅供本店老板／平台管理员使用、不向顾客公开已确认；本人通知设置三项按§3.0.3.1已定、无代授权或逐业务开关，帮助与反馈三项按§3.0.3.3已定，平台处理界面权限等契约另定；员工列表三列及仅本人修改称呼、无老板代改按§3.0.4.4／3.0.3.5已定；其他未决业务动作与敏感字段视图及通知模板接口技术仍待细化 | 阶段08，先由04提交动作清单 |
 | DEC-STAFF-08 | pending | §3.0.10老板经营统计五项（实收／退款／净消费、实际发生日期／已入账、充值单列、原单明细）、老板汇总／员工本人核对与每单明确归属已定；一单一人默认开单人／员工仅转当前本人归属／老板可改本店全部、原因必填／客户端商品确认必选及实际收款业绩已定；结算后独立更正带整单历史及后续收退款按原日期归新员工、调入调出摘要和全店不变已定；离职／停用／移出不自动转归属、有效员工业务接续及后续实际收退款保留原归属、老板可更正／历史目标例外按本节已定；订单核对列表含未收／免单、六列及手机号／开单日期／业务筛选、开单倒序和独立本人变更摘要已定；充值记录两入口／六列／手机号日期查询及原流水历史保护已确认，当前有效本金赠送券可按§3.0.13有原因更正／有条件撤销、失败超管专属已定，单据生成日期展示／筛选及生成时间倒序已定，实际收款时间另存用于充值收入统计；历史缺归属回填和充值交易时间映射仍待确认；日结／交接班／现金盘点按§3.0.10.1本期排除，原统计及正常记账补录保持；对账沿原统计明细、不新增独立流程，门店表格导出及Excel／CSV批量导入归Web后续设计、手机本期无入口按§3.0.10.2已定；老板日志三项按§3.0.4.1已定；Web具体契约及库存／日志其他技术和未列手机Web分工仍待决 | 阶段04/05/06/08 |
