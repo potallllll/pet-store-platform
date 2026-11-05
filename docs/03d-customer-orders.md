@@ -1,8 +1,8 @@
 # 03D 客户端「我的订单」模块
 
 > status: mixed
-> confirmed_scope: payment_correction_entry_permissions_fields_audit_delta_updates_and_blockers_only_and_confirmed_partial_refund_manual_original_channel_amounts_and_wallet_principal_remaining_first_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_business_statistics_consumption_aggregation_and_performance_attribution_direction_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_notices_interruption_and_completed_amendments_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_current_order_rules_wash_groom_care_twelve_boarding_sixteen_pricing_checkout_departure_unpaid_hold_and_offline_financial_ledger
-> pending_scope: interruption_client_label_remaining_unlisted_state_corrections_remaining_mixed_business_checkout_except_same_pet_wash_groom_care_add_on_ledger_corrections_and_remaining_boarding_rate_changes_boarding_followup_reminders_special_handover_and_corrections
+> confirmed_scope: effective_corrected_receipt_authoritative_zero_waiver_principal_first_wallet_reallocation_no_cross_business_checkout_and_termination_label_and_payment_correction_entry_permissions_fields_audit_delta_updates_and_blockers_only_and_confirmed_partial_refund_manual_original_channel_amounts_and_wallet_principal_remaining_first_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_business_statistics_consumption_aggregation_and_performance_attribution_direction_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_notices_interruption_and_completed_amendments_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_current_order_rules_wash_groom_care_twelve_boarding_sixteen_pricing_checkout_departure_unpaid_hold_and_offline_financial_ledger
+> pending_scope: ledger_corrections_and_remaining_boarding_rate_changes_boarding_followup_reminders_special_handover_and_corrections
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -102,7 +102,7 @@ V1.0 只保留三个分类：
 
 后台可保留更细内部状态，但不直接暴露给客户。
 
-洗美内部五态按04§4.3，正常客户端显示等待中／洗护中或美容中／洗护完毕或美容完毕，取消显示已取消。未结算已完成服务可重新处理、原因选填，顾客恢复服务中，旧普通结果保留历史但非当前最终；再次完成产生新结果版本并可再通知一次，不重置AI权益。已结算不重开旧单；正常已完成洗美补照片／改普通说明是独立内容补改，已结算亦可，不改账、不重开、不发补改通知，明细按04§4.4。店内老板／有效员工无审批可办、原因选填，旧内容／人／时间留历史、顾客默认最新；检查结论、实际时间及收费明细仍按原规则。AI报告由顾客主动选择并校验原资格，补改不自动运行AI／覆盖旧报告；洗美中止说明选填，顾客端无本次中止过程／过程照片或检查时间轴、不发布普通完成结果／AI报告，不发中止通知；店内原真实记录／审计保留，不假记正常完成。中止精确标签仍待DEC-STAFF-04；洗美／独立护理取消或中止后不恢复原服务，包括误点和未结算情形，要再开始必须重新开单／新的service_record_id，从待开始重新检查、手动开始／完成。可选已有顾客宠物，原单状态／历史／账目保留，不复制旧检查为新检查或自动结清／退款／转移旧款，不发送恢复消息，明细见04§4.4。
+洗美内部五态按04§4.3，正常客户端显示等待中／洗护中或美容中／洗护完毕或美容完毕，顾客端取消／中止显示“服务异常，已终止”。未结算已完成服务可重新处理、原因选填，顾客恢复服务中，旧普通结果保留历史但非当前最终；再次完成产生新结果版本并可再通知一次，不重置AI权益。已结算不重开旧单；正常已完成洗美补照片／改普通说明是独立内容补改，已结算亦可，不改账、不重开、不发补改通知，明细按04§4.4。店内老板／有效员工无审批可办、原因选填，旧内容／人／时间留历史、顾客默认最新；检查结论、实际时间及收费明细仍按原规则。AI报告由顾客主动选择并校验原资格，补改不自动运行AI／覆盖旧报告；洗美中止说明选填，顾客端无本次中止过程／过程照片或检查时间轴、不发布普通完成结果／AI报告，不发中止通知；店内原真实记录／审计保留，不假记正常完成。已取消／中止的顾客端提示统一为“服务异常，已终止”；洗美／独立护理取消或中止后不恢复原服务，包括误点和未结算情形，要再开始必须重新开单／新的service_record_id，从待开始重新检查、手动开始／完成。可选已有顾客宠物，原单状态／历史／账目保留，不复制旧检查为新检查或自动结清／退款／转移旧款，不发送恢复消息，明细见04§4.4。
 
 同顾客多宠一单，按宠物分别显示项目／进度／结果、整单总金额；一宠完成或取消不覆盖其他宠物。全部服务结束且中止／取消费用明确后一起结算，不按宠拆账／分次付款。全未开始即全部取消不收费，整单取消、不记免单成交；已开始后中止说明选填；实际应收及独立收费原因明确后可按原例外结算，不伪记完成、不按比例自动算。
 
@@ -139,7 +139,7 @@ V1.0 只保留三个分类：
 
 已完成未结算可重新处理、原因选填、操作留痕；顾客当前恢复服务中，旧普通结果留历史、不冒充当前最终，再次完成发布真实结果，已结算不重开或改历史金额。护理挂单／人工联系及撤销按04§4.6；护理开始／完成与再次完成／补改消息按04§4.5已定；取消／中止后重新开单按04§4.4已定，原服务不恢复且不发恢复通知。其他未列取消／更正消息和状态更正等仍待对应DEC，不把洗美其他通知整套套入。
 
-同只宠物在洗美中增加护理项目是原单加项，共用该宠物原洗美进度，不另建护理流程、改原service_type或降低洗美六项检查要求。本例外不开放商品／寄养混单及其他未决组合；参考价可调、明确免单、先本金后赠送、无老板审批且原路退款按统一规则，部分退款分配按03c§5.1已定，未列混单及账本更正仍待决。
+同只宠物在洗美中增加护理项目是原单加项，共用该宠物原洗美进度，不另建护理流程、改原service_type或降低洗美六项检查要求。本例外不开放商品／寄养混单及本期禁止的其他跨业务组合；参考价可调、明确免单、先本金后赠送、无老板审批且原路退款按统一规则，部分退款分配按03c§5.1已定，跨业务混结禁止，其余账本更正仍待决。
 
 ## 5. 洗护 / 美容订单详情
 
@@ -289,7 +289,9 @@ V1.0 只保留三个分类：
 7. 普通商品免单仍在本来成交节点一次正式出库，金额收入为0，不因零元省略SKU、可售、预占及库存校验；已选优惠券按原消费结算规则一次处理。免单前未成功结算的0元订单仍按原未结算超时／取消规则处理；免单成功后不能被未付款超时任务取消或返还已出库库存。
 8. 免单不自动完成洗美／护理／寄养、交付或生成真实照护；加餐商品按普通销售完成交易，需要时由店员另记喂食，遵守本次主人要求及饮食限制，收款不是照护记录的前置条件。
 9. 客户端读同一真实订单，免单显示“已免单，实付0元”及无实际支付，不伪造凭证；仅0元未确认不能标成已结算／免单成功。服务已真实完成仍如实显示服务完成及未结算，不能混淆服务与财务轴；普通商品交易完成仍须原结算规则。通知表达真实结果，失败不回滚结算。
-10. 该调价权限不适用于充值免费入账、任意改余额、积分免费兑换或无痕冲正。洗美按04§4.4正常完成或中止实际费用明确后结算，全未开始即全取消不收费；未结算可重新处理、原因选填，已结算不重开。手动挂单原因必填，改0后明确免单；全部消费最多两种支付，消费退款由老板／有效员工按§12办理、无需老板审批。除§4.4同宠洗美护理加项外的未决混合业务及其余账本更正等待DEC-STAFF-05，不因不限额跳过顺序或退不存在的实收。
+10. 该调价权限不适用于充值免费入账、任意改余额、积分免费兑换或无痕冲正。洗美按04§4.4正常完成或中止实际费用明确后结算，全未开始即全取消不收费；未结算可重新处理、原因选填，已结算不重开。手动挂单原因必填，改0后明确免单；全部消费最多两种支付，消费退款由老板／有效员工按§12办理、无需老板审批。除§4.4同宠洗美护理加项外的未决跨业务混结禁止；其余账本更正等待DEC-STAFF-05，不因不限额跳过顺序或退不存在的实收。
+
+不同业务订单不混合结算：洗美、独立护理、寄养和商品各自开单／结算，不因同一顾客合成一张结算单；原同宠洗美护理加项仍属原洗美单，同业务多宠及寄养分批依原规则。03e加餐商品也独立商品交易，不并入寄养费用，详见04§4.1.1。
 
 ## 11. 支付方式展示
 
@@ -312,7 +314,7 @@ V1.0 只保留三个分类：
 > status: mixed
 > status_scope: payment_correction
 > confirmed_scope: original_order_entry_owner_staff_permission_amount_method_actual_time_required_reason_history_delta_wallet_and_net_performance_updates_and_refunded_or_insufficient_balance_blockers
-> pending_scope: corrected_receipt_vs_receivable_status_zero_or_waiver_conversion_wallet_component_reallocation_and_detailed_correction_data_and_platform_exception_contracts
+> pending_scope: originally_waived_without_payment_record_recollection_full_void_or_extra_collection_and_detailed_correction_data_platform_exception_contracts
 > change_policy: record_required
 > development_readiness: partial
 > blocked_by: [DEC-STAFF-05, DEC-STAFF-08]
@@ -325,6 +327,9 @@ V1.0 只保留三个分类：
 > payment_correction_reason_required: true
 > payment_correction_original_records: retained
 > payment_correction_effects: wallet_and_net_performance_delta_updates
+> payment_correction_receivable_basis: corrected_actual_receipt
+> payment_correction_zero_result: explicit_waiver_no_actual_payment
+> payment_correction_wallet_reallocation: restore_original_effective_components_then_principal_first_rededuct_atomically
 > payment_correction_blockers: [confirmed_refund_exists, insufficient_wallet_balance]
 > payment_correction_blocked_handling: inform_contact_platform_no_store_override
 
@@ -337,11 +342,17 @@ V1.0 只保留三个分类：
 5. 原单已有已确认消费退款，或本次资产差额处理会使本金／赠送余额不足时，门店明确提示“无法更正，请联系平台处理”，不得强改或扣为负数，失败不先写更正成功／改金额／改业绩。不提供老板审批代办或借“修改余额”清除原单退款事实的绕过；联系平台是提示方向，本轮不新增自动工单／通知或平台异常处理页面、细节权限。
 6. 服务端提交时重验本店身份、原订单／付款关联、是否已有退款、最新金额版本与资产状态；更正、退款及其他收款请求协调原F-ORD-032，旧上下文须重核。原记录／更正结果／余额差额流水及统计依据一致成功，失败不留半笔。CORE010同请求重试返回原更正ID／原结果、不重复调整余额和业绩；新请求重新鉴权，重试不恢复后来失效的任职／旧会话。未变化不伪造更正或新收入，不因本轮开通普通员工读取原始审计。
 
+**本轮补充确认（2026-11-05）**：
+
+- 员工可自行更正实际收款金额，老板继续具备同等业务资格；本单以更正后实际收款为最终金额，当前最终应收与当前有效实收同步为该金额，不另造欠款／多收款、挂单或待结算差额。原始收费明细、参考价、最初收款和历次更正保留，通过原调价／更正前后值表达，不能无痕覆盖。正数金额须与本次确认的有效支付拆分合计一致，仍最多两种支付方式。
+- 更正后的实际收款为0时，按明确免单处理：更正页显示0元免单结果并由本人确认，成功后payment_status=waived、当前应收／有效实收均0；不新建虚假零元付款、不伪造真实退款。此前误记的收款作为被更正历史保留、不再计有效实收，原服务完成／寄养离店／商品交付事实不回退，库存不重做。
+- 钱包更正按“先消除本笔原有效扣款影响，再按本金优先重新计算本笔应扣”一次原子提交。用于本次重算的可用本金＝当前本金＋本笔原有效扣本金，可用赠送＝当前赠送＋本笔原有效扣赠送；新钱包支付额先扣该可用本金、不足再扣赠送。最终只登记原扣与新扣之间的本金／赠送净差额，保留各自前后流水，不把暂时恢复金额作为可被其他请求消费的中间余额；新扣不足则整次失败并提示联系平台。外部方式改为钱包、更正钱包金额或改为0均沿本规则，原有效钱包扣款变0时只恢复原本笔组成，不套消费部分退款分配。
+- 业务实际收款日期可按本轮可改内容纠正；钱包本次差额的真实系统发生时间仍为本次成功操作时间，两者各自保留，不伪造过去余额已变化。净业绩及当前有效收款按新金额／真实业务日期归原员工，原已有退款禁止更正及余额不足阻断保持。
+
 **仍待确认、实现不得默认的边界**：
 
-- 更正后实收与原最终应收不一致时，是否允许同次改应收、形成欠款／多收款，以及相应结算状态／挂单处理；本轮没有决定，不能自行设成已付、待结算或免单，也不能为满足原“合计等于应收”偷偷改应收。
-- 更正为0、已免单转收款、已收款改免单、完全撤销收款、实际漏收后新增补款等流程，不从本次字段可改推导为已批准。
-- 钱包原本金／赠送重分配算法、组合方式变化的细分关联、会员余额系统真实发生时间与可更正记账时间的映射、完整版本／历史查询接口及平台异常更正技术契约须先按FIELD登记收口；不能套用部分退款算法、把记录时间改写成过去实际扣增或猜测旧数据。触及这些未决边界的更正不可用默认值／Mock放行。
+- 原来已经免单、没有原付款记录的订单重新收费，完全撤销收款、实际漏收后的新增补款等流程，本轮不由“现有收款金额可改”自动推导。
+- 完整更正记录／支付拆分／历史接口、跨版本迁移与平台异常处理技术契约仍须先登记后实现；当前已定金额、免单及本金优先规则不再列待决，也不允许凭本轮入口绕过未决流程。
 
 本节只确认上面的独立动作和边界。充值更正／余额修改仍各按03c§4.2／4.3，消费退款仍按§12／03c§5.1；新增更正业务标识F-PAY-019，其余复用原PAY字段、CORE／WAL／ORD与F-AUD，不新造第二账本或同义金额字段。
 

@@ -2,11 +2,11 @@
 
 > status: mixed
 > confirmed_scope: all_profile_rules_except_cross_store_pet_safety_sharing_details
-> pending_scope: cross_store_pet_safety_visibility_authorization_and_retention
+> pending_scope: cross_store_pet_safety_visibility_authorization_and_retention_and_authorized_history_import_contracts
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
-> blocked_by: [DEC-PETSAFETY-01]
+> blocked_by: [DEC-PETSAFETY-01, DEC-STAFF-09]
 > parent_stage: 03_customer_miniapp
 > version: V1.0
 
@@ -16,6 +16,7 @@
 - 后续预约、洗护、美容、寄养尽量自动带出宠物资料，减少重复输入。
 - 客户和店员均可在权限范围内维护宠物基础资料，但当前食用品牌不允许店员维护，见§4.4。
 - 客户可见资料与门店内部备注必须分离。
+- 顾客本人可按03g§5.5确认，把其他店本人有权查看的宠物档案及服务护理历史导入当前门店；原记录来源及权限保留，不导入订单金额、钱包、充值、券资产或内部备注，不自动授予跨店风险共享或修改来源店资料的权限。
 - 历史体重、服务记录、服务照片等数据自动沉淀，不要求额外重复录入。
 
 ## 2. 宠物列表

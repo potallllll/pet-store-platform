@@ -126,11 +126,31 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
     duplicate_fields = sorted({item for item in registered_ids if registered_ids.count(item) > 1})
     if duplicate_fields:
         add(results, "error", "registry.duplicate_id", Path("docs/FIELD-REGISTRY.md"), f"duplicate registered field IDs: {', '.join(duplicate_fields)}")
-    for field_id in ("F-APPT-019", "F-APPT-020", "F-APPT-027", "F-PAY-012"):
+    for field_id in ("F-APPT-019", "F-APPT-020", "F-APPT-027", "F-PAY-012", "F-CMP-023"):
         row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
         cells = [cell.strip() for cell in row.split("|")]
         if len(cells) < 4 or cells[3] != "D":
             add(results, "error", "registry.retired_field", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must remain registered as D (retired)")
+
+    # Keep the confirmed batch rules distinct from remaining implementation contracts.
+    for field_id, required_status in {"F-RWD-027": "C", "F-CSH-001": "S", "F-CSH-002": "S"}.items():
+        row = next((line for line in registry.splitlines() if line.startswith(f"| {field_id} |")), "")
+        if len(row.split("|")) < 5 or row.split("|")[3].strip() != required_status:
+            add(results, "error", "batch.registry_status", Path("docs/FIELD-REGISTRY.md"), f"{field_id} must be {required_status}")
+    identity = current_text["docs/03g-customer-identity-security.md"]
+    for required in ("history_import_confirmer: authenticated_customer_self",
+                     "verified_mobile_account_uniqueness: one_active_platform_account"):
+        if required not in identity:
+            add(results, "error", "identity.batch_rules", Path("docs/03g-customer-identity-security.md"), f"missing {required}")
+    risk = current_text["docs/03h-customer-risk-feedback.md"]
+    if "complaint_appeal_entry: excluded" not in risk or "#### 10.1.3 已确认：无条件申诉" not in risk:
+        add(results, "error", "complaint.appeal_separation", Path("docs/03h-customer-risk-feedback.md"), "complaint appeal is excluded while independent risk-record appeal remains")
+    reward_text = current_text["docs/03k-customer-loyalty-points.md"]
+    for required in ("reward_pickup_validity_hours_after_shipment: 720",
+                     "reward_pickup_expiry_anchor: warehouse_shipped_at",
+                     "reward_unclaimed_expiry_action: automatic_cancel_without_points_return"):
+        if required not in reward_text:
+            add(results, "error", "reward.pickup_expiry", Path("docs/03k-customer-loyalty-points.md"), f"missing {required}")
 
     # Check the confirmed subsection, not the staff document's still-mixed overall status.
     staff_path = Path("docs/04-staff-miniapp.md")
@@ -674,7 +694,7 @@ def audit_current_invariants(root: Path, results: list[dict[str, str]]) -> None:
         if billing_meta.get(key) != expected:
             add(results, "error", "boarding.billing_rules", staff_path, f"section 5.2 {key} must be {expected}")
 
-    boarding_health = staff.split("### 5.4 ", 1)[-1].split("\n## 6.", 1)[0]
+    boarding_health = staff.split("### 5.4 ", 1)[-1].split("\n### 5.5 ", 1)[0].split("\n## 6.", 1)[0]
     health_meta = dict(META_RE.findall(boarding_health)) if "### 5.4 " in staff else {}
     for key, expected in {
         "status": "confirmed",
