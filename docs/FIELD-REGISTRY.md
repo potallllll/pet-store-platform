@@ -212,7 +212,9 @@ F-STORE-012～014是04§3.0.7的独立经营配置，同样以F-CORE-003／store
 | F-STAFF-012 | `staff_removed_at` | S | Datetime | 员工移出本店当前名单及终止有效关系的时间；不表示物理删除账号或经营历史。 |
 | F-STAFF-013 | `staff_restored_at` | S | Datetime | 最近一次从disabled恢复active的生效时间；恢复使用当前统一店员资格。 |
 | F-STAFF-014 | `staff_rejoined_at` | S | Datetime | 被移出员工通过老板新邀请重新回原店入职的实际生效时间，区别于停用恢复。各轮事件关联既有F-STAFF-005邀请及F-STAFF-002关系标识并追加F-AUD审计，不覆盖原删除和服务时间。 |
-| F-STAFF-015 | `staff_display_name` | C | Text | 员工称呼，确认加入时去首尾空白后必填；默认实际可用微信昵称且表单可改，无昵称手填，返聘优先原称呼。唯一归属原CORE005 staff_id及STAFF001所属Merchant，供员工列表／订单／工作记录／业绩人员展示，允许同名，不作为身份或权限键，不改历史人员快照／真实经办。 |
+| F-STAFF-015 | `staff_display_name` | C | Text | 员工称呼，确认加入时去首尾空白后必填；默认实际可用微信昵称且表单可改，无昵称手填，返聘优先原称呼。唯一归属原CORE005 staff_id及STAFF001所属Merchant，供员工列表／订单／工作记录／业绩人员展示，允许同名，不作为身份或权限键；入职后仅当前有效本人可在员工与门店信息修改，老板不能代改，去空白必填、原因选填、自动审计，不改身份／业绩归属／历史人员快照或真实经办（02§7.1）。 |
+
+员工当前名单与称呼维护按02§7.1／04§3.0.3.5及§3.0.4.4：仅本店有效老板读当前active／disabled人员，列015称呼、通过该员工原稳定User关联AUTH001手机号、004员工状态；removed不在当前名单，原历史业务不删。原staff_owner.employee_list无代改称呼资格；新增staff_me.update_display_name仅真实登录本人及当前有效关系，拒绝改他人／跨店／失效员工。CORE005及STAFF001／003确定原对象和租户，015唯一字段；不造手机号副本／新角色／改名原因必填或老板代改ID。真实变化自动沿原F-AUD前后值人时间／CORE010防重，原因沿原可空AUD009，不扩普通员工原始审计读取。仍729字段，原永久号／名／类型标记不改。
 
 当前已确认的店员端一级功能标识固定为：
 
@@ -1345,7 +1347,8 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 
 | 产品标识 | 菜单名称 |
 |---|---|
-| `staff_me.employee_store_info` | 员工与门店信息 |
+| `staff_me.employee_store_info` | 本人员工与门店信息，包含仅本人修改员工称呼入口，不提供代改他人或全店名单 |
+| `staff_me.update_display_name` | 当前有效本人修改原staff_display_name，空白拒绝、原因选填、自动审计与防重，不改身份／历史快照／业绩归属；老板无代改资格 |
 | `staff_me.work_records` | 员工仅本人实际经办／服务事实，老板默认本店全店可切本人；四列时间员工项目结算价格，价格取原015实际已收款，只读跳原业务，不返原始审计或他人绩效汇总 |
 | `staff_me.performance` | 我的业绩 |
 | `staff_me.notification_settings` | 我的／通知设置，仅本人微信主动授权入口、站内普通重要通知规则说明、短信暂未开放，无逐业务开关／自改等级 |
@@ -1413,7 +1416,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 | `staff_owner.edit_service_item` | 服务项目管理内／修改项目，仅本店老板，不回写历史业务事实 |
 | `staff_owner.disable_service_item` | 服务项目管理内／停用项目，仅本店老板，不物理删除或自动取消旧预约 |
 | `staff_owner.restore_service_item` | 服务项目管理内／恢复已停用服务项目，仅本店老板，沿用原service_item_id和历史 |
-| `staff_owner.employee_list` | 员工管理／员工列表 |
+| `staff_owner.employee_list` | 仅本店有效老板读当前在职／停用员工，三列称呼／手机号／员工状态；移出不列当前名单、历史保留，无代改称呼 |
 | `staff_owner.invite_employee` | 员工管理／邀请员工；12小时有效且单人使用，无老板撤销，完整规则见02§6.0～6.0.1／04§3.0.4.3 |
 | `staff_invitation.join_confirmation` | 从真实员工入职邀请进入，显示原门店名称地址及本人认证手机号、必填员工称呼；认证返回本页，未确认不授门店业务权限 |
 | `staff_invitation.accept` | 本人明确点击确认加入，重验原邀请截止／未使用与角色门店资格，成功原子记使用及任职、失败不消耗、重复返回原结果；称呼不决定身份 |
