@@ -2,7 +2,7 @@
 
 > status: mixed
 > confirmed_scope: cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_amendment_no_notice_and_wash_groom_interruption_no_notice_and_current_stage_sms_unavailable_and_global_two_notification_levels_and_existing_messages_wash_groom_result_version_completion_and_recompletion_notifications_and_sections_13_2_13_3_directions_food_risk_initial_store_routing_staff_acknowledgement_updates_and_restore_rounds_and_boarding_record_visibility_controls
-> pending_scope: future_sms_enablement_and_configuration_food_notice_reassignment_multi_store_remaining_note_corrections_platform_ui_other_corrections_other_care_events_and_hold_collection_notifications
+> pending_scope: future_sms_enablement_and_configuration_food_notice_reassignment_multi_store_platform_note_correction_contracts_platform_ui_other_corrections_other_care_events_and_hold_collection_notifications
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -418,7 +418,7 @@ V1.0 为店员保留轻量“通知客户”能力，用于特殊业务情况，
 > owner_notice_blocked_by_store_assignment: false
 > manufacturer_contact_blocked_by_store_assignment: false
 > dispatch_implies_store_liability: false
-> pending_scope: multi_store_reassignment_remaining_note_corrections_and_platform_ui
+> pending_scope: multi_store_reassignment_platform_note_correction_contracts_and_platform_ui
 > update_and_restore_authority: section_13_3_2
 > staff_acknowledgement_authority: section_13_3_1
 
@@ -432,7 +432,7 @@ V1.0 为店员保留轻量“通知客户”能力，用于特殊业务情况，
 
 平台承接复用原投诉，不新增另一套食品投诉／工单或“默认负责门店”。字段沿F-CMP-001／004，未明确时target_store_id可空；初次后补关联不改User当前门店、不新建Customer／迁移资产。门店仍仅获本待办有权查看的内容，不能借派发索取所有收到提醒主人的联系方式、宠物私有档案或未审原件。
 
-本店人员／基本查看范围及明确知悉后移出工作台按§13.3.1已确认，无领取／转交／审批；普通通知／重要通知及误点恢复按§13.3.2已确认；已派后改店／多店、其他已知悉后备注更正及平台具体界面仍按DEC-STAFF-03／07和相关食品DEC收口。基础知悉记录字段见FIELD-REGISTRY§14.4.1；剩余接口结构仍先登记，不以Mock冒充已接通，不自动停卖／退款、认定质量责任或扩大短信频率。
+本店人员／基本查看范围及明确知悉后移出工作台按§13.3.1已确认，无领取／转交／审批；普通通知／重要通知及误点恢复按§13.3.2已确认；已派后改店／多店、食品风险内部备注填错由门店联系客服，不提供门店直接修改，平台具体界面／处理契约仍按DEC-STAFF-03／07和相关食品DEC收口。基础知悉记录字段见FIELD-REGISTRY§14.4.1；剩余接口结构仍先登记，不以Mock冒充已接通，不自动停卖／退款、认定质量责任或扩大短信频率。
 
 ### 13.3.1 已确认：食品风险门店知悉提醒
 
@@ -451,7 +451,7 @@ V1.0 为店员保留轻量“通知客户”能力，用于特殊业务情况，
 > acknowledgement_removes_workbench_notice: true
 > history_policy: retain
 > acknowledgement_changes_complaint_or_finances: false
-> remaining_pending_scope: reassignment_multi_store_remaining_note_corrections_and_platform_ui
+> remaining_pending_scope: reassignment_multi_store_platform_note_correction_contracts_and_platform_ui
 > update_and_restore_authority: section_13_3_2
 
 1. **人员**：该提醒所归属门店的老板和所有账号／任职关系有效的员工均可操作，不需领取、转交或审批，也不限原经办人。服务端校验当前身份、原提醒及其门店／原投诉关联；停用／移出本店／跨店或伪造归属不能确认。
@@ -460,7 +460,7 @@ V1.0 为店员保留轻量“通知客户”能力，用于特殊业务情况，
 
 已知悉结果使用独立食品提醒记录，以原complaint_id＋assigned_store_id唯一关联；知悉时间／选填本店内部备注见F-RISK-021～025，经办人及前后值／请求复用F-AUD。备注和经办历史按本店原业务权限查看，不公开给顾客或跨店，不复用03h§6.2对外处理情况／公开副本字段。历史在原食品提醒／关联投诉上下文可追溯，具体列表位置／排序后续UI收口。
 
-“已知悉”只表示门店收到并了解本提醒，不表示食品安全、厂家已回应、投诉成立／不成立或已解决；不替门店正式回应，不修改7天／3天截止、投诉裁决／解决状态、品牌风险信号／热度，也不自动停卖、退款、变更余额／库存。反过来，消费争议卡移出、平台确认投诉已解决或通知已读也不自动写该提醒已知悉。未完成且仍需知悉的提醒跨天保留，不按午夜清空；新投诉仍按原触发与归属规则独立承接，不因同品牌旧提醒已知悉而永久忽略。原投诉普通通知／重要通知和误点恢复按§13.3.2执行；其他已知悉后备注更正、已派后改店／多店及平台具体界面仍待确认，重复通知不作为复活理由。
+“已知悉”只表示门店收到并了解本提醒，不表示食品安全、厂家已回应、投诉成立／不成立或已解决；不替门店正式回应，不修改7天／3天截止、投诉裁决／解决状态、品牌风险信号／热度，也不自动停卖、退款、变更余额／库存。反过来，消费争议卡移出、平台确认投诉已解决或通知已读也不自动写该提醒已知悉。未完成且仍需知悉的提醒跨天保留，不按午夜清空；新投诉仍按原触发与归属规则独立承接，不因同品牌旧提醒已知悉而永久忽略。原投诉普通通知／重要通知和误点恢复按§13.3.2执行；已知悉后的内部备注填错由门店联系客服，老板／员工不直接修改；已派后改店／多店及平台具体界面仍待确认，重复通知不作为复活理由。
 
 ### 13.3.2 已确认：普通通知、重新知悉与误点恢复
 
@@ -477,15 +477,15 @@ V1.0 为店员保留轻量“通知客户”能力，用于特殊业务情况，
 > current_notice_identity: same_complaint_and_store_same_notice_id
 > history_policy: retain_all_rounds
 > round_field: food_risk_notice_round
-> remaining_pending_scope: reassignment_multi_store_remaining_note_corrections_platform_role_mapping_and_ui
+> remaining_pending_scope: reassignment_multi_store_platform_note_correction_contracts_platform_role_mapping_and_ui
 
 1. **普通通知**：同一投诉的普通文字／材料／状态更新只更新原提醒的当前可见内容，不新建任务、不开新轮，也不把已知悉提醒放回工作台；尚未知悉的仍为同一张待办卡。普通通知不冒充已经看过更新内容，旧知悉历史记录的仍是当时操作；所有内容继续按当前公开／访问权限读取。
 2. **重要通知**：本项指食品提醒的后续更新；只有平台有权人员明确提出新的“需要门店重新知悉”要求，才使原提醒进入新一轮待知悉、回到原工作台食品风险位置。继续使用同一notice_id及投诉／门店，不复制任务，旧轮知悉人／时间／备注完整保留。平台每次非重复的新要求推进轮次；若原轮尚未知悉，也只更新同一张当前卡，旧版本操作不得确认新的要求。不能用自动热度、转发次数、普通内容变化或消息重发代替平台明确要求，具体平台角色／界面后续收口。
-3. **误点恢复**：本店老板／任一当前有效员工可将当前已知悉提醒恢复“待知悉”，无需审批、不限原确认人，原因选填。成功后开新轮并回原工作台位置，原操作／备注仍为历史，不篡改为从未知悉；已待知悉时重复恢复不再开轮。同一请求重试返回原结果，不重复恢复或覆盖首次恢复事实；其他已知悉后直接改备注的方式仍待确认。
+3. **误点恢复**：本店老板／任一当前有效员工可将当前已知悉提醒恢复“待知悉”，无需审批、不限原确认人，原因选填。成功后开新轮并回原工作台位置，原操作／备注仍为历史，不篡改为从未知悉；已待知悉时重复恢复不再开轮。同一请求重试返回原结果，不重复恢复或覆盖首次恢复事实；原轮内部备注填错仍须联系客服更正，不提供门店直接修改；误点恢复不用于覆盖旧备注。
 
 轮次由服务端控制：F-RISK-026初始1，真实平台新要求或从已知悉成功恢复时递增；将旧轮F-RISK-024／025及人／时间／触发保留于原审计历史，再为新轮设置尚未知悉／空选填备注。F-RISK-024表示当前轮首次知悉时间，不再用单一快照承担历轮历史。实际知悉、恢复均校验当前身份／本店／原提醒及提交的当前轮次，旧轮页面不能确认新轮或回写轮次。并发／重试不重复增轮；旧轮已成功请求的重试只返回该次历史结果，不把它当新轮已完成或回退当前轮。平台新要求以原F-AUD-001事件及F-AUD-011稳定请求关联原提醒，在完整历史中去重，不只比较最新事件；消息重试不能伪装成另一次新要求。
 
-本节只更新门店知悉轮次；其他业务的重要通知不套用食品重新知悉机制，单纯等级标签不产生新轮。本节不改变主人Platform User＋complaint_id消息去重或厂家联系流程，不新增门店派发、投诉、消息群发或短信频率，不改食品质量／厂家回应、投诉裁决／解决状态、风险期限／热度及财务库存。无明确门店仍沿§13.3平台承接；已派后改店／多店、其他备注更正及具体平台权限／界面仍待后续。知悉／恢复经办事实可按原业务权限查看，不扩大原始审计或私有顾客资料读取。
+本节只更新门店知悉轮次；其他业务的重要通知不套用食品重新知悉机制，单纯等级标签不产生新轮。本节不改变主人Platform User＋complaint_id消息去重或厂家联系流程，不新增门店派发、投诉、消息群发或短信频率，不改食品质量／厂家回应、投诉裁决／解决状态、风险期限／热度及财务库存。无明确门店仍沿§13.3平台承接；食品风险内部备注填错走客服且保留原文及前后经办历史，不在门店端直接修改；已派后改店／多店及具体平台处理权限／界面仍待后续。知悉／恢复经办事实可按原业务权限查看，不扩大原始审计或私有顾客资料读取。
 
 食品风险调查按03h§2.4：平台管理员先联系涉事门店核实、确认后联系厂家，后台承接；原门店食品风险提醒及明确已知悉流程保留，不把已知悉当调查结论或厂家正式回应。
 
