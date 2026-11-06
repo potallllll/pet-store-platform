@@ -1,11 +1,11 @@
 # 03K 客户端「平台积分 + 每日签到 + 积分商城」模块
 
-> status: mixed
-> confirmed_scope: batch_confirmed_account_history_import_financial_boundaries_termination_support_and_reward_expiry_where_applicable_and_all_current_rules_except_section_8_4
-> pending_scope: section_8_4
+> status: confirmed
+> status_scope: full_document
+> confirmed_by: user
 > change_policy: record_required
-> development_readiness: partial
-> blocked_by: [DEC-POINTS-02]
+> development_readiness: ready
+> blocked_by: []
 > parent_stage: 03_customer_miniapp
 > version: V1.0
 
@@ -99,9 +99,9 @@ V1.0 新增平台级会员积分体系。
 典型记录：
 
 - 每日签到 +N
-- 兑换优惠券 -N
 - 兑换实物 -N
-- 兑换取消返还 +N
+- 兑换实物 -N
+- 门店停用自动取消返还 +N
 - 平台人工调整（如后续允许）
 
 积分消费记录在积分中心 / 积分商城体系内独立展示，不混入商户钱包流水。
@@ -116,148 +116,54 @@ V1.0 不允许普通 Merchant Owner 自行决定平台积分商品的积分价�
 
 - 奖励名称
 - 奖励图片
-- 奖励类型
+- 实物奖励内容
 - 所需积分
 - 平台奖励库存
 - 上下架状态
 - 每人兑换上限（可选）
 - 有效期（如适用）
 - 可兑换 / 可领取门店范围
-- 优惠券面额与适用范围（券类）
+- 可领取门店范围和实物履约信息
 
-## 7. 奖励类型
+## 7. 奖励类型：V1仅实物
 
-### 7.1 线下消费优惠券
-
-积分可兑换门店线下消费优惠券，例如：
-
-- 固定金额优惠券
-- 洗护优惠券
-- 美容优惠券
-- 寄养优惠券
-- 其他平台允许的商户消费券
-
-兑换前用户应选择适用 / 领取门店（若该奖励要求绑定门店）。
-
-兑换成功后：
-
-积分系统负责扣减积分并保存兑换记录；
-钱包 / 优惠券域负责向所选 Merchant Customer 发放正式优惠券。
-
-两者不得共用同一账本；跨模块失败必须支持幂等和补偿，避免积分已扣但优惠券未发或重复发券。
-
-兑换门店需处于奖励允许范围内并有效；若尚未建立所选 Merchant Customer 关系，先按 `03g` 完成必要身份与关系校验，再确认扣积分。选择领取 / 使用门店本身不得读取其他门店的资产或自动共享宠物档案。
-
-跨模块结果未确定时，客户端显示“兑换处理中”并可回到同一兑换记录查询；补偿已启动但尚未到账时显示“返还处理中”。只在优惠券已成功发放或积分补偿流水已成功入账后展示对应成功结果。
-
-### 7.2 实物奖励
-
-支持兑换：
-
-- 狗粮
-- 猫粮
-- 冻干
-- 零食
-- 其他平台积分实物奖励
-
-V1.0 不提供用户快递到家。
-
-统一采用：
-
-> 总仓发货到指定门店 → 实物线下到店 → 实际领取后店员登记；发货后30天未登记则系统默认已领取（无到货确认／领取凭证）。
-
+V1积分商城只允许兑换平台实物奖励，例如狗粮、猫粮、冻干、零食和其他平台实物。不得配置或兑换商户优惠券、服务券、活动券、钱包余额或现金；对应券类字段和入口仅保留历史读取，禁止新写。V1不提供快递到家，统一采用总仓发往顾客选择门店后线下领取。
 ## 8. 总仓到门店自提流程
 
 > status: confirmed
-> status_scope: physical_reward_shipment_actual_or_timeout_default_pickup_without_cancellation_receipt_or_credential
-> confirmed_by: user
-> confirmed_on: 2026-11-05
-> reward_store_receipt_confirmation: retired
-> reward_store_receipt_todo: excluded
-> reward_pickup_credential: retired
-> reward_pickup_scan_or_code_required: false
-> reward_pickup_confirmation: manual_actual_handover_or_timeout_default
-> reward_pickup_roles: [merchant_owner, active_store_staff]
-> reward_pickup_store_scope: selected_pickup_store_only
-> reward_pickup_start_state: warehouse_shipped_and_not_canceled
-> reward_arrival_auto_inference: excluded
-> reward_arrival_auto_notification: excluded
-> reward_fulfillment_states: [待总仓发货, 已发往门店, 已领取]
+> status_scope: physical_rewards_only_with_disabled_store_points_return
+> development_readiness: ready
+> blocked_by: []
+> reward_store_receipt_confirmation: excluded
+> reward_pickup_credential: excluded
+> reward_fulfillment_states: [待总仓发货, 已发往门店, 已领取, 已取消]
 > reward_pickup_validity_hours_after_shipment: 720
-> reward_pickup_expiry_anchor: warehouse_shipped_at
-> reward_manual_cancellation: excluded_before_and_after_shipment
-> reward_shipped_manual_cancellation: excluded
-> reward_unclaimed_expiry_action: default_mark_received_without_points_return
-> reward_disabled_store_reassignment: excluded
-> reward_disabled_store_contact: customer_service_phone_call
+> disabled_pickup_store_action: cancel_and_return_points
+> replacement_store_selection: excluded
 
-确认兑换成功并扣积分后，生成原总仓发货任务，持有reward_fulfillment.manage的Platform Super Admin确认发往顾客原选门店。实物到店和联系线下完成，无到货确认或领取凭证。顾客实际领取后，所选店老板／有效员工在原兑换单点击“已领取”；发货后连续30天未登记领取的，按§8.5由系统默认已领取。
+1. 兑换成功时服务端原子扣积分、占用平台奖励库存并生成原兑换单；失败或结果未知按同一请求恢复，不重复扣分或占库存。只有持有`reward_fulfillment.manage`的Platform Super Admin可以登记真实总仓发货。
+2. 不设置门店到货确认、领取凭证或扫码。顾客实际领取后，原领取门店老板／有效员工在原兑换单登记“已领取”；不需要审批。
+3. 真实发货起连续720小时仍未登记领取时，系统默认已领取且不退积分；必须标记系统默认来源，不伪造实际领取时间或店员。
+4. 原领取门店账号停用时，原兑换单自动取消并原路退回本次积分，向顾客发送重要通知；顾客不能重新选择门店。未发货的占用库存释放；已发货实物由平台在原兑换单记录后续处理，门店无操作。
+5. 门店停用取消与人工领取、720小时默认完成并发时，以服务端先成功的状态转换为准，同一兑换只产生一个终态；积分最多退回一次。
+6. 实物错发、损坏、少件、无法领取等异常全部由平台在原兑换单处理；门店端不提供异常登记、换货、补发、退积分或改店操作。
+7. 成功兑换在领取门店有效时，顾客和门店均不能主动取消；只有门店账号停用触发第4条自动取消退积分。兑换失败的原子回滚不受此限制。
+8. 系统自动记录每次状态修改的操作主体、服务端时间及改前改后；顾客查看真实状态与平台处理结果，普通门店不能读取平台内部处理备注。
 
-### 8.1 提交与展示
+### 8.1 状态与动作
 
-- 服务端校验原积分、奖励上架／限额、平台独立库存和所选门店资格；同请求只扣积分／占库存／生成原兑换单一次，兑换失败的原子回滚与失败补偿沿原规则，不将“成功兑换不取消不退积分”误作失败也扣积分。
-- 成功兑换后，发货前后均不能主动取消，不提供顾客、门店或总仓取消入口／接口；积分不退回，不生成新取消或返还任务。既有历史取消／合法失败补偿记录保留，不能清除或伪造完成。
-- 已发往门店不表示已经到货或现在即可领取，详情提示联系原门店确认时间；不生成领取码、二维码、收货确认或自动到货通知。页面访问、预计日期及一般定时任务不能推断到货；只有§8.5明确的30天规则允许系统默认完成。
-- 实际交付后本店老板／有效员工手动登记，保留F-RWD-023真实领取时间及024真实员工，F-RWD-029来源为manual_actual。不需顾客签字、凭证、短信或老板审批。
-- 详情主状态均可为“已领取”，但须区分“门店登记领取”和“超期默认已领取”；后者显示系统处理来源／时间，不宣称已实际交付、不显示虚构的实际领取人或时间。
-- 原真实发货及人工领取通知保留；默认完成仅更新真实系统状态，不冒发“顾客已实际领取”消息，不新增短信、自动电话或独立逾期提醒。
-
-### 8.2 状态、主体与动作
-
-| 状态 / 条件 | 主体 | 动作与校验 | 结果 / 客户端反馈 |
-|---|---|---|---|
-| 兑换处理中 / 结果未知 | 兑换用户 | 查询同一原请求 | 原结果或仍处理中，不重复扣积分／生成单据 |
-| 待总仓发货 | 持有reward_fulfillment.manage的Platform Super Admin | 确认真实发货；无取消动作 | 已发往门店，保留原所选店与真实发货时间，不自动推断到货 |
-| 已发往门店、未到默认截止且实际已交付 | 所选门店老板／有效员工 | 在原单手动登记已领取，校验有效任职、本店、原单与最新状态 | 已领取，来源manual_actual，保留实际领取时间／员工 |
-| 已发往门店且达到发货起720小时，尚未登记领取 | 服务端到期处理 | 同一原单幂等默认已领取，不退积分 | 已领取，来源timeout_default，显示“超期默认已领取”，实际领取时间／员工保持未登记 |
-| 已领取 | 兑换用户、原有权门店人员 | 查询原结果 | 不重复扣分、发放或出库；重复请求不改首次来源及时间 |
-| 原领取门店停用 | 平台客服 | 保留原店与原单，由客服人工电话通知顾客协调领取 | 不自动或手动换店，不自动取消／退积分；停用门店员工不恢复经营权限，原720小时截止不重置 |
-
-### 8.3 并发与记录
-
-- 手动领取和系统到期默认完成都校验同一原兑换单最新状态；只能形成一次有效完成。同次成功请求重试返回原结果，不重扣积分、重复发放或改变首次来源。系统默认后不能再点出第二笔实际领取结果，事后纠错由平台原异常处理设计收口。
-- 来源manual_actual才记录真实F-RWD-023／024；来源timeout_default写F-RWD-030系统默认完成时间，F-RWD-023／024不得拿定时任务时间、虚构员工代填。两者共享原兑换单，不能将默认完成统计为门店已实际交付。
-- 原奖励库存与商品库存分离，到期默认、门店停用或客服电话联系不再次扣／加库存、不表示实物已退仓或已真实领取，不增加门店消费／收款／业绩。
-- 未发货不生成720小时自提截止；原已取消／失败记录不被本次新规则复活，已实际领取的不被定时任务覆盖。成功兑换的本期流程不再产生新的取消状态或积分退回。
-- 客服人工电话通知不是小程序自动语音／短信接口，不新增通知类别或给门店、任意客服账号平台写权限。
-
-### 8.4 决策收口与剩余平台契约
-
-DEC-POINTS-01的取消业务边界已确认：成功兑换后发货前后均不能取消、不退积分，不再阻塞取消入口设计，不得继续预留待开发取消入口。
-
-| 决策 ID | 剩余待确认内容 | 收口阶段 / 影响 |
+| 状态／条件 | 处理主体 | 结果 |
 |---|---|---|
-| DEC-POINTS-02 | 不换店、客服人工电话通知及超期默认已领取已确认；客服具体平台权限／电话处理记录、事后错误登记等剩余异常技术契约 | 阶段05／06／08；不重开取消、换店或到货确认流程 |
+| 待总仓发货 | Platform Super Admin | 登记真实发货后进入已发往门店 |
+| 已发往门店且实际领取 | 原门店老板／有效员工 | 登记已领取，保存真实人和时间 |
+| 已发往门店满720小时未登记 | 系统 | 默认已领取，不退积分，不伪造实际交付 |
+| 原领取门店账号停用 | 系统＋平台 | 自动取消、退回积分、重要通知顾客；不允许换店 |
+| 实物异常 | 平台 | 在原兑换单处理，门店无动作 |
+| 已领取／已取消 | 各端只读 | 不重复扣分、退分、出库或完成 |
 
-### 8.5 发货后30天未登记领取，系统默认已领取
+### 8.2 奖励自提内部备注
 
-> status: confirmed
-> status_scope: shipped_physical_reward_timeout_default_received_without_points_return
-> confirmed_by: user
-> confirmed_on: 2026-11-05
-> reward_pickup_validity_hours_after_shipment: 720
-> reward_pickup_expiry_anchor: warehouse_shipped_at
-> reward_manual_cancel_after_shipment: excluded
-> reward_pickup_expiry_action: default_mark_received_no_points_return
-> reward_pickup_expiry_boundary: now_greater_than_or_equal_to_pickup_deadline
-
-- 原真实发货时间F-RWD-020加连续720小时为F-RWD-027 cutoff；不从兑换、预计到店或联系时间计，切店／联系／重试不重置。
-- 服务端达到或超过截止，原单仍已发往门店且未登记领取时，同次写已领取、F-RWD-029=timeout_default及F-RWD-030实际系统处理时间。展示“已领取”及“超期默认已领取”说明；这不是取消，不写F-RWD-025、不生成积分返还／补偿、不改原扣积分。
-- 默认完成不证明顾客实际拿到实物，F-RWD-023／024保持未登记；系统操作者及前后状态／请求沿原F-AUD留存，不伪造店员经办、签字、到货或实际领取时间。
-- 人工登记与到期任务并发按原状态只成功一种结果；已成功人工领取的重试保留原实际来源，超期任务不会覆盖。默认任务迟到仍以原发货截止判断、处理时间如实记录，同次重试不重复完成。
-- 门店停用不换店、不重置截止，由客服人工电话通知；到期默认不自动增加库存或确认实物去向。原真实领取通知与失败补偿保持，不因本规则新增短信或虚假实际领取通知。
-
-### 8.6 奖励自提内部备注纠错
-
-> status: confirmed
-> status_scope: reward_pickup_internal_note_correction_contact_customer_service_only
-> confirmed_by: user
-> confirmed_on: 2026-11-05
-> reward_pickup_internal_note_correction: contact_customer_service
-> reward_pickup_store_direct_note_amendment: excluded
-
-奖励自提业务的内部备注填错，由门店联系客服处理，老板／员工不在门店端直接修改。原备注及更正前后内容、真实处理人和服务端时间须保留，备注不向顾客或其他门店公开；备注纠错不修改原兑换、积分、发货／领取事实或720小时截止，也不解锁取消或重领。平台具体处理人员／界面及数据契约仍由后续平台设计明确，不因联系客服新增任意客服写权限、独立工单系统或未登记备注字段。食品风险同样按03h§2.4及03f§13.3处理；其他业务内部备注仍按各自原规则维护。
-
+奖励自提内部备注由平台在原兑换单维护；门店不提供新增或修改入口。平台修改同样自动记录实际操作人、时间和前后值，备注不向其他门店公开。
 ## 9. 积分商城库存边界
 
 积分实物奖励使用平台 / 总仓独立奖励库存，不直接占用某家门店普通商品销售库存。
@@ -279,7 +185,7 @@ DEC-POINTS-01的取消业务边界已确认：成功兑换后发货前后均不�
 - 当前状态
 - 兑换时间
 
-券类奖励可深链到对应优惠券；实物奖励显示真实发货和领取状态，不推断已到货，不展示领取凭证。
+历史上已经合法产生的券类兑换记录仅按原权限只读展示；V1不得再创建或兑换券类奖励。当前实物奖励显示真实发货和领取状态，不推断已到货，不展示领取凭证。
 
 兑换记录属于 Platform User，切换当前门店后仍可查看；关联领取 / 使用门店须如实展示。查看具体商户优惠券时，按 `03g` / `03f` 校验对应门店 Customer 权限后进入，不把平台兑换记录作为越权凭证。
 
@@ -317,10 +223,10 @@ DEC-POINTS-01的取消业务边界已确认：成功兑换后发货前后均不�
 - 该周不自动补足 50。
 - 无补签。
 
-### C-POINTS-04：兑换优惠券
+### C-POINTS-04：V1不兑换券
 
-- 扣积分后获得指定门店优惠券。
-- 积分记录与商户优惠券记录分别可查。
+- 积分商城不展示优惠券／服务券／活动券奖励。
+- 历史已合法发出的积分券只读保留，不允许新兑换。
 
 ### C-POINTS-05：兑换实物
 
@@ -334,7 +240,7 @@ DEC-POINTS-01的取消业务边界已确认：成功兑换后发货前后均不�
 - 重复提交、网络重试及迟到回调不重复扣积分 / 占库存；最后一份库存并发兑换结果符合真实库存。
 - 结果未知时可从我的兑换恢复查询；补偿未入账时显示返还处理中，不提前展示积分已返还。
 - 未发货／历史已取消／其他门店不能人工登记领取；实际未交付不能人工假记。发货起720小时到期与人工登记并发只完成一次，分别保留manual_actual或timeout_default来源，默认完成不伪造实际领取时间／员工；成功重试不重复。
-- 成功兑换后发货前后均不能取消、不退积分；发货起720小时未登记按§8.5默认已领取，非取消。门店停用不换店，由客服人工电话通知，原截止不重置，失败补偿及原历史保留。
+- 成功兑换后发货前后均不能取消、不退积分；发货起720小时未登记按§8.5默认已领取，非取消。门店停用自动取消原兑换、退回积分并发送重要通知，不允许换店，失败补偿及原历史保留。
 
 ## 13. 需求变更记录
 

@@ -6,6 +6,7 @@ on:
       - "AGENTS.md"
       - "docs/**"
       - "scripts/audit_requirements.py"
+      - "prototype/**"
       - ".github/workflows/requirements-audit.yml"
   push:
     branches: [main]
@@ -13,6 +14,7 @@ on:
       - "AGENTS.md"
       - "docs/**"
       - "scripts/audit_requirements.py"
+      - "prototype/**"
       - ".github/workflows/requirements-audit.yml"
 
 permissions:
@@ -26,5 +28,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
       - name: Audit requirement consistency
         run: python scripts/audit_requirements.py --root . --output requirements-audit.json
+      - name: Check H5 JavaScript syntax
+        run: node --check prototype/pawdays-full-preview/dist/app.js
+      - name: Verify interactive H5 preview
+        run: node prototype/pawdays-full-preview/verify.mjs

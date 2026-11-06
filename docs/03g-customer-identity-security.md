@@ -1,12 +1,11 @@
 # 03G 客户端「登录 / 手机号绑定 / 历史客户识别 / 账号安全」模块
 
-> status: mixed
+> status: confirmed
 > status_scope: full_document
-> confirmed_scope: existing_identity_rules_global_unique_verified_mobile_account_rebind_or_change_mobile_and_customer_authorized_current_store_history_import
-> pending_scope: shared_history_import_detailed_mapping_source_amendment_refresh_support_handled_authorization_disposition_and_legacy_identity_mapping_contracts
+> confirmed_by: user
 > change_policy: record_required
-> development_readiness: partial
-> blocked_by: [DEC-STAFF-09]
+> development_readiness: ready
+> blocked_by: []
 > parent_stage: 03_customer_miniapp
 > version: V1.0
 
@@ -74,14 +73,14 @@
 > identity_lookup: verified_mobile_account_and_current_effective_roles
 > duplicate_mobile_action: choose_confirmed_rebinding_or_another_verified_mobile
 > verified_mobile_account_uniqueness: one_active_platform_account
-> default_staff_entry: effective_staff_miniapp_operating_identity_only
+> default_staff_entry: single_effective_store_operating_identity_only
 > no_effective_operating_role: customer_client
 > previous_wechat_after_rebinding: unbound_and_sessions_revoked
 
-本节适用于客户端与老板／员工共用的小程序登录，不定义平台管理员Web登录。全平台账号唯一按已认证手机号约束；顾客和店员使用同一平台账号，存在当前有效店员端经营身份（含老板原有业务身份）才默认进店员界面，否则进客户端，不把历史停用身份当有效任职。换绑不再要求用户检查旧账号或核验旧微信，旧身份与资料保留；同一人在各店的Customer是店内业务关系，不是重复登录账号。§3公开浏览仍无需先登录；一旦执行登录，则必须满足本节手机号认证条件。
+本节适用于客户端与老板／员工共用的小程序登录，不定义平台管理员Web登录。全平台账号唯一按已认证手机号约束；顾客和店员使用同一平台账号。同一平台账号在同一时刻只能归属一个有效经营门店：已经是某店老板或店员时，不能同时成为另一家店的老板或店员。存在该唯一有效经营身份才默认进店员界面，否则进客户端，不把历史停用身份当有效任职。换绑不再要求用户检查旧账号或核验旧微信，旧身份与资料保留；同一人在各店的Customer是店内业务关系，不是重复登录账号。§3公开浏览仍无需先登录；一旦执行登录，则必须满足本节手机号认证条件。
 
 1. **微信登录后检查认证**：服务端检查当前微信绑定账号是否已有有效手机号认证。已认证且绑定未变化，可直接登录，不要求每次进入重复认证；未认证则提示完成手机号认证，成功后才建立可访问个人业务的登录会话。拒绝／失败不冒充已登录，不开放个人或门店私有数据，原安全目标按§3保留。
-2. **按手机号确定身份**：只能使用服务端核验的手机号，查找其当前绑定的平台账号及该账号的现行经营关系。有有效老板／员工身份则进入其有权门店；没有有效经营身份时，普通登录进入客户端；从真实员工入职邀请进入则恢复原邀请确认页并按02§6.0.1重验资格、本人明确确认后才加入，不在认证时自动入职。不新增“客户”经营角色，不自动创建任意门店Customer。账号停用／注销仍按原规则阻断；员工停用／移出、门店停用不因认证或换绑恢复权限，返聘仍需02§6.1的新邀请。
+2. **按手机号确定身份**：只能使用服务端核验的手机号，查找其当前绑定的平台账号及该账号的现行经营关系。有唯一有效老板／员工身份则进入该门店；如果已存在其他门店有效经营身份，新的入职邀请或老板关系创建必须拒绝并提示先结束原关系；没有有效经营身份时，普通登录进入客户端；从真实员工入职邀请进入则恢复原邀请确认页并按02§6.0.1重验资格、本人明确确认后才加入，不在认证时自动入职。不新增“客户”经营角色，不自动创建任意门店Customer。账号停用／注销仍按原规则阻断；员工停用／移出、门店停用不因认证或换绑恢复权限，返聘仍需02§6.1的新邀请。
 3. **重复号码提示**：新微信完成该手机号所有权认证后，如号码已绑定其他微信，标题提示“手机号异常”，正文“该手机号已绑定其他微信，是否换绑？”，提供“换绑”和“更换手机号”两种处理；选择新手机号须重新认证，未成功前不授予原号码身份。未认证不查询／展示他人绑定情况；提示不透露原微信、姓名、门店或资产。退出本次处理不改变原绑定，新微信不能用该号码取得原身份。全平台同一认证手机号只绑定一个当前有效平台账号，不能因新微信再建同号顾客／员工登录账号；手机号码仍不是业务主键，旧资料不删除。
 4. **确认换绑**：本轮明确采用“当前手机号认证成功＋本人明确确认”完成换绑，不另增加旧微信核验或平台人工审批前置。新微信绑定该手机号对应的原平台账号，沿用其稳定platform_user_id、原员工／老板关系及已有业务历史；解除旧微信登录绑定并使旧微信的原登录会话失效。旧微信此后不能沿旧认证状态或旧缓存继续进入；历史订单、业绩、Customer、余额和作者／经办事实均不重建、复制、合并或改归属。
 5. **边界及防重**：换绑以服务端当前绑定和认证结果为准，一致完成新绑定、旧解绑及会话失效，并保留实际操作人、时间和前后绑定审计；失败不半换绑，同请求重试不重复迁移，冲突并发不得让两个微信同时持有同一有效绑定。若新微信已关联另一个有业务历史的账号，或手机号对应多个账号等非唯一情况，不能猜选、覆盖或自动合并；独立账号合并／异常处置技术方案另行收口，本节不授权其自动处理。
@@ -131,38 +130,7 @@
 
 进入账号绑定冲突 / 恢复流程，V1.0 可由商户老板辅助处理；所有换绑必须保留审计记录。
 
-本节处理的是“当前Merchant内历史Customer与Platform User如何绑定”，不等于03h跨店服务履约记录查询的身份冲突。若手机号与稳定微信身份在跨店查询中指向不同主体、存在多候选、换号／回收疑点或验证过期，必须按03h§10.1.2阻断结果并转平台核验；商户老板和普通店员均不能用本节的本店绑定能力解除跨店冲突，也不能借此合并其他门店Customer。
-
-### 5.5 顾客本人授权，将其他门店档案与服务护理历史导入当前门店
-
-> status: mixed
-> confirmed_scope: verified_account_unique_customer_confirms_current_store_import_of_profiles_and_customer_visible_service_history_only
-> pending_scope: exact_field_and_source_target_mapping_source_updates_after_import_support_handled_authorization_disposition_and_legacy_identity_resolution_contracts
-> change_policy: record_required
-> development_readiness: partial
-> blocked_by: [DEC-STAFF-09]
-> confirmed_by: user
-> confirmed_on: 2026-11-05
-> history_import_confirmer: authenticated_customer_self
-> history_import_target: explicitly_selected_current_merchant
-> history_import_prompt: 其他门店有您的服务记录，是否一键导入本店？
-> history_import_allowed_data: [顾客基本档案, 宠物档案, 顾客可见服务护理历史]
-> history_import_excluded_data: [订单金额, 钱包, 充值, 商户优惠券及活动权益资产, 内部备注, 员工评价, 经营分析, 原始审计]
-> history_import_merchant_self_authorization: excluded
-> history_import_financial_effects: excluded
-> history_import_risk_quota_reuse: excluded
-> history_import_customer_self_revoke: excluded
-> history_import_authorization_change_channel: contact_customer_service
-
-- 当前手机号完成认证且关联稳定User后，只有对本人实际有权读取的其他门店记录，才提示“其他门店有您的服务记录，是否一键导入本店？”。明确展示目标门店，顾客本人选择确认后，授权本次允许的顾客／宠物档案与服务护理历史导入当前Merchant；不因手机号匹配、登录、查看提示或门店点击而自动导入，不将授权给当前店扩大为所有门店可查。
-- 全平台同手机号一个登录账号；各门店仍通过自身Customer关系记录资金及交易。其他门店订单金额、钱包、充值、商户券／活动资产和内部备注始终不导入、不互通。服务历史只包含原业务允许顾客本人看的内容；终止服务不可向顾客展示的过程／照片、原件及审计不能借导入绕过，也不直接返回原完整Customer／Pet实体。
-- 导入以原User、原服务记录与来源门店为依据，保留真实来源／原发生时间，不按昵称或手填电话猜同人同宠。新建或复用目标店的Customer关系不得复制／合并来源钱包；旧档案及历史保留，旧重复关系／宠物映射未明确时不得猜配。
-- 成功导入只形成目标店有授权的历史视图／资料关联，不生成本店新服务完成、消费订单、实收、退款、充值、积分或员工业绩，不把其他门店服务当本店已履约。重复确认／请求重试沿原导入请求恢复结果，同一源记录不重复导入或复制原业务事实，记录本人、目标店、授权和导入范围及服务端时间。
-- 本流程与03h的“服务履约风险记录”独立：风险记录仍按双方门店授权、顾客分项同意、每月3次等现行规则；本次导入不充当风险共享同意、解除身份冲突或重置额度，也不将该限额套到普通历史导入。
-- 顾客不提供自行撤销本次跨店资料导入授权的按钮、接口或其他自助入口；需要变更／撤销授权须本人联系客服，由客服受理处理。联系客服不自动代表已经撤销；具体处理资格、处理结果和已导入资料处置按DEC-STAFF-09在平台设计中明确，不擅定永久共享或自动删除历史。此限制仅针对本节普通档案／历史导入，03h服务履约风险共享原有分项授权及撤回规则独立保持。
-- 来源记录修改后的更新方式、源宠物到目标档案映射、字段白名单／媒体访问及历史冲突迁移仍按DEC-STAFF-09在实现前明确。拒绝、未认证或失败不导入，失败不假成功／建立本店新成交。
-
-F-CSH-001 customer_history_import_id固定导入业务标识；F-CSH-002 source_service_record_ids记录本次授权导入的原服务引用集合。唯一目标归属复用CORE002 merchant_id，当前店CORE003、本人CORE001、目标Customer CORE004及CORE010防重／CORE013成功创建时间／原AUD审计；完整映射先注册后实现，不复用历史订单Excel导入F-IMP或风险授权字段。
+本节处理的是“当前Merchant内历史Customer与Platform User如何绑定”，不等于03h跨店顾客风险查询。跨店顾客风险只按服务端核验的认证手机号匹配；号码存在多候选、换号／回收疑点、验证过期或其他冲突时必须阻断结果并转平台核验。不得再使用微信身份、昵称、手填联系方式或Customer文本作为第二匹配条件；商户老板和普通店员不能用本节的本店绑定能力解除跨店冲突，也不能借此合并其他门店Customer。
 
 ## 6. 线下先建客户、线上后绑定
 
@@ -249,22 +217,18 @@ V1.0 支持门店针对复杂历史数据提供“绑定客户小程序”能力
 - 后台回前台不丢当前页面和未提交内容；新外部目标优先时不自动提交或丢弃原草稿，草稿只在同一账号及原业务上下文恢复。
 - 切店后平台个人消息保留、其他门店私有消息隔离，消息未读按 `03f` 的可见范围更新。
 
-## 12. 宠物基础档案复用
+## 12. V1不提供跨店档案复用
 
-客户进入新的商户时，可主动选择“使用已有宠物档案”。
-
-只有客户明确授权后，才向目标商户提供允许共享的宠物基础资料。
-
-不得跨商户共享：
+客户进入新的商户时，不显示“使用已有宠物档案”或“一键导入其他门店记录”。目标门店只使用本店Customer、Pet和本店服务记录；不得跨商户复制、导入或自动合并：
 
 - 其他商户订单 / 消费金额
 - 其他商户会员余额 / 优惠券
-- 未经§5.5顾客本人明确授权导入的其他商户服务记录
+- 其他商户顾客档案、宠物档案和服务护理历史（V1不提供导入）
 - 其他商户内部备注
 - 其他商户员工评价
 - 其他商户经营分析标签
 
-宠物相关服务安全事件已经并入统一顾客风险，不随基础档案复用自动开启，按`03h-customer-risk-feedback.md`§10.1～10.5执行顾客服务履约分项同意、双方门店授权、客服审核、顾客不可见及期限规则。`DEC-PETSAFETY-01`只继续约束宠物护理注意事项的共享细节。
+宠物相关服务安全事件已经并入统一顾客风险，按`03h-customer-risk-feedback.md`§10.1～10.5执行认证手机号匹配、顾客服务履约分项同意、双方门店授权、客服审核、顾客不可见及期限规则。该最小范围查询不是档案导入，也不能写回目标门店完整档案或历史。
 
 ## 13. 客户端账号设置
 
@@ -299,7 +263,7 @@ V1.0 采用主要 User 管理宠物和商户关系；架构可在以后版本预
 - 账号恢复
 - 注销申请
 
-至少记录操作时间、操作方式、操作主体、原关系、新关系和原因；人工操作还必须记录操作员工 / 老板。
+至少自动记录操作时间、操作方式、操作主体、原关系和新关系；原因选填，人工操作另记录实际员工／老板。
 
 ## 16. 减少操作原则
 

@@ -1,11 +1,10 @@
 # 03J 客户端「上门喂养需求市场」模块
 
-> status: mixed
-> confirmed_scope: all_current_rules_except_section_8_3
-> pending_scope: section_8_3
+> status: confirmed
+> status_scope: full_document
 > change_policy: record_required
-> development_readiness: partial
-> blocked_by: [DEC-FEED-02]
+> development_readiness: ready
+> blocked_by: []
 > parent_stage: 03_customer_miniapp
 > version: V1.0
 
@@ -125,119 +124,30 @@ V1.0 不建设平台在线支付、资金托管、抽佣、自动分账或保证
 - 其他用户随后看到“已有人接单 / 等待门店对接”，不得重复形成有效接单。
 - 并发接单必须由服务端原子校验，前端状态不可作为最终依据。
 
-## 8. 状态与当前边界
+## 8. 状态、入口与操作
 
-当前状态只保留：待接单 → 待门店确认 → 已确认；终止状态为已撤销（承接原已取消语义）及已过期expired。
+当前唯一入口名为“上门喂养”。状态统一为：待接单 → 待门店确认 → 已确认 → 已结束；终止状态为已撤销、已过期。
 
-“已确认”仅表示当前负责门店已确认并取得查看双方必要联系方式的资格，不表示双方互获联系方式，也不表示实际服务开始／完成。APP不记录服务进度或线下协商修改；原门店对接中／服务中／已完成等服务跟踪状态退役，仅保留旧历史，不创建新记录或据时间自动生成服务完成。
+- 需求方只有发布、撤销；用户保留自主接单；当前负责门店只有确认、撤销。所有动作均无需审批，撤销原因选填。
+- 门店确认前不返回双方联系方式；确认后只有当前负责门店老板／有效员工能查看双方合法授权的完整联系资料，需求方和接单用户不能互看。
+- APP不跟踪开始、打卡、完成或线上修改；线下安排由门店协调。到需求结束日期的服务端日界线后，未撤销记录自动变为“已结束”，只表示系统展示周期结束，不证明逐次服务完成或收付款。
+- 结束、撤销、过期后停止新接单、确认和联系方式的新读取；历史只读保留。要重新开始必须发布新需求。
 
-### 8.1 主体与操作
+## 9. 门店匹配、异常与自动接续
 
-| 主体／条件 | APP允许的业务动作 | 结果及边界 |
-|---|---|---|
-| 需求发布者本人 | 发布、撤销 | 发布后不编辑；待接单／待门店确认／已确认均可撤销整笔未终止需求，不要求门店审批 |
-| 已验证的非发布者用户 | 原“我要接单” | 首个有效请求锁定接单人；保留查看本人记录，不增加修改、退出申请或在线确认安排按钮 |
-| 当前负责门店老板／有效员工 | 确认、撤销 | 存在有效接单人才可确认；确认后本店可看双方必要联系方式，撤销为整笔需求终止，不是释放一人后重开 |
-| 已撤销／已过期 | 查看有权历史／旧分享真实只读状态 | 不再接单、确认、编辑或重新开放；重复撤销仅返回原结果 |
+1. 定位成功时按原绑定门店位置寻找当前有效平台门店；附近没有可用门店，提示“附近暂无服务门店”并结束本次发布引导，不创建待处理需求。
+2. 定位失败时提示顾客手动选择区县；选择后重新查找，仍无候选则按第1条结束。不得静默随机选店或无限扩大范围。
+3. 门店临时休息不影响本功能正常运行。
+4. 当前负责门店账号停用时，尚未结束的需求及待办、原接单人和历史自动转给最近的其他有效平台门店；新店可查看原需求和接单关系。
+5. 联系方式权限绑定当前负责版本：新店必须重新点击确认，确认成功后可查看双方完整联系方式；原店立即失去新读取和操作资格，历史确认记录保留。
+6. 转店无候选时不创建虚假新店，保留原记录并显示“附近暂无服务门店”，停止继续对接；不得恢复停用门店权限。
+7. 发布、接单、确认、撤销、自动结束、过期和转店均由服务端按最新状态、当前负责版本与幂等请求原子处理，系统自动记录操作主体、时间和前后状态。
 
-接单用户需要退出或任何一方需要变更安排时，由门店线下协商，不在APP增加修改／退出／重新开放／开始／完成操作。需要结束系统对接记录时按上述撤销；仍需公开招募则由需求方新发布，原记录不复活。浏览、查询、分享等读取入口保留，不把“两项操作”理解为删掉列表或历史。
+### 9.1 接单截止与自动结束
 
-### 8.2 并发与权限
-
-发布／接单／门店确认／撤销／过期及自动接续均由服务端校验本人／当前负责店资格、最新状态、coordination_assignment_version及原请求幂等。发布者不能接自己需求，同一需求只一名有效接单人；无重新开放，因此不再创建新的接单轮次。撤销／过期成功后不能确认、接单或取双方联系资料，重复请求不重复需求、事件或通知。
-
-### 8.3 剩余待决
-
-| 决策ID | 剩余范围 |
-|---|---|
-| DEC-FEED-02 | 最近门店位置／地理接口技术契约及无候选／定位失败的平台异常人工界面细节；不恢复已退役内部细状态或额外操作 |
-
-### 8.4 已确认决策
-
-DEC-FEED-01已确认：协商修改全部在线下，APP需求方仅发布／撤销、门店仅确认／撤销，原修改／重确认表单及终止恢复操作退役。DEC-FEED-03已确认：首次上门接单截止与过期／公开曝光规则按§9.3。两者不再放入blocked_by，DEC-FEED-02仅剩上表范围。
-
-## 9. 已确认：简化操作与门店确认后查看联系方式
-
-> status: confirmed
-> status_scope: home_feeding_simple_matching_and_store_only_contact_release
-> confirmed_by: user
-> confirmed_on: 2026-11-01
-> home_feeding_requester_actions: [发布, 撤销]
-> home_feeding_store_actions: [确认, 撤销]
-> home_feeding_user_self_acceptance: retained
-> home_feeding_changes: offline_store_coordination_only
-> home_feeding_post_publication_edit: excluded
-> home_feeding_progress_tracking: retired
-> home_feeding_reopen: excluded
-> home_feeding_contact_release_trigger: explicit_current_store_confirmation_with_effective_acceptor
-> home_feeding_contact_viewers: current_confirmed_store_owner_and_active_staff_only
-> home_feeding_contact_mutual_user_visibility: false
-> home_feeding_contact_preconfirmation_visibility: false
-> home_feeding_contact_after_cancellation_visibility: false
-> home_feeding_confirmation_assignment_binding: required
-> home_feeding_store_owner_approval: false
-> home_feeding_response_deadline: none
-> home_feeding_automatic_chasing: excluded
-> home_feeding_auto_complete_service: excluded
-> home_feeding_dec_feed_01_status: confirmed
-
-- 入口仍为“业务 → 上门喂养”，查询组为待确认、已确认、历史记录；组名不新增底层状态。有效用户接单后进入当前店工作台待处理，按accepted_at早到晚；门店确认后从待确认办理队列移除，已确认记录仍可查。工作台不跟踪上门服务中事项。
-- 门店只有确认／撤销两个业务按钮，本店老板／有效员工均可，无老板逐单审批或原经办人限制。“确认”就是本功能动作，不能被理解为只由老板审批。
-- 确认前门店看到原公开／授权需求、有效接单关系及必要对接摘要，但不返回双方手机号／微信等联系资料；按钮必须有有效接单者且当前需求未终止。确认成功记录实际员工、服务端时间及当前负责版本，随后只有当前店老板／有效员工可以查看双方已有合法授权联系资料。
-- 需求方与接单用户无相互联系方式权限，确认不改变这一点。公开列表、需求详情、我的发布／接单、分享／消息、导出／缓存和媒体均须相同过滤，不能只遮前端。原有本人资料访问与其他合法独立业务权限保持，但不得借上门喂养接口绕过确认取对方联系方式。
-- 联系资料按publisher_user_id／accepted_user_id解析各自已有合法授权的联系方式；例如复用F-AUTH-001 verified_mobile，不复制原商户Customer、不把昵称／OpenID当微信号，不伪造缺失号码。授权／资料缺失时如实显示不可用，不因已确认猜测资料；精确地址仍沿原授权与必要范围，不随本次确认对外公开。
-- 接单后修改日期／时段／地址／次数等，门店自行线下协商，APP不新增修改表单、双方线上同意、修改原因／照片表单、内部沟通记录、开始服务／完成服务、逐次打卡、定位、签字或顾客验收。页面明确“发布信息供联系参考，实际安排请与门店沟通”，不把原发布内容冒充最新线下安排。
-- 原需求、接单人及原发布内容保留，APP不因线下协商重算截止、重开接单或更新服务进度；双方可通过原门店公开信息联系店家，本功能不向用户披露另一参与方联系方式。确认及撤销通知不夹带双方号码／微信／精确地址。
-- 不设固定响应时限、自动催办或超时撤销；已有有效接单不按开始／结束日期自动终止。已确认不是实际服务完成，系统只保留撮合确认记录，不自动销售、收款、扣余额或记门店营业额。
-
-### 9.1 撤销与线下协调
-
-需求方本人及当前负责店老板／有效员工可撤销待接单／待门店确认／已确认的整笔未终止需求，原因不强制填写，保留真实操作者／时间／前后状态及历史；无额外审批。撤销只终止系统撮合记录，不表示线下服务未发生或自动退费。已确认后撤销也不抹去原确认或实际线下事实。
-
-撤销成功显示已撤销，停止新接单／门店确认及双方联系资料的新读取，通知原参与双方及当前店；网络重试沿原结果。无独立接单退出、重新开放或“服务开始后提前结束”录入流程。需要重新招募时新发布，不通过撤销回待接单或改日期复活。当前店确认与需求方撤销并发按服务器先成功的合法状态转换及最新版本处理，撤销先成立就不能放出号码，已确认仍可合法撤销但原历史不删除。
-
-### 9.2 临时休息不受影响，账号停用自动接续
-
-> status: confirmed
-> status_scope: home_feeding_disabled_store_reassignment_with_confirmation_bound_contacts
-> home_feeding_temporary_rest_effect: no_effect_on_feature_operations
-> home_feeding_reassignment_anchor: original_publisher_store_effective_location
-> home_feeding_reassignment_candidates: other_active_platform_stores_with_usable_location
-> home_feeding_reassignment_preserve: original_request_acceptor_and_history
-> home_feeding_reassignment_contact_reset: new_assignment_requires_store_confirmation
-> home_feeding_reassignment_no_candidate: preserve_request_and_pending_platform_exception
-
-- 临时休息／临时关闭预约不影响本功能浏览、发布、接单、确认及线下协调，不触发迁移。
-- 当前负责店账号停用时，未撤销／未过期需求及原接单关系、对接待办自动转给最近其他正常平台店。距离起点始终取原publisher_store_id的有效地址位置，不取服务地点／用户定位；候选排除停用／失效或不可定位店，临时休息不剔除。等距按稳定store_id次序，地理接口／结构化坐标技术契约仍后续收口，不伪造定位。
-- publisher_store_id原始来源、原需求ID、发布者、接单人、发布内容及历史保留；只更新current_coordination_store_id和coordination_assignment_version。原店失去新取数及操作资格，旧缓存／旧版本不再操作；不迁移其他顾客、钱包、券或宠物私有档案，不改变用户全局当前门店。
-- 联系资料权限绑定负责版本。原店确认不能自动替新店确认：已有接单关系的需求转到新店后显示待新门店确认，新店需点确认才获得双方联系方式；原确认人／时间及旧版本历史保留，不删除或伪造。无有效接单者的需求仍按原待接单／截止规则，不凭转店产生接单或确认。
-- 成功后通知双方及新店、页面显示当前对接店；不将联系方式放入通知或公开给候选门店，不因转店公开旧店内部备注／媒体或原始审计。因APP不跟踪实际服务是否结束，已确认仅为撮合结果；未撤销／未过期记录仍按本节可接续，不自动生成服务完成状态。
-- 迁移与新旧店确认／撤销／接单／过期须按负责版本和状态一致生效，提交时复核候选仍正常，重试不重复任务／通知或放宽联系方式门槛。原店无法定位、无候选或迁移未成功时保留原单／接单／历史，显示门店接续处理中并进入平台异常事项，不随机选店、恢复旧店权限或自动撤销／完成／退款。
-
-### 9.3 接单截止、过期与公开展示
-
-> status: confirmed
-> status_scope: home_feeding_first_visit_cutoff_and_expiry_for_simple_matching
-> dec_feed_03_status: confirmed
-> home_feeding_cutoff_timezone: Asia/Shanghai
-> home_feeding_cutoff_source: first_service_date_and_earliest_first_visit_window_start
-> home_feeding_cutoff_advance_hours: 0
-> home_feeding_accept_time_condition: server_now_strictly_before_accept_deadline
-> home_feeding_same_day_publication: allowed_if_first_visit_is_future
-> home_feeding_expiry_scope: unaccepted_nonterminal_request_at_cutoff
-> home_feeding_expired_status: expired
-> home_feeding_accepted_auto_expiry: excluded
-> home_feeding_expired_revival: excluded_new_request_required
-> home_feeding_public_recommendation_scope: valid_open_unaccepted_requests_before_cutoff_only
-> home_feeding_old_share_link: latest_real_state_read_only_no_participant_contacts
-
-- 延续北京时间首次约定上门开始时间为接单截止，不提前小时数，09:00—11:00取09:00，多次取首日最早起点。now严格早于accept_deadline才可新接单；可当天发布未来首访，模糊文字／AI不能决定资格。无重新开放或APP修改，因此不因线下协商更新时间／截止。
-- 截止时无有效接单者的未终止需求自动expired／已过期，退出公开推荐，不假记撤销或服务完成；已有有效接单者的待确认／已确认记录不按开始／结束日期自动结束。接单截止不是门店确认截止，不给门店确认加未授权的提前小时限制。
-- 发布后不编辑，包括截止前；修改需求需线下沟通，若需要新公开内容则撤销原单后新发布。已过期不可复活，历史保留。
-- 首页／公开需求列表／跨城补充仅有效待接单且未截止；有效接单、撤销／过期后退出推荐。F-FEED-027是本轮公开招募曝光退出时点，初始取截止，提前接单／撤销按真实事件收口，不是旧分享禁访／数据删除期限。
-- 旧分享、本人记录读取最新真实只读状态，已接单不可重复接，已终止不可确认／恢复；精确地址及双方联系方式均不向公开或彼此披露，门店已确认也不改变公开侧权限。
-- 接单／撤销／门店确认／过期／转店使用服务器时间、当前负责版本、最新状态和原请求防重。迟到过期任务不能覆盖截止前有效接单；即使任务未跑，now≥截止也不能接单，迁移不重置截止、不复活过期。定时任务不生成服务开始／完成、重复通知或资金事件。
-
+- 接单截止仍为首次约定上门开始时间；服务端当前时间严格早于截止才可接单。截止时仍无人接单的需求变为已过期。
+- 已有接单者的待确认／已确认记录不因接单截止而过期，但到需求结束日期后自动变为已结束。
+- 旧分享与本人记录只读显示最新真实状态，不公开精确地址或参与方联系方式。
 
 ## 10. 订单 / 数据边界
 
@@ -293,7 +203,7 @@ DEC-FEED-01已确认：协商修改全部在线下，APP需求方仅发布／撤
 - 同一需求一位有效接单者；接单／撤销／确认／过期／迁移竞态与重复请求不多建需求、确认／通知或放出错误门店版本的联系方式。
 - 临时休息不影响运行；账号停用按原发布店距离转最近有效店，原需求／接单人／历史不改，新店再确认才取联系方式，旧店失权，无候选保持原单并待平台异常处理。
 - 首次上门起始截止，等于及之后不接单；无有效接单者到点过期，已有有效接单者不自动结束。仅有效待接单推荐，旧分享最新真实状态只读且无双方私密资料，原历史保留。
-- 文档确认与审计不是实际功能验收，地理接口及异常界面剩余范围仍按DEC-FEED-02，不能用Mock宣称已接通。
+- 文档确认与审计不是实际功能验收；附近无服务门店提示与定位失败手动选区已确认，但真实定位和门店距离接口仍须在技术阶段实现与验收，不能用Mock宣称已接通。
 
 ## 13. 需求变更记录
 
