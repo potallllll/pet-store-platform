@@ -1227,6 +1227,12 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 > member_order_customer_input: select_existing_current_store_customer
 > member_order_manual_mobile_or_wechat: excluded
 > service_entry_shared_order_model: true
+> service_entry_service_choice_required: true
+> service_entry_service_choice_values: [wash, grooming, other]
+> service_entry_service_choice_labels: [洗护, 美容, 其他]
+> service_entry_price_required: true
+> service_entry_price_minimum: 0
+> service_entry_price_decimal_places: 2
 > guest_customer_supported: true
 > guest_customer_requires_online_registration: false
 > multi_pet_add_action: 新增宠物
@@ -1240,8 +1246,11 @@ staff_invite_code.view／copy／share退役保留标识防止复活，不改造�
 | 宠物昵称 | 每只办理服务的宠物必填，复用F-PET-002／pet_name；不另建dog_name，保留猫／狗／其他现有类型。 |
 | 联系方式 | 当前顾客手机号或微信号至少一个非空，可都填；复用／填写本Customer联系资料，见F-CUST-001／002。同一顾客多只宠物不要求逐只重复输入联系方式。 |
 | 品种 | 每只办理服务的宠物必填，复用F-PET-005／pet_breed；已有资料自动带出，缺失时在开单中补齐，不要求重新建同一宠物。 |
+| 服务项目 | 临时开单和会员开单都必须从“洗护／美容／其他”中选择一项；这是本次快速开单的界面选择范围。 |
+| 价格 | 两种开单都必须填写本单开单价格，非负、最多两位小数；结算前仍可按现有调价／免单规则处理，不回写项目参考价。 |
 
-- 临时开单使用本节联系方式规则，可建立本店稳定Customer后继续；会员开单必须从当前门店已有顾客下拉选择，不展示手机号／微信号手填框。两者选中或创建顾客后都复用同一后续项目、宠物、检查、状态和结算流程。
+- 临时开单使用本节联系方式规则，可建立本店稳定Customer后继续；会员开单必须从当前门店已有顾客下拉选择，不展示手机号／微信号手填框。两种开单都必须选择服务项目并填写价格，选中或创建顾客后复用同一后续宠物、检查、状态和结算流程。
+- 本节快速开单下拉中的“其他”只表示本次快速开单的界面归类，不表示新增正式`service_type=other`、删除护理／商品或改变老板管理中的四类项目。正式项目主资料仍为洗护／美容／护理／商品；护理和商品继续按各自现行规则办理，实现不得把本下拉三项反向覆盖§3.0.8或FIELD-REGISTRY中的正式类型。
 
 - 新增宠物仍保留03b已有的宠物类型规则，已知资料自动带出；不以本轮三项基础信息为由删除既有类型，或把头像、生日、性别、体重、完整档案擅自增加为统一开单必填。品种必填仅针对本节服务开单，客户端首次建档继续可不填品种。
 - 支持临时顾客：由本店老板／有效员工在线下创建或选用本Merchant的Customer，填写上述资料即可继续开单，不强制顾客先注册小程序、成为会员或先绑定Platform User。临时顾客不是新系统角色、共享匿名Customer或另一套订单；依然使用稳定customer_id／pet_id及本店订单关联，历史保留。

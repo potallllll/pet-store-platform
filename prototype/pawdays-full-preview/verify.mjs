@@ -11,6 +11,7 @@ const washDetail = js.slice(js.indexOf("function staffWashDetail"), js.indexOf("
 const customerPets = js.slice(js.indexOf("function customerPets"), js.indexOf("function customerWallet"));
 const staffDisputes = js.slice(js.indexOf("function staffDisputes"), js.indexOf("function staffOrders"));
 const staffCustomerDetail = js.slice(js.indexOf("function staffCustomerDetail"), js.indexOf("function staffMe"));
+const openOrderSheet = js.slice(js.indexOf("function openOrderSheet"), js.indexOf("function handleForm"));
 
 const checks = [
   ["HTML language", html.includes('lang="zh-CN"')],
@@ -26,6 +27,7 @@ const checks = [
   ["Home store switch in top header", homeHeader.includes('暖爪宠物生活馆') && homeHeader.includes('home-store-switch') && homeHeader.includes('data-action="switch-store"')],
   ["Home body starts without duplicate store banner", !homeBody.includes('暖爪宠物生活馆') && !homeBody.includes('hero-banner') && !homeBody.includes('store-bar')],
   ["Temporary and member ordering", js.includes('临时开单') && js.includes('会员开单') && !js.includes('到店开单') && !js.includes('洗美开单')],
+  ["Shared order service and price fields", openOrderSheet.includes('name="serviceType" required') && openOrderSheet.includes('洗护') && openOrderSheet.includes('美容') && openOrderSheet.includes('其他') && openOrderSheet.includes('name="price" type="number"') && openOrderSheet.includes('inputmode="decimal" required')],
   ["Optional wash photo groups", js.includes('六个检查位置和全身') && js.includes('wash-before-') && js.includes('wash-after-')],
   ["Exactly seven wash photo positions", washDetail.includes('["皮肤","耳道","眼睛","口腔","指甲","毛发","全身"]')],
   ["Exactly fourteen optional wash photo inputs", (washDetail.match(/type="file"/g) || []).length === 2 && washDetail.includes('photoParts.map') && !washDetail.includes('required type="file"')],
