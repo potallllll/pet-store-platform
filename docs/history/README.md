@@ -15,6 +15,7 @@
 ## 当前档案
 
 - [2026-execution-and-staff-changes.md](2026-execution-and-staff-changes.md)：执行治理与店员端分析的变更证据。
+- [2026-11-08-requirements-audit-decisions.md](2026-11-08-requirements-audit-decisions.md)：PRD独立审计后，经产品方确认的业务口径、权限映射、数据保存期限与开发准入变更记录。
 
 - [`2026-client-requirements-changes.md`](2026-client-requirements-changes.md)：2026 年客户端需求变更记录。
 - [`03n-customer-screen-blueprint-extension.archived.md`](03n-customer-screen-blueprint-extension.archived.md)：已由 `03i` 和对应业务子模块取代的页面蓝图扩展。
