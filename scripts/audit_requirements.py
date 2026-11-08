@@ -116,9 +116,11 @@ def audit_current_rules(root: Path, results: list[dict[str, str]]) -> None:
     require("docs/REQUIREMENTS-STATUS.md",
             "只有消费退款、充值退款和免单的原因必填",
             "结算成功后，最终应收、实收、付款拆分和收款时间锁定",
-            "V1 不做跨店顾客／宠物档案或服务护理历史导入",
+            "V1不提供跨店Customer档案、宠物服务报告／护理历史或商户私有业务数据导入",
             "门店日常经营和老板设置全部在店员小程序",
-            "商品标题使用“本店推荐”")
+            "商品标题使用“本店推荐”",
+            "development_readiness: blocked", "blocked_by: [DEC-EXEC-01, DEC-EXEC-02]",
+            "一次性复制选定的宠物基础档案", "上门喂养业务状态以03j为唯一来源")
     require("docs/03c-customer-wallet.md",
             "取消“修改余额”入口", "从一笔已成功充值记录发起全额或部分充值退款",
             "所有优惠券与活动券统一在结算时选择并自动核销", "结算成功后自动核销")
@@ -128,7 +130,7 @@ def audit_current_rules(root: Path, results: list[dict[str, str]]) -> None:
             "寄养中／待结算／已完成／已取消", "补图或修改普通说明均不发送通知")
     require("docs/03g-customer-identity-security.md",
             "同一平台账号在同一时刻只能归属一个有效经营门店",
-            "V1不提供跨店档案复用", "不显示“使用已有宠物档案”或“一键导入其他门店记录”")
+            "V1跨店宠物基础档案授权一次性复制边界", "唯一例外是按01§5由顾客主动发起并明确授权", "不建立持续同步关系", "不得转移、合并或改写源Customer关系")
     if "### 5.5" in texts["docs/03g-customer-identity-security.md"]:
         add(results, "identity.deleted_section", "docs/03g-customer-identity-security.md", "deleted cross-store import section 5.5 must not remain")
     require("docs/03h-customer-risk-feedback.md",
@@ -137,7 +139,10 @@ def audit_current_rules(root: Path, results: list[dict[str, str]]) -> None:
             "审核通过即记为厂家回应", "不设置厂家回应期限",
             "再次投诉，但必须提交与上一案不同的新证据",
             "从最新一次触发时间重新计算2个月", "未入驻",
-            "食品问题热度只对外显示“低／中／高”三档")
+            "食品问题热度只对外显示“低／中／高”三档",
+            "complaint_review.decide", "complaint_review.resolve", "evidence.review", "customer_risk.review",
+            "公开脱敏投诉内容自首次公开之日起保留 1 年", "原始投诉视频 | 3个月", "原始投诉图片 | 1年",
+            "用户账号注销不会触发本节所列投诉资料提前删除")
     require("docs/03j-customer-home-feeding-marketplace.md",
             "待接单 → 待门店确认 → 已确认 → 已结束",
             "附近暂无服务门店", "定位失败时提示顾客手动选择区县",
@@ -157,12 +162,14 @@ def audit_current_rules(root: Path, results: list[dict[str, str]]) -> None:
             "历史缺少归属的订单统一算本店老板")
     require("docs/03i-customer-screen-blueprint.md",
             "本店推荐", "简版卡片", "不发补改通知",
-            "取消／中止后要重新开始必须新开单")
+            "取消／中止后要重新开始必须新开单",
+            "时间轴动作类型严格与店员端实际录入类型一致", "喂食／遛狗／清扫笼子／其他",
+            "03j是唯一业务状态来源", "公开脱敏投诉内容自首次公开之日起保留1年")
     require("docs/03i-customer-screen-blueprint.md", "不再保留“宠物好友邀请”消息类型")
     require("docs/execution/deepseek-execution-standard.md",
-            "只有消费退款、充值退款和免单原因必填", "V1 不提供跨店顾客／宠物档案、服务报告或护理历史导入")
+            "只有消费退款、充值退款和免单原因必填", "V1不提供跨店Customer档案、宠物服务报告／护理历史或商户私有业务数据导入", "一次性复制选定的宠物基础档案", "03j§8是上门喂养业务状态唯一来源")
     require("docs/execution/deepseek-start-prompt.md",
-            "禁止“更正收款”和直接改余额", "V1不做跨店顾客／宠物档案、服务报告或护理历史导入")
+            "禁止“更正收款”和直接改余额", "V1不提供跨店Customer档案、宠物服务报告／护理历史或商户私有业务数据导入", "一次性复制选定的宠物基础档案", "customer_risk.review")
 
     active = "\n".join(texts.values())
     forbidden = {
