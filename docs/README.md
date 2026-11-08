@@ -43,6 +43,8 @@
 - `04-staff-miniapp.md`：店员端正式需求入口。门店日常经营和老板设置均在小程序内，网页后台只给平台使用；不做门店侧Web经营后台。店员端必须遵守本批无审批、原因范围、自动审计、结算锁定、充值退款、待办归门店和员工完整手机号可见规则。
 - `execution/deepseek-execution-standard.md`：AI执行、分批交付和独立验收约束；不新增业务规则，不替代阶段14最终开发总提示词。
 - `execution/deepseek-start-prompt.md`：上述标准的可复制启动/整改提示词。
+- `standards/PRD-INDEPENDENT-AUDIT-STANDARD-V1.0.md`：PRD 独立审计的范围、维度、问题等级、证据要求和结论标准；不新增业务规则。
+- `standards/PRD-AUDIT-PROMPT-V1.0.md`：供 ChatGPT、Codex 等 AI 执行 PRD 审计的只读提示词；不授权修改仓库。
 - `execution/customer-delivery-tracker.md`：引用03i唯一验收ID的交付证据记录，不定义业务或验收ID含义。
 - `../prototype/pawdays-full-preview/`：客户端＋店员端交互验收资产；不属于正式需求源，不替代小程序、后端、微信能力或权限测试。
 
