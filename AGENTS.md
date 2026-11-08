@@ -62,7 +62,8 @@
 
 完整文件索引、文档优先级和当前基线见 `docs/README.md`。
 
-AI实现或交付审查另须读取 `docs/execution/deepseek-execution-standard.md`；它只约束执行和证据，不代替业务模块或项目阶段。店员端讨论稿的菜单不能被推导为已确认权限。执行标准的 `status: confirmed` 仅限 `execution_controls_only`，不表示整套小程序可直接正式开发。
+AI实现或交付审查另须读取 `docs/execution/deepseek-execution-standard.md`；它只约束执行和证据，不代替业务模块或项目阶段。
+PRD 独立审计任务还必须读取 `docs/standards/PRD-INDEPENDENT-AUDIT-STANDARD-V1.0.md`，并按 `docs/standards/PRD-AUDIT-PROMPT-V1.0.md` 执行；两份文件只约束审计方法，不新增或覆盖业务规则。PRD 审计默认只读，未经用户明确授权不得修改正式需求。店员端讨论稿的菜单不能被推导为已确认权限。执行标准的 `status: confirmed` 仅限 `execution_controls_only`，不表示整套小程序可直接正式开发。
 
 ## 7. 变更历史
 
