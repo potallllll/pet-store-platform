@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+from collections import Counter
 from pathlib import Path
 from urllib.parse import unquote
 
@@ -51,7 +52,8 @@ def audit_metadata(root: Path, results: list[dict[str, str]]) -> None:
             add(results, "history.policy", path.relative_to(root), "history file must be archived and implementation_policy forbidden")
 
 
-def audit_links(root: Path, results: list[dict[str, str]]) -> None:
+def audit_links(root: Path, results: list[dict[str, str]], *, ignore_history_links: bool = False) -> None:
+    history_root = (root / "docs" / "history").resolve()
     for path in sorted(root.rglob("*.md")):
         if ".git" in path.parts:
             continue
@@ -60,8 +62,14 @@ def audit_links(root: Path, results: list[dict[str, str]]) -> None:
             if target.startswith(("http://", "https://", "mailto:", "#")):
                 continue
             file_part = unquote(target.split("#", 1)[0])
-            if file_part and not (path.parent / file_part).resolve().exists():
-                add(results, "link.missing", path.relative_to(root), f"missing target: {target}")
+            if not file_part:
+                continue
+            resolved = (path.parent / file_part).resolve()
+            if resolved.exists():
+                continue
+            if ignore_history_links and not history_root.exists() and resolved.is_relative_to(history_root):
+                continue
+            add(results, "link.missing", path.relative_to(root), f"missing target: {target}")
 
 
 def audit_acceptance_ids(root: Path, results: list[dict[str, str]]) -> None:
@@ -90,6 +98,11 @@ def audit_fields(root: Path, results: list[dict[str, str]]) -> None:
         add(results, "registry.duplicate_id", path.relative_to(root), f"duplicate field ID: {item}")
 
     statuses = {field_id: status for field_id, _, status in rows}
+    counts = Counter(status for _, _, status in rows)
+    meta = metadata(text)
+    declared = "[" + ", ".join(f"{status}={counts[status]}" for status in "CSDP") + "]"
+    if meta.get("field_count") != str(len(rows)) or meta.get("field_status_counts") != declared:
+        add(results, "registry.count", path.relative_to(root), f"expected {len(rows)} fields with counts {declared}")
     expected = {
         "F-CSH-001": "D", "F-CSH-002": "D", "F-PAY-019": "D",
         "F-CMP-023": "D", "F-CRISK-009": "D", "F-CRISK-028": "D",
@@ -159,6 +172,11 @@ def audit_current_rules(root: Path, results: list[dict[str, str]]) -> None:
             "本店推荐", "简版卡片", "不发补改通知",
             "取消／中止后要重新开始必须新开单")
     require("docs/03i-customer-screen-blueprint.md", "不再保留“宠物好友邀请”消息类型")
+    require("docs/04-staff-miniapp.md", "bottom_navigation: [工作台, 业务, 快捷入口, 客户, 我的]",
+            "wash_groom_primary_entry: 业务/洗美", "workbench_quick_actions: excluded",
+            "service_entry_service_choice_values: [wash, groom, other]")
+    require("docs/03h-customer-risk-feedback.md", "### 12.1", "complaint_review.decide",
+            "complaint_review.resolve", "evidence.review", "customer_risk.review")
     require("docs/execution/deepseek-execution-standard.md",
             "只有消费退款、充值退款和免单原因必填", "V1 不提供跨店顾客／宠物档案、服务报告或护理历史导入")
     require("docs/execution/deepseek-start-prompt.md",
@@ -166,6 +184,9 @@ def audit_current_rules(root: Path, results: list[dict[str, str]]) -> None:
 
     active = "\n".join(texts.values())
     forbidden = {
+        "bottom_navigation: [工作台, 业务, 洗美, 客户, 我的]": "staff tabbar uses quick entry",
+        "business_item_category_order: [洗护, 美容, 护理, 商品]": "staff service catalog uses three shared categories",
+        "公开投诉长期保留": "complaint retention follows 03h section 12.1",
         "附近小区的人都在买": "retired homepage product heading",
         "coupon_manual_grant_reason_required: true": "coupon grant reason must be optional",
         "coupon_delete_reason_required: true": "coupon deletion reason must be optional",
@@ -208,11 +229,13 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", default=".")
     parser.add_argument("--output")
+    parser.add_argument("--ignore-history-links", action="store_true",
+                        help="allow links into docs/history only when that directory is absent from an offline bundle")
     args = parser.parse_args()
     root = Path(args.root).resolve()
     results: list[dict[str, str]] = []
     audit_metadata(root, results)
-    audit_links(root, results)
+    audit_links(root, results, ignore_history_links=args.ignore_history_links)
     audit_acceptance_ids(root, results)
     audit_fields(root, results)
     audit_current_rules(root, results)

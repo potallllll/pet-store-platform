@@ -40,7 +40,7 @@
 - `10a-customer-ui-design-system.md`：客户端通用视觉基线。
 - `10b-customer-homepage-ui-spec.md`：首页 UI 详细规格。
 - `10c-customer-launch-cover-ad-ui-spec.md`：启动封面广告 UI / 调试规格。
-- `04-staff-miniapp.md`：店员端正式需求入口。门店日常经营和老板设置均在小程序内，网页后台只给平台使用；不做门店侧Web经营后台。店员端必须遵守本批无审批、原因范围、自动审计、结算锁定、充值退款、待办归门店和员工完整手机号可见规则。
+- `04-staff-miniapp.md`：店员端正式需求入口。工作台聚焦当天事项，快捷入口承载四个常用动作，洗美列表归“业务 → 洗美”。服务项目管理与两种快速开单共用洗护／美容／其他三类。门店日常经营和老板设置均在小程序内，网页后台只给平台使用；不做门店侧Web经营后台。店员端必须遵守本批无审批、原因范围、自动审计、结算锁定、充值退款、待办归门店和员工完整手机号可见规则。
 - `execution/deepseek-execution-standard.md`：AI执行、分批交付和独立验收约束；不新增业务规则，不替代阶段14最终开发总提示词。
 - `execution/deepseek-start-prompt.md`：上述标准的可复制启动/整改提示词。
 - `standards/PRD-INDEPENDENT-AUDIT-STANDARD-V1.0.md`：PRD 独立审计的范围、维度、问题等级、证据要求和结论标准；不新增业务规则。
@@ -50,7 +50,7 @@
 
 同一业务范围内，详细子模块解释总纲；页面结构以当前 `03i` 为统一收口，新增详细场景按对应子模块和 UI 规格执行。若出现无法同时满足的冲突，必须停止实现并提出冲突。
 
-当前项目阶段、各文件状态例外和待决决策不在本文件重复，统一读取 `REQUIREMENTS-STATUS.md`。
+当前项目阶段、首批范围、各文件状态例外和待决决策不在本文件重复，统一读取 `REQUIREMENTS-STATUS.md`。
 
 ## 3. 客户端预览 / 原型读取顺序
 
@@ -131,7 +131,7 @@
 - 历史变更证据统一放在 `history/`，档案地图见 [history/README.md](history/README.md)；客户端业务历史继续使用原客户端变更文件，执行治理与店员分析使用各自列明的历史文件。
 - 页面地图 / 关键原型交互变更同步 `03i`；业务细节同步对应子模块；阶段和待决状态同步 `REQUIREMENTS-STATUS.md`。
 - 字段新增、重命名、废弃或别名收口同步 `FIELD-REGISTRY.md`；已使用注册号不得复用。
-- 提交需求变更前运行 `python scripts/audit_requirements.py --root . --output requirements-audit.json`；该脚本检查当前文件元数据、相对链接、验收ID与追踪表一致性、关闭决策残留和退役模块残留。审计通过只代表文档结构一致，不代表业务实现或测试已经完成。
+- 提交需求变更前运行 `python scripts/audit_requirements.py --root . --output requirements-audit.json`；该脚本检查当前文件元数据、相对链接、验收ID与追踪表一致性、关闭决策残留和退役模块残留。排除整个 `docs/history/` 的离线包可显式加 `--ignore-history-links`，其他链接仍校验。审计通过只代表文档结构一致，不代表业务实现或测试已经完成。
 - 历史文件只用于追溯，不属于正式需求来源，不得从历史文件恢复已废弃行为。
 
 ## 7. 变更历史

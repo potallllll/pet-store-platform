@@ -2,7 +2,7 @@
 
 > status: mixed
 > confirmed_scope: all_home_rules_except_section_7_exact_risk_module_layout
-> pending_scope: section_7_exact_risk_module_layout
+> pending_scope: deferred_section_7_exact_risk_module_layout_after_first_batch_compact_card
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -141,7 +141,7 @@
 
 ### 7.3 待确认布局
 
-首页消费争议固定使用简版卡片。精确卡高、列数、是否横向滑动、附近门店距离与地图表达、筛选入口和摘要数量在本阶段后续视觉稿中收口；在此之前不得恢复旧宠物交友卡片或展开完整争议内容。
+首批固定使用简版卡片，两个入口、最多一条摘要。精确卡高、列数、是否横向滑动、附近门店距离与地图表达、筛选入口和摘要数量在本阶段后续视觉稿中收口；在此之前不得恢复旧宠物交友卡片或展开完整争议内容。
 
 在该决策关闭前，不得直接复用已退役宠物交友约 107px 三列卡片和自动轮播规格。
 
@@ -165,11 +165,11 @@
 客户端主状态：
 
 1. 待接单
-2. 已接单待门店对接
-3. 进行中
-4. 已完成
+2. 待门店确认
+3. 已确认
+4. 已结束
 
-取消只用于历史 / 终止状态展示。
+已撤销、已过期用于终止状态。以03j§8的服务端状态为准，首页不根据当前日期推导结束。
 
 ### 8.3 本地为空
 
@@ -328,12 +328,12 @@
 - 水平内边距约 10px
 - 圆角约 12px
 - 字号 / 行高用 `type.label`；关键状态需要更多说明时用 `type.body.small`
-- 正常字号优先单行；空间不足时状态可独占一行或改为自然换行的浅底文字条，不能截断“已接单待门店对接”等完整状态
+- 正常字号优先单行；空间不足时状态可独占一行或改为自然换行的浅底文字条，不能截断“待门店确认”等完整状态
 
 低饱和状态色只引用 `10a` 已验证的配对：
 
 - 待接单 / 等待：brand.tint / brand.strong
-- 已接单待门店对接：status.accepted.fill / .ink
+- 待门店确认：status.accepted.fill / .ink
 - 进行中：status.info.fill / .ink
 - 已完成：status.success.fill / .ink
 - 已取消：status.neutral.fill / .ink

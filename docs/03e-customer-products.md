@@ -2,13 +2,16 @@
 
 > status: mixed
 > confirmed_scope: original_customer_purchase_rules_and_staff_product_management_six_rules_and_manual_and_ai_photo_intake_current_no_membership_check_future_membership_original_form_explicit_posting_and_inventory_management_correction_and_posted_intake_records_five_rules_and_ai_photo_usage_five_rules_and_product_category_lifecycle_five_rules_and_staff_product_list_five_rules_and_simple_inventory_view_edit_automatic_audit_without_movement_query_page_and_one_spec_per_product_only
-> pending_scope: stock_intake_remaining_technical_contracts_future_membership_and_legacy_multi_sku_mapping_if_needed
+> pending_scope: deferred_membership_legacy_multi_sku_and_rare_photo_exceptions_first_batch_stock_contracts_in_08_09_11
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
 > blocked_by: []
 > parent_stage: 03_customer_miniapp
 > version: V1.0
+
+
+**首批边界**：首批保留单规格、手工入库及已确认的AI辅助填表流程。识别不清、跨页重叠或单位难以换算时，由门店核对并用原表单手工录入。复杂票据去重、旧多SKU迁移和付费会员接入延后。库存并发、防重和权限契约在08／09／11收口。
 
 ## 1. 设计定位
 
@@ -241,7 +244,7 @@ V1.0 默认值确定为 24 小时。
 > product_price_update_scope: future_order_creation_only
 > product_history_delete_rule: preserve_products_with_sales_or_inventory_records
 
-1. **入口及权限**：“业务 → 商品处理 → 商品管理”，本店老板／有效员工均可维护本店商品、SKU、售价、上下架及按本节调整库存，不需老板逐次审批。不是老板管理专属菜单，不扩展食品品牌／厂家主资料维护资格；04服务项目管理的商品分支仍只关联这里已有SKU，不复制为服务项目。
+1. **入口及权限**：“业务 → 商品处理 → 商品管理”，本店老板／有效员工均可维护本店商品、SKU、售价、上下架及按本节调整库存，不需老板逐次审批。不是老板管理专属菜单，不扩展食品品牌／厂家主资料维护资格；商品是独立业务，不再作为04服务项目管理的分类，也不复制为service_item。
 2. **最少建档**：商品名称、分类、售价、初始库存必填；图片、条码、成本价、介绍选填，缺图可以建档，不以图片上传／成本价必填阻断。初始库存为明确非负整数，0可保存，不拿缺填当0；售价沿精确非负金额规则，不因售价0自动成交／免单。分类使用本店分类，不从AI或别店资料猜测。
 3. **规格**：每种商品固定只有一个规格，保留原唯一稳定SKU，一份售价和库存；不同容量／口味／包装分别建商品。不提供增加规格或多规格管理，客户和店员均不需选规格；新商品补齐原必填资料后连同唯一SKU一致建档，不复制库存，详见§15.6。
 4. **售价修改**：仅影响后续新开单，不覆盖已有订单明细或原价；已有订单仍按原结算权限手动改最终应收并留痕。商品主资料售价与订单最终成交价区分。
@@ -372,7 +375,7 @@ AI原始识别结果仅用于填入原入库表单，仍是不可信输入，不
 > product_restore_policy: reuse_original_product_and_sku_ids
 > unused_product_delete_policy: no_business_references_no_inventory_movements_and_single_sku_stock_and_reservations_zero
 
-1. **分类管理**：本店老板／有效员工均可新增、改名、调整商品分类顺序；分类自定义，如主粮、零食、用品，不把服务项目的洗护／美容／护理／商品四大类当商品分类或食品品牌厂家主资料。分类及商品仍唯一归Merchant，store_id是实际门店上下文，本店权限不开放跨店维护。
+1. **分类管理**：本店老板／有效员工均可新增、改名、调整商品分类顺序；分类自定义，如主粮、零食、用品，不把服务项目的洗护／美容／其他三类当商品分类或食品品牌厂家主资料。分类及商品仍唯一归Merchant，store_id是实际门店上下文，本店权限不开放跨店维护。
 2. **删除分类自动转移**：删除自定义分类时，该分类下全部商品自动转到本店固定兜底分类“其他”，包含下架商品，无需先逐个手动转移；空分类直接删除。转移只改变商品当前分类，不换商品／SKU、不改售价库存或上下架，不生成出入库及财务。系统为本店提供唯一兜底分类，以稳定product_category_id及product_category_is_fallback标识识别，名称固定“其他”，不能改名或删除，不用其他门店分类或仅按同名猜目标。删除前准确提示商品自动转移至其他；迁移及分类退出当前列表保持同一成功结果，失败不能留下部分商品无分类，重试不重复迁移。保留分类原身份和迁移／删除操作历史，不复用旧ID；历史订单／入库及审计原记录不级联删除或覆盖，物理存储策略在数据库阶段收口。
 3. **下架商品**：停止新的购买，既有订单继续按原流程办理，库存仍可查看、调整；不因下架清预占、自动取消历史订单或删除库存／销售记录。所有原合法SKU／状态／版本和财务校验仍保持。
 4. **恢复上架**：老板／有效员工均可将本店下架商品恢复上架，沿用原product_id和全部原SKU标识，不重新建档／复制库存；正常恢复仍校验当前对象合法性，不把已删除商品当可恢复的下架商品，也不恢复已结束订单。

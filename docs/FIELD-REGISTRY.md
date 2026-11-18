@@ -1,8 +1,9 @@
 # 全项目字段唯一注册表（Field Registry）
 
-> status: mixed
-> confirmed_scope: registry_rules_and_entries_marked_C_or_S
-> pending_scope: entries_marked_P
+> status: confirmed
+> status_scope: logical_registry_only
+> field_count: 734
+> field_status_counts: [C=324, S=365, D=45, P=0]
 > change_policy: record_required
 > development_readiness: partial
 > blocked_by: []
@@ -205,7 +206,7 @@ F-CSH两项仅保留永久号及旧历史读取，V1新代码不得提供跨店�
 
 入职邀请02§6.0／04§3.0.4.3已确认12小时有效、单人使用、明确加入及称呼与无老板撤销：CORE013为该邀请首次服务端成功创建时间，STAFF006保存原截止，CORE010保证创建重试返回原邀请和原时限。005～010不改永久号／逻辑名／状态标记／类型，007历史已撤销值仅兼容读取不再新建；不注册撤销按钮／接口／同义字段，不从F-INV顾客活动码或F-EVD佐证卡复制生命周期。仍734字段；未过期仍须原门店／身份资格，资格失败不假标过期或加入成功，不新增到期通知。02§6.0.1新增STAFF015员工称呼后734字段，原728永久号逻辑名类型标记不变；单人成功使用STAFF007／009／010与原任职一致提交，失败不消耗，并发仅一人成功。同次成功重试沿CORE010恢复原结果；确认页沿原门店名称地址、AUTH001本人认证号及新增015，不另存同义副本或以昵称当身份。
 
-> `04-staff-miniapp.md` 已确认范围以该文档confirmed_scope及已确认子节为准，含§3.0导航、洗美分组、客户页结构、“我的”、老板／员工管理、统一店员资格及记录可见性，§3.0.6～3.0.9的门店资料／营业设置／项目分类与生命周期／全部到店整单调价及免单，§3.2工作台分组顺序及§6.1、§6.5已确认职责。护理执行流程、其他菜单和未决业务仍按对应DEC收口；本注册表不授予业务权限。
+> `04-staff-miniapp.md` 已确认范围以该文档 status_scope 及已确认子节为准，含§3.0导航、洗美分组、客户页结构、“我的”、老板／员工管理、统一店员资格及记录可见性，§3.0.6～3.0.9的门店资料／营业设置／项目分类与生命周期／全部到店整单调价及免单，§3.2工作台分组顺序及§6.1、§6.5已确认职责。护理执行流程、其他菜单和未决业务仍按对应DEC收口；本注册表不授予业务权限。
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
@@ -231,9 +232,12 @@ F-CSH两项仅保留永久号及旧历史读取，V1新代码不得提供跨店�
 
 - `staff_nav.workbench` → 工作台
 - `staff_nav.business` → 业务；寄养主入口归此
-- `staff_nav.wash_groom` → 洗美；洗护、美容主入口归此
+- `staff_nav.quick_entry` → 快捷入口；临时开单、会员开单、客户查询、寄养入住
+
 - `staff_nav.customers` → 客户
 - `staff_nav.me` → 我的
+
+洗护、美容办理列表使用 `staff_business.wash_groom`（业务 → 洗美）。原 `staff_nav.wash_groom` 已退役，禁止用于当前底栏或新埋点。
 
 店员默认业务集合、员工状态和返聘采用02／04已确认规则；未登记的技术字段不得据统一权限自行补齐，也不得恢复待办领取／转交、收款更正、修改余额、老板审批或其他已排除流程。
 
@@ -261,7 +265,7 @@ F-CSH两项仅保留永久号及旧历史读取，V1新代码不得提供跨店�
 | F-APPT-004 | `customer_id` | C | ID | 预约所属当前 Merchant Customer。 |
 | F-APPT-005 | `pet_ids` | C | Ref[] | 一次预约选择的真实宠物；内部每只宠物建立独立服务项。 |
 | F-APPT-006 | `appointment_pet_item_id` | S | ID | 多宠预约中的单宠服务项标识。 |
-| F-APPT-007 | `service_category` | S | Enum | 实际服务业务大类：洗护／美容／护理／寄养；护理只供门店开单，不表示预约允许护理。不是经营项目四类入口的business_item_category，也不包含商品。 |
+| F-APPT-007 | `service_category` | S | Enum | 正式服务分类统一为wash／groom／other，对应洗护／美容／其他；与F-SITEM-005、F-SVC-002及临时／会员开单下拉同义同值，不建第二套映射。护理归other但仍不开放客户端预约。寄养由F-APPT-002=boarding及BOARD域办理，商品由商品域办理，二者均不写入本枚举。 |
 | F-APPT-008 | `service_item_id` | S | ID | 本店服务主资料稳定标识，预约及门店服务开单共用；修改／停用／恢复沿用原ID。商品用原product_id／sku_id，不伪造service_item；边界见04§3.0.8。 |
 | F-APPT-009 | `requested_start_at` | S | Datetime | 客户提出的期望到店日期时间，须在营业范围内且未临时关闭，不要求对应固定间隔时段。提交不等于已确认，人工确认及版本切换按03a§11。 |
 | F-APPT-010 | `boarding_checkout_at` | S | Datetime | 寄养预约预计离店日期时间。仅寄养使用。 |
@@ -292,9 +296,9 @@ F-CSH两项仅保留永久号及旧历史读取，V1新代码不得提供跨店�
 
 ### 6.1 轻量服务项目主资料（SERVICE_ITEM）
 
-04§3.0.8已确认四类入口、三类服务的四项表单／校验、保存生效、启停恢复及旧预约例外；03d§10.1／04§3.0.9已确认全部到店消费订单不限幅整单调价及免单。主资料以store_id为唯一Store归属、merchant_id作租户隔离；服务标识复用F-APPT-008，实际服务大类F-APPT-007，参考价F-APPT-011。不另建第二套项目或价款账本。
+04§3.0.8已确认洗护／美容／其他三类服务项目的四项表单／校验、保存生效、启停恢复及旧预约例外；03d§10.1／04§3.0.9已确认全部到店消费订单不限幅整单调价及免单。主资料以store_id为唯一Store归属、merchant_id作租户隔离；服务标识复用F-APPT-008，正式服务分类复用F-APPT-007，参考价F-APPT-011。不另建第二套项目、开单分类或价款账本。
 
-F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型F-APPT-002、实际服务类型F-SVC-002或商品自定义分类F-PROD-003。商品分支仅选择／关联本店F-PROD-001／002已有商品／SKU，名称、售价、说明及库存从原商品主资料读取，不复制为service_item或用服务表单限制截断既有商品；护理仅门店开单，不新增客户端护理预约，原寄养业务仍独立保留。
+F-SITEM-005与F-APPT-007、F-SVC-002及快速开单下拉统一使用wash／groom／other，不允许另建界面专用枚举。护理项目归other、由真实service_item_id区分，仍仅门店开单且不新增客户端护理预约。商品使用F-PROD-001／002及商品分类F-PROD-003，寄养使用BOARD域；二者是独立业务，不属于服务三分类，也不复制为service_item。
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
@@ -302,9 +306,11 @@ F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型
 | F-SITEM-002 | `service_item_version` | S | Int | 服务项目主资料版本；用于修改／停用与新业务提交的并发校验，不能用新内容覆盖旧预约、订单或服务事实／快照，不代替F-APPT-022预约版本。 |
 | F-SITEM-003 | `service_item_name` | C | Text | 三类服务项目名称，必填、去首尾空白后1～30个Unicode字符；同类同名提醒不禁止，不按名称合并或覆盖历史，名称不替代稳定ID。 |
 | F-SITEM-004 | `service_item_description` | C | Text | 三类服务说明，选填、最多300个Unicode字符，不强制图片或夹带工时／排班／复杂套餐参数。 |
-| F-SITEM-005 | `business_item_category` | C | Enum | 管理／开单入口固定wash / groom / care / product，对应洗护／美容／护理／商品；前三类使用服务主资料，product仅关联原商品／SKU，不重写预约、服务或商品分类枚举。 |
+| F-SITEM-005 | `business_item_category` | C | Enum | 服务项目管理与快速开单统一固定wash／groom／other，对应洗护／美容／其他；护理项目写other并由service_item_id区分。care／product禁止新写：旧care按迁移规则归other，商品继续使用原商品／SKU和商品分类，不进入本字段。 |
 
-三类服务参考价复用F-APPT-011，必填、大于0、最多两位小数，不用0表示待定；字数按Unicode码点而非字节校验。四项服务表单不覆盖03e商品字段及SKU售价。项目由本店老板维护，新增／修改合法保存后生效，不需平台审核或168小时等待；原ID恢复不改历史。F-AUD记录变更；不新增工时／排班／复杂服务套餐，护理12项流程按04§4.5，其余明确未决细节仍待对应DEC，不把本节确认扩大为完整平台已解阻。
+三类服务参考价复用F-APPT-011，必填、大于0、最多两位小数，不用0表示待定；字数按Unicode码点而非字节校验。四项服务表单不覆盖03e商品字段及SKU售价。项目由本店老板维护，新增／修改合法保存后生效，不需平台审核或168小时等待；原ID恢复不改历史。F-AUD记录变更；不新增工时／排班／复杂服务套餐，other中的护理项目仍按04§4.5执行。
+
+旧数据兼容只在迁移／读取层处理：历史`care`值映射为`other`并保留原service_item_id与审计事实；历史`product`不得迁成other，继续关联原商品对象；历史`boarding`不得迁成other，继续关联寄养对象。所有新API、DTO、数据库写入、事件和缓存只接受wash／groom／other，禁止同时保留新旧两套当前枚举。
 
 本单收费复用F-ORD-008／009／010保留原始明细及应收，F-ORD-011／012仅历史读取、退役禁新写，F-ORD-013统一记录包含券及活动优惠的人工调价差额、F-ORD-014最终应收；F-ORD-018～020及033记录原因、操作人及服务端时间。不能直接改写reference_price、明细原价或paid_amount冒充本单调价；实收或免单成功后锁定及幂等／并发校验见03d§10.1、04§3.0.9。
 
@@ -379,8 +385,8 @@ F-SITEM-005四类是管理／开单入口归类，不等于客户端预约类型
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
-| F-SVC-001 | `service_record_id` | S | ID | 一次真实洗护／美容／护理／寄养服务记录标识。 |
-| F-SVC-002 | `service_type` | C | Enum | 洗护／美容／护理／寄养；独立care护理仅门店开单，按04§4.5，不开放客户端预约、护理AI报告或医疗流程。同宠洗美护理加项不改原服务类型／另建care流程；商品不属于此枚举。 |
+| F-SVC-001 | `service_record_id` | S | ID | 一次真实洗护／美容／其他服务记录标识；护理属于其他。寄养使用BOARD域对象，不因历史兼容继续新建本字段记录。 |
+| F-SVC-002 | `service_type` | C | Enum | 正式服务类型统一为wash／groom／other，与F-APPT-007、F-SITEM-005和两种快速开单下拉同义同值。独立护理写other并由service_item_id指向具体护理项目，仍按04§4.5办理；同宠洗美护理加项不改原洗美类型。历史care读取映射other，历史boarding只作迁移兼容且禁止新写；商品不属于本枚举。 |
 | F-SVC-003 | `service_customer_status` | C | Enum | 客户侧简化状态；洗美不得直接暴露全部店员内部步骤。洗美按04§4.4、独立护理按§4.5，中止均无本次顾客过程／完成结果、不发中止通知；已取消／中止的顾客提示“服务异常，已终止”，底层cancelled／interrupted仍分开、不假映射completed。 |
 | F-SVC-004 | `service_internal_status` | S | Enum | 洗美及04§4.5独立护理复用not_started／in_progress／completed／cancelled／interrupted，由本店有效员工手动操作；开单不自动开始。已完成仅未结算原单可重新处理、原因选填但审计，已结算不重开。04§4.4洗美／独立护理一旦cancelled或interrupted，原记录不得转回not_started／in_progress／completed，误点或未结算也不例外；要开始须新order_id／service_record_id，从not_started及新检查重新办理，旧单历史保留，不提供恢复动作／通知。不为同宠洗美护理加项另设进度，不自动付款／交付，不套寄养。 |
 | F-SVC-005 | `service_started_at` | S | Datetime | 实际开始服务时间。 |
@@ -521,7 +527,7 @@ F-SVC-005／006允许按04§4.3补录／更正实际时间：须原因及原值�
 | F-CPN-006 | `discount_rate` | C | Number | 折扣券比例。 |
 | F-CPN-007 | `minimum_spend` | C | Money | 使用门槛（如适用）。 |
 | F-CPN-008 | `max_discount_amount` | C | Money | 折扣券最高优惠金额（如适用）。 |
-| F-CPN-009 | `applicable_scope` | C | Enum/Struct | 全部消费／洗护／美容／护理／寄养／商品；新增护理选项，不扩大旧洗护／美容限定实例，模板修改不回写已发券范围。 |
+| F-CPN-009 | `applicable_scope` | C | Enum/Struct | 全部消费／洗护／美容／其他服务／寄养／商品；护理按“其他服务＋具体service_item_id”判断，不保留当前care服务分类。模板修改不回写已发券范围。 |
 | F-CPN-010 | `valid_from` | S | Datetime | 优惠券有效开始；邀请码来源取本次服务端兑换成功取得券的时间，见03c§9.3。 |
 | F-CPN-011 | `valid_until` | C | Datetime | 当前实际有效截止；邀请码来源初始值为成功领取时间顺延一个日历月，月末无同日取下月月末同一时刻，其他来源沿原期限。选券和最终结算时都由服务端校验，锁定不暂停或延长有效期；历史合法延长记录保留，不批量回退。 |
 | F-CPN-012 | `coupon_enabled` | C | Bool | 模板新增成功默认true，老板停用false／恢复true，禁止停用后新发；不作为已发实例继续核销的否决条件，不把旧实例自动失效／过期或恢复成未用。 |
@@ -802,7 +808,7 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-CMP-021 | `complaint_resolution_status` | S | Enum | unresolved / resolved；03h§6.1只允许平台有权人员明确确认后标记resolved。门店／顾客只提交处理情况和意见，不能直接写入或以同意／退款／已读／时间经过自动结案；不复用F-CMP-020事实结论，未确认的恢复／更正规则仍待决。 |
 | F-CMP-022 | `complaint_resolved_at` | S | Datetime | 实际解决时间，不是平台确认操作时间或顾客反馈时间；不得由退款／点击／消息时间自动代填。平台确认人、操作时间、前后值及请求复用F-AUD并关联原投诉；实际时间填报／更正规则后续确认。 |
 | F-CMP-023 | `complaint_appeal_status` | D | Enum | 消费争议、投诉与顾客风险均取消自助申诉；永久ID和旧值仅供历史追溯，不再写入或提供新申诉入口／消息，异议统一提示联系客服。 |
-| F-CMP-024 | `platform_reviewer_user_id` | S | ID | 作出平台事实裁决的审核员；不因另一平台人员确认已解决而覆盖，该解决确认操作者沿原F-AUD关联，不冒充事实裁决人。 |
+| F-CMP-024 | `platform_reviewer_user_id` | S | ID | 以 `complaint_review.decide` 作出事实裁决的 Platform Super Admin；不因另一平台人员确认已解决而覆盖，该解决确认操作者沿原F-AUD关联，不冒充事实裁决人。 |
 | F-CMP-025 | `platform_decided_at` | S | Datetime | 平台事实裁决时间，不是解决确认操作时间或实际解决时间；解决确认不自动覆盖本值。 |
 | F-CMP-026 | `decision_reason` | C | Text | 裁决理由与关键依据。 |
 | F-CMP-027 | `complaint_claim_id` | S | ID | 投诉中一个可独立判断的事实点。 |
@@ -830,7 +836,7 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-EVD-008 | `is_business_invited_witness` | C | Bool | 第三方是否由被投诉商家邀请，审核端必须可见，沿真实邀请来源记录；不是由顾客随意声明的授权开关。标识／邀请不授予私有材料权限，不表示已提交／已审核或正式回应，不按邀请次数计多份佐证。 |
 | F-EVD-009 | `evidence_relationship_type` | S | Enum/Text | 亲历、交易关系、旁观者、一般体验等与事件关系；03h§7.1第三方初次提交必填，不强制消费订单、不默认均为亲历。证据等级只分高／中／低三档，由审核员人工判断，不自动定责。 |
 | F-EVD-010 | `evidence_submitted_at` | S | Datetime | 本条证据／说明的服务端实际提交时间。handling_progress在平台未确认解决且原对象可访问时可晚于原3天，不用它代填真实退款／实际解决时间或改写原截止；§7.1普通第三方初次／追加仍校验原窗口及适用邀请状态，规则不因处理入口放宽。 |
-| F-EVD-011 | `evidence_weight_level` | C | Enum | high／medium／low三档证据等级，由有权审核员人工判断；不是自动评分、投票结果或裁决结论。 |
+| F-EVD-011 | `evidence_weight_level` | C | Enum | high／medium／low三档证据等级，由持有 `evidence.review` 的 Platform Super Admin 人工判断；不是自动评分、投票结果或裁决结论。 |
 
 03h§7.1的同人同争议一份佐证复用F-EVD-002／004／005唯一归属，多条材料／追加记录不产生多名佐证人。普通投诉证据／第三方佐证的单条审核及公开副本结构仍在后续技术设计按注册表登记；03h§6.2处理情况仅按14.3.2已登记范围执行，不扩展其他用途；不得复用F-CMP-010投诉基础审核状态或F-CMP-020事实结论冒充证据审核，也不得因尚未设计字段就直接公开未审原件。
 
@@ -929,7 +935,7 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 
 ### 14.6 跨门店统一顾客风险（CUSTOMER_RISK）
 
-> 产品原则已确认“共享客观风险事件，不共享主观人格评价”。统一顾客风险包含顾客相关和宠物相关两种对象，不再设置独立宠物安全跨店分类；提交人员／材料、客服审核、审核前撤回重提、审核后联系客服、顾客不可见、门店最小展示、认证手机号匹配、每月3次、授权撤回、身份冲突、12个月展示及3年受限留存均已确认。顾客不提供自助申诉，异议统一联系客服。字段存在不代表平台审核页面或数据库迁移已经实现，技术映射仍须在阶段05／09完成。
+> 产品原则已确认“共享客观风险事件，不共享主观人格评价”。统一顾客风险包含顾客相关和宠物相关两种对象，不再设置独立宠物安全跨店分类；提交人员／材料、平台审核（`customer_risk.review`）、审核前撤回重提、审核后联系客服、顾客不可见、门店最小展示、认证手机号匹配、每月3次、授权撤回、身份冲突、12个月展示及3年受限留存均已确认。顾客不提供自助申诉，异议统一联系客服。字段存在不代表平台审核页面或数据库迁移已经实现，技术映射仍须在阶段05／09完成。
 
 | 注册号 | 统一逻辑字段名 | 状态 | 类型 | 解释 |
 |---|---|---:|---|---|
@@ -939,7 +945,7 @@ F-SOC-001 ～ F-SOC-020 的永久注册号继续保留用于历史迁移，但�
 | F-CRISK-004 | `risk_event_source_merchant_id` | S | ID | 来源 Merchant。 |
 | F-CRISK-005 | `risk_event_source_store_id` | S | ID | 来源 Store。 |
 | F-CRISK-006 | `risk_event_business_id` | C | ID | 关联预约／订单／服务等真实事实对象。 |
-| F-CRISK-007 | `risk_event_review_status` | S | Enum | 平台客服审核状态；审核通过前不得跨店展示。 |
+| F-CRISK-007 | `risk_event_review_status` | S | Enum | 平台审核（`customer_risk.review`）状态；审核通过前不得跨店展示。 |
 | F-CRISK-008 | `risk_event_cross_store_visible_until` | C | Datetime | 跨店展示硬截止：首次可共享平台结论生效时间 + 12个月；等于或晚于该时间不得返回门店。申诉及普通更正不重置，提前撤回／撤销按更早时间停止。 |
 | F-CRISK-009 | `risk_event_appeal_status` | D | Enum | 跨店顾客风险自助申诉已取消；旧值仅历史追溯，禁止新写，异议统一提示联系客服。 |
 | F-CRISK-010 | `cross_store_risk_query_id` | S | ID | 单次跨店查询稳定标识。 |
@@ -1307,7 +1313,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 
 - `staff_nav.workbench` → 工作台
 - `staff_nav.business` → 业务
-- `staff_nav.wash_groom` → 洗美
+- `staff_nav.quick_entry` → 快捷入口
 - `staff_nav.customers` → 客户
 - `staff_nav.me` → 我的
 
@@ -1431,7 +1437,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 | `staff_owner.edit_coupon_template` | 优惠券管理／修改模板，仅影响以后发券，已发实例不回写 |
 | `staff_owner.disable_coupon_template` | 优惠券管理／停用模板，阻止新发、已有实例按原条件使用 |
 | `staff_owner.restore_coupon_template` | 优惠券管理／恢复模板，沿原ID及历史，不复活已用／过期券 |
-| `staff_owner.create_service_item` | 服务项目管理内／新增服务项目，仅本店老板；三类服务四项表单及校验已确认，商品分支只关联已有SKU |
+| `staff_owner.create_service_item` | 服务项目管理内／新增洗护、美容、其他服务项目，仅本店老板；三类服务四项表单及校验已确认，护理归其他，商品走独立商品管理 |
 | `staff_owner.edit_service_item` | 服务项目管理内／修改项目，仅本店老板，不回写历史业务事实 |
 | `staff_owner.disable_service_item` | 服务项目管理内／停用项目，仅本店老板，不物理删除或自动取消旧预约 |
 | `staff_owner.restore_service_item` | 服务项目管理内／恢复已停用服务项目，仅本店老板，沿用原service_item_id和历史 |
@@ -1468,7 +1474,7 @@ F-AUD系统操作日志只允许本店Merchant Owner和Platform Super Admin按�
 
 - `F-PET-049`～`050`、`F-RISK-007`、`F-RISK-018`及所有申诉字段为D，只供旧数据迁移和历史追溯，禁止新写或复用；
 - `F-EVD-011`只允许high／medium／low三档，并由审核员人工判断；不得恢复数值权重或自动定责；
-- `F-REV-016`～`017`与`F-CRISK`落实顾客风险最小展示、12个月展示期、客服审核、认证手机号匹配、每月3次、授权和逐次审计；顾客端不可见且无自助申诉；
+- `F-REV-016`～`017`与`F-CRISK`落实顾客风险最小展示、12个月展示期、平台审核（`customer_risk.review`）、认证手机号匹配、每月3次、授权和逐次审计；顾客端不可见且无自助申诉；
 - `F-FEED-022`／`024`／`025`／`028`／`029`／`032`已退役；上门喂养使用03j已确认状态和附近无门店／定位失败规则，不从D字段恢复旧操作；
 - `F-RWD-028`改店已退役；领取门店停用时取消兑换、退回积分并发送重要通知。发货后连续720小时未登记领取的正常超期单按03k既定规则默认已领取，两者不得混用；
 - 门店业务不设置审批；只有消费退款、充值退款和免单原因必填。结算后金额与付款拆分锁定，少收走原单补收，多收或不应收走退款；不得恢复收款更正或修改余额；

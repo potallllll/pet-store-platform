@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { runInNewContext } from "node:vm";
 
 const html = readFileSync(new URL("./dist/index.html", import.meta.url), "utf8");
 const css = readFileSync(new URL("./dist/styles.css", import.meta.url), "utf8");
@@ -13,13 +14,54 @@ const staffDisputes = js.slice(js.indexOf("function staffDisputes"), js.indexOf(
 const staffCustomerDetail = js.slice(js.indexOf("function staffCustomerDetail"), js.indexOf("function staffMe"));
 const openOrderSheet = js.slice(js.indexOf("function openOrderSheet"), js.indexOf("function handleForm"));
 
+// Evaluate the repository's actual render and submit functions with inert UI bindings.
+const rendered = runInNewContext(js.slice(0, js.indexOf('document.addEventListener("click"')) + `
+  render = closeOverlay = showToast = () => {};
+  openSheet = (_title, _subtitle, body) => body;
+  const submit = (type) => handleForm({dataset:{form:type}, querySelectorAll:() => []});
+  const result = {
+    navigation: navStaff.map(({label,route}) => [label,route]),
+    workbench: staffWorkbench(),
+    quick: staffQuick(),
+    business: staffBusiness(),
+    wash: staffWash(),
+    services: staffServices(),
+    temporaryOrder: openOrderSheet("temporary-order"),
+    memberOrder: openOrderSheet("member-order"),
+    pendingBefore: staffDisputes(),
+    washBefore: staffWashDetail()
+  };
+  state.activeTab.serviceCategory = "other";
+  result.otherServices = staffServices();
+  submit("dispute-response");
+  result.disputeTab = state.activeTab.disputes;
+  result.evidenceAfter = staffDisputes();
+  state.activeTab.disputes = "待回应";
+  result.pendingAfter = staffDisputes();
+  submit("waive-order");
+  result.washAfter = staffWashDetail();
+  result;
+`);
+const categoryOptions = (markup) => Array.from(
+  markup.matchAll(/<(?:option value|button [^>]*data-service-category)="(wash|groom|other)">(洗护|美容|其他)<\//g),
+  ([, id, label]) => [id,label]
+);
+const expectedCategories = JSON.stringify([["wash","洗护"],["groom","美容"],["other","其他"]]);
 const checks = [
   ["HTML language", html.includes('lang="zh-CN"')],
   ["Viewport", html.includes('name="viewport"')],
   ["Main landmark", html.includes('id="app-main"')],
   ["Live region", html.includes('aria-live="polite"')],
   ["Client navigation", js.includes('预约') && js.includes('首页') && js.includes('我的')],
-  ["Staff navigation", js.includes('工作台') && js.includes('业务') && js.includes('洗美') && js.includes('客户')],
+  ["Staff navigation", JSON.stringify(rendered.navigation) === JSON.stringify([
+    ["工作台","staff-workbench"],["业务","staff-business"],["快捷入口","staff-quick"],["客户","staff-customers"],["我的","staff-me"]
+  ])],
+  ["Workbench excludes shortcut actions", ["快捷操作","temporary-order","member-order","客户查询","寄养入住"].every(label => !rendered.workbench.includes(label))],
+  ["Quick entry reuses four actions", ['data-action="temporary-order"','data-action="member-order"','data-route="staff-customers"','data-action="quick-boarding-checkin"'].every(target => rendered.quick.includes(target)) && !rendered.quick.includes('data-staff-wash-tab')],
+  ["Wash lists belong to Business", rendered.business.includes('data-route="staff-wash"') && ["待接宠","服务中","待结算","历史记录"].every(label => rendered.wash.includes(label)) && !rendered.wash.includes("开单</button>")],
+  ["Catalog and order use the same three service categories", [rendered.services,rendered.temporaryOrder,rendered.memberOrder].every(markup => JSON.stringify(categoryOptions(markup)) === expectedCategories) && rendered.otherServices.includes("足部护理") && !rendered.services.includes("足部护理")],
+  ["Dispute response moves the original case into evidence", rendered.pendingBefore.includes("CP20261029012") && rendered.disputeTab === "补充材料中" && rendered.evidenceAfter.includes("CP20261029012") && rendered.evidenceAfter.includes("3天补证") && !rendered.pendingAfter.includes("CP20261029012")],
+  ["Waiver renders zero final amount and locks settlement", rendered.washBefore.includes('<span class="price">¥88.00</span>') && rendered.washAfter.includes('<span class="price">¥0.00</span>') && rendered.washAfter.includes("已免单 · 实收 ¥0.00") && !rendered.washAfter.includes('data-action="waive-order"')],
   ["Launch ad modes", js.includes('微信广告') && js.includes('No Fill')],
   ["Boarding 03:00 rule", js.includes('凌晨3点')],
   ["Boarding snack before timeline", js.indexOf('寄养加餐') < js.indexOf('今天 · 11月5日')],
@@ -27,7 +69,7 @@ const checks = [
   ["Home store switch in top header", homeHeader.includes('暖爪宠物生活馆') && homeHeader.includes('home-store-switch') && homeHeader.includes('data-action="switch-store"')],
   ["Home body starts without duplicate store banner", !homeBody.includes('暖爪宠物生活馆') && !homeBody.includes('hero-banner') && !homeBody.includes('store-bar')],
   ["Temporary and member ordering", js.includes('临时开单') && js.includes('会员开单') && !js.includes('到店开单') && !js.includes('洗美开单')],
-  ["Shared order service and price fields", openOrderSheet.includes('name="serviceType" required') && openOrderSheet.includes('洗护') && openOrderSheet.includes('美容') && openOrderSheet.includes('其他') && openOrderSheet.includes('name="price" type="number"') && openOrderSheet.includes('inputmode="decimal" required')],
+  ["Shared order service and price fields", openOrderSheet.includes('name="serviceType" required') && openOrderSheet.includes('serviceCategories.map') && openOrderSheet.includes('name="price" type="number"') && openOrderSheet.includes('inputmode="decimal" required')],
   ["Optional wash photo groups", js.includes('六个检查位置和全身') && js.includes('wash-before-') && js.includes('wash-after-')],
   ["Exactly seven wash photo positions", washDetail.includes('["皮肤","耳道","眼睛","口腔","指甲","毛发","全身"]')],
   ["Exactly fourteen optional wash photo inputs", (washDetail.match(/type="file"/g) || []).length === 2 && washDetail.includes('photoParts.map') && !washDetail.includes('required type="file"')],
@@ -64,4 +106,4 @@ const checks = [
 const failed = checks.filter(([, ok]) => !ok);
 for (const [name, ok] of checks) console.log(`${ok ? "PASS" : "FAIL"} ${name}`);
 if (failed.length) process.exit(1);
-console.log(`PASS ${checks.length} static checks`);
+console.log(`PASS ${checks.length} static and simulated state checks`);

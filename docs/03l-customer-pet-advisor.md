@@ -1,9 +1,10 @@
 # 03L 客户端「养宠顾问」模块
 
-> status: confirmed
-> status_scope: full_document
+> status: mixed
+> confirmed_scope: advisor_entry_entitlement_session_and_privacy_boundaries
+> pending_scope: deferred_chat_retention_deletion_and_cross_device_sync
 > change_policy: record_required
-> development_readiness: ready
+> development_readiness: partial
 > blocked_by: []
 > parent_stage: 03_customer_miniapp
 > version: V1.0
@@ -213,7 +214,7 @@ V1.0 当前 `1 Merchant = 1 Store`，但权益唯一归属仍固定为 Store：`
 - AI Provider 调用只发送完成当前回答所需的最小信息。
 - 密钥、Provider 配置等仅保存在后端。
 
-聊天历史保留周期、删除规则和是否支持跨设备同步在后续隐私 / 数据保留阶段进一步确认。
+首批仅使用当前会话所需的临时上下文，不提供历史跨设备同步或长期保存。会话保留期和删除规则后续在隐私／数据阶段确认，不以默认值提前写入永久聊天历史。
 
 ---
 

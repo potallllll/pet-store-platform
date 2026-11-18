@@ -2,7 +2,7 @@
 
 > status: mixed
 > confirmed_scope: wallet_recharge_refund_coupon_checkout_and_invite_code_rules_except_recharge_refund_used_benefit_recovery_formula
-> pending_scope: activity_data_and_return_linkage_contracts_and_platform_exception_details_and_remaining_transaction_contracts
+> pending_scope: deferred_complex_benefit_recovery_activity_mapping_and_platform_recovery_first_batch_checkout_contract_in_08_09_11
 > status_scope: full_document
 > change_policy: record_required
 > development_readiness: partial
@@ -32,6 +32,9 @@
 > coupon_template_delete: forbidden
 > coupon_template_changes_affect: future_issuance_only
 > coupon_template_disabled_existing_instances: original_instance_rules_remain_effective
+
+
+**首批边界**：正常充值、按原充值退款及结算选券的已确认流程保留。已用赠送权益或复杂部分回收遇到规则未定义时，转现有客服／平台人工处理，保留原账和证据，不自动扣回或写负余额。活动权益的扩展映射与平台异常恢复延后。§10 的选券校验、锁定和成功后核销是首批业务规格，接口及事务契约在08／09／11收口。
 
 ## 1. 客户端定位
 
@@ -119,7 +122,7 @@ V1.0 不引入复杂营销条件引擎。
 > status: mixed
 > status_scope: recharge_refund
 > confirmed_scope: original_recharge_entry_owner_staff_no_approval_required_reason_and_automatic_audit
-> pending_scope: bonus_and_coupon_recovery_formula_when_related_benefits_have_been_used
+> pending_scope: deferred_bonus_and_coupon_recovery_formula_for_used_benefits
 > development_readiness: partial
 > blocked_by: []
 

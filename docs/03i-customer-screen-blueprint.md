@@ -2,7 +2,7 @@
 
 > status: mixed
 > confirmed_scope: batch_confirmed_account_history_import_financial_boundaries_termination_support_and_reward_expiry_where_applicable_and_payment_correction_entry_permissions_fields_audit_delta_updates_and_blockers_only_and_confirmed_partial_refund_manual_original_channel_amounts_and_wallet_principal_remaining_first_and_self_owned_performance_transfer_owner_all_order_corrections_required_reason_and_actual_receipts_and_single_order_performance_staff_attribution_and_effective_order_owner_refund_metrics_including_corrections_and_staff_business_statistics_and_performance_visibility_and_staff_wash_groom_active_lists_five_rules_and_staff_wash_groom_history_fifteen_day_mobile_filters_and_final_receivable_display_and_cancelled_or_interrupted_wash_groom_and_care_restart_new_order_only_and_care_start_completion_and_amendment_notices_interruption_and_amendment_controls_and_completed_wash_groom_photo_and_ordinary_text_amendment_and_wash_groom_interruption_optional_explanation_no_customer_process_no_notice_and_current_page_map_confirmed_care_twelve_boarding_sixteen_pricing_checkout_departure_unpaid_hold_and_other_confirmed_interactions
-> pending_scope: risk_visual_unresolved_03h_remaining_care_edges_ai_version_contract_remaining_ledger_corrections_and_remaining_boarding_rate_changes_boarding_followup_reminders_special_handover_and_corrections
+> pending_scope: deferred_risk_exact_visual_ai_report_reuse_and_complex_service_ledger_boarding_edges_first_batch_core_contracts_in_08_09_11
 > status_scope: full_document
 > retired_acceptance_ids: [C-BOARDING-03, C-BOARDING-04, C-BOARDING-05]
 > change_policy: record_required
@@ -10,6 +10,9 @@
 > blocked_by: []
 > parent_stage: 03_customer_miniapp
 > version: V1.0
+
+
+**首批边界**：首批首页消费争议使用10b§7的简版卡片：两个入口、最多一条摘要，完整内容去列表／详情；精确视觉留阶段10。AI报告版本复用、未列收款异常、寄养复杂特殊交接及异常恢复延后，遇到个案走原客服／人工渠道。正常业务技术契约在08／09／11收口。
 
 ## 1. 文档职责
 
@@ -215,9 +218,9 @@ UI 层不得在顶部门店栏下重复门店名称或插入品牌／生活方�
 
 投诉基础内容审核通过后立即公开为“用户反馈 · 待商家回应 / 尚未核验”。
 
-商家回应期限 7 天；逾期显示“商家逾期未回应”，但不自动成立。商家正式回应后双方进入 3 天补证期，随后由 1 名有 `complaint_review.decide` 权限的平台审核员裁决。
+商家回应期限 7 天；逾期显示“商家逾期未回应”，但不自动成立。商家正式回应后双方进入 3 天补证期，随后由 1 名持有 `complaint_review.decide` 的 Platform Super Admin裁决。
 
-所有公开投诉长期保留；未解决整体靠前，已解决整体靠后，各组内部按时间倒序。
+公开脱敏投诉按03h§12.1保留1年；未解决整体靠前，已解决整体靠后，各组内部按时间倒序。
 
 同一食品同一批次在最近 2 天内达到至少 3 条独立投诉时显示“出现集中反馈”。3 条为硬门槛；跨不同门店来源只提高风险优先级 / 排序，不得把 2 条折算为 3 条。提示保留 2 个月。
 
@@ -274,9 +277,9 @@ UI 层不得在顶部门店栏下重复门店名称或插入品牌／生活方�
 - 已有客户 / 宠物资料自动带出。
 - 无宠物时允许轻量添加，保存后返回当前流程。
 - 洗护／美容可选项目与门店开单共用主资料，全新预约排除停用项目并由服务端复核。停用前未终结的原预约可继续原项目／原宠物确认和转开单，不能新增停用项目／宠物或复活已终结预约，营业／6小时规则仍有效，见04§3.0.8。
-- 项目管理四类不等于预约四类：护理仅门店开单，客户端不新增护理预约；商品走原商品／SKU购买需求，寄养预约保留。原预约停用项目可以标注已停用及原预约保留，不能变成新选择入口。
+- 服务项目正式分类与门店快速开单统一为洗护／美容／其他；护理项目归“其他”且仅门店开单，客户端不新增护理预约。商品走原商品／SKU购买需求，寄养保留独立预约类型，二者均不属于服务分类。原预约停用项目可以标注已停用及原预约保留，不能变成新选择入口。
 - 价格只作参考，不出现在线支付。
-- 三类服务表单及校验按04§3.0.8：名称必填≤30字、大类必选、参考价必填且大于0／最多两位小数、说明选填≤300字。同类同名只提醒；商品分支关联已有SKU，不复制该表单。客户端只选其中洗护／美容；订单展示真实应收／实付，不给顾客改价权或用最新参考价覆盖历史。
+- 三类服务表单及校验按04§3.0.8：名称必填≤30字、大类必选洗护／美容／其他，参考价必填且大于0／最多两位小数、说明选填≤300字。同类同名只提醒；商品独立管理，不复制该表单。客户端只选其中洗护／美容；订单展示真实应收／实付，不给顾客改价权或用最新参考价覆盖历史。
 - 同页提供“我的预约”入口或预约记录区域。
 - 提交后明确显示“待门店确认”，不得表现成已经正式预约成功。
 - 时间须在门店营业范围内且未临时关闭，不要求匹配预生成的固定间隔时段；不显示剩余名额、已满、抢位或保留名额倒计时。门店人工判断忙闲并确认或提出新时间，营业时间及临时关闭以04§3.0.7为准。
@@ -686,14 +689,14 @@ C-BOARDING-03／04／05为已退役的独立执行验收编号，保留编号供
 
 ### C-COMPLAINT-04：单审核员逐事实点裁决
 
-- 1 名有权限的平台审核员可以裁决所有案件。
+- 1 名持有 `complaint_review.decide` 的 Platform Super Admin可以裁决所有案件。
 - 支持 established / partially_established / insufficient_evidence / not_supported。
 - 组合投诉按事实点分别核验。
 - 按03h§6.1：事实最终裁决归平台，门店／顾客提交意见或处理情况不能直接写入成立／不支持结论；平台确认已解决也不自动改写事实结论、裁决人或裁决时间。平台角色／具体权限映射仍按05／08待决，不能借本条把门店权限扩成平台权限。
 
-### C-COMPLAINT-05：长期公开与排序
+### C-COMPLAINT-05：公开期限与排序
 
-- 公开投诉长期保留。
+- 公开脱敏投诉保留1年，原件和关联身份按03h§12.1独立保存。
 - 未解决整体优先并按时间倒序。
 - 已解决整体后置并按时间倒序。
 - “已解决”与事实裁决分开。
@@ -779,7 +782,7 @@ C-BOARDING-03／04／05为已退役的独立执行验收编号，保留编号供
 ### C-FEED-03：接单与绑定门店待办
 
 - 第一位接单者成功锁定；其他并发请求不能重复成功。
-- 只向当前负责门店生成待办，初始是发布店，账号停用按03j§9.2自动接续；显示真实已接单待门店对接，不复制需求或改原接单人。
+- 只向当前负责门店生成待办，初始是发布店，账号停用按03j§9.2自动接续；显示真实“待门店确认”，不复制需求或改原接单人。
 
 ### C-FEED-04：当前门店确认／撤销与联系资料
 
@@ -966,7 +969,7 @@ C-BOARDING-03／04／05为已退役的独立执行验收编号，保留编号供
 | C-COMPLAINT-02 | 7天商家回应与逾期不自动成立 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
 | C-COMPLAINT-03 | 商家回应后双方3天补证及第三方佐证 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
 | C-COMPLAINT-04 | 单审核员逐事实点裁决 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
-| C-COMPLAINT-05 | 投诉长期公开、未解决优先排序 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
+| C-COMPLAINT-05 | 投诉分项期限、未解决优先排序 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
 | C-FOOD-RISK-01 | 同食品同批次2天内3条独立投诉硬门槛 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
 | C-FOOD-RISK-02 | 同一用户未处理投诉去重 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
 | C-FOOD-RISK-03 | 跨门店来源仅提高风险优先级/排序 | [03h-customer-risk-feedback.md](03h-customer-risk-feedback.md) |
@@ -1076,7 +1079,7 @@ C-BOARDING-03／04／05为已退役的独立执行验收编号，保留编号供
 
 - C-ORDER-01／C-MSG-01补验04§4.5护理通知：开始成功生成普通通知，完成／再次完成生成重要通知；正常完成后补图或修改普通说明均不发送站内、微信或短信通知，中止同样不通知。正常已完成在已／未结算均可由本店老板／有效员工补真实照片或改普通说明，无审批、原因选填，自动保留前后内容／媒体关联／人／时间，顾客默认最新；不得改账、重开服务、修改检查结论／实际时间／收费明细或自动生成AI。取消／中止后要重新开始必须新开单。
 
-- C-ORDER-01逐项覆盖：护理仅门店开单、无客户端预约且不进入洗美导航。临时开单／会员开单完成必要检查并提交后直接进入服务中；普通预约到店后仍手动开始。前检查不得默认正常，说明选填但系统状态与主人决定必须如实记录；缺照片／普通备注仍可完成。多宠独立进度／一起结算、正常完成后收款／中止实际费、全未开始取消无收费。取消／中止后重新开始必须新开单；已结算旧单不重开。全消费不限幅调价且原因选填，最终应收0必须明确确认免单并填写原因，结算成功后金额锁定。
+- C-ORDER-01逐项覆盖：护理归正式“其他”服务分类，仅门店快速开单、无客户端预约。店员底栏原“洗美”改为“快捷入口”，工作台删除快捷操作；临时开单、会员开单、客户查询、寄养入住归快捷入口，客户／寄养动作跳原业务对象。洗美列表归“业务 → 洗美”。临时开单／会员开单完成必要检查并提交后直接进入服务中；普通预约到店后仍手动开始。前检查不得默认正常，说明选填但系统状态与主人决定必须如实记录；缺照片／普通备注仍可完成。多宠独立进度／一起结算、正常完成后收款／中止实际费、全未开始取消无收费。取消／中止后重新开始必须新开单；已结算旧单不重开。全消费不限幅调价且原因选填，最终应收0必须明确确认免单并填写原因，结算成功后金额锁定。
 - 新的上门喂养／积分异常流程先验证已确认不变量：03j§9门店确认／撤销、确认后店家看双方联系方式、附近无店提示、定位失败手动选区及到期自动结束；积分实物异常由平台原单处理、领取店停用自动取消退积分且不改选门店。真实地理和平台异常工具仍须后续技术验收。
 - 03a第11节的每个典型推演均属于 `C-APPT-01` 的正式子场景；执行记录须逐项说明营业／临时关闭配置、人工处理结果、原预约、提议及预约版本和最终状态，并证明没有固定间隔／硬名额拦截，不能只截图预约表单或只记录一次总通过。
 - 原型允许有标注的模拟成功 / 失败状态；正式上线必须验证服务端真实权限、并发结果和恢复。文档检查、token计算或原型演示均不等于实际客户端验收通过。

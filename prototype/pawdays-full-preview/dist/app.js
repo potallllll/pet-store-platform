@@ -64,7 +64,7 @@ const initialState = () => ({
   role:"customer", perspective:"owner", route:"customer-home", previousRoute:null, tab:"home", scenario:"busy",
   launchVisible:true, launchMode:"图片", adState:"loaded", advisorSide:"left", advisorEligible:true,
   cart:[], signed:false, points:1280, couponCount:4, rewardStoreDisabled:false, toastId:0, activeTab:{}, modal:null,
-  appointmentSubmitted:false, reminderRead:false, orderPaid:false, washState:"in_progress", boardingCareCount:3,
+  appointmentSubmitted:false, reminderRead:false, orderWaived:false, washState:"in_progress", boardingCareCount:3,
   foodRiskAcknowledged:false, disputeResponded:false, importedHistory:false, riskSubmitted:false, employeeStatus:"active",
   goods:[
     {id:"g1",name:"冻干鸡肉粒",price:39,stock:"有货",category:"零食"},
@@ -74,6 +74,14 @@ const initialState = () => ({
 });
 let state = initialState();
 
+const serviceCategories = [
+  {id:"wash", label:"洗护"},
+  {id:"groom", label:"美容"},
+  {id:"other", label:"其他"}
+];
+
+const washOriginalAmount = 88;
+
 const routes = [
   ["customer-home","客户端：首页与当前服务","首页"],["customer-appointment","客户端：预约","预约"],["customer-boarding","客户端：寄养动态与加餐","寄养"],
   ["customer-result","客户端：洗美结果与 AI 报告","洗美"],["customer-risk","客户端：消费争议与食品风险","消费争议"],["customer-feeding","客户端：上门喂养需求市场","上门喂养"],
@@ -82,7 +90,7 @@ const routes = [
   ["customer-complaints","客户端：投诉与建议","投诉"],["customer-settings","客户端：账号与设置","账号"],["customer-advisor","客户端：养宠顾问","顾问"],
   ["staff-workbench","店员端：当日工作台","工作台"],["staff-business","店员端：业务全部菜单","业务"],["staff-appointments","店员端：预约管理","预约"],
   ["staff-goods","店员端：商品处理","商品处理"],["staff-boarding","店员端：寄养入住与照护","寄养"],["staff-feeding","店员端：上门喂养确认","上门喂养"],
-  ["staff-disputes","店员端：消费争议回应","消费争议"],["staff-orders","店员端：订单、收银与挂单","收银"],["staff-wash","店员端：洗美办理","洗美"],
+  ["staff-disputes","店员端：消费争议回应","消费争议"],["staff-orders","店员端：订单、收银与挂单","收银"],["staff-quick","店员端：快捷入口","临时开单 会员开单 客户查询 寄养入住"],["staff-wash","店员端：洗美","洗美办理"],
   ["staff-wash-detail","店员端：洗美服务详情","洗美流程"],["staff-customers","店员端：客户资料与风险提醒","客户"],["staff-customer-detail","店员端：客户详情与资产","客户详情"],
   ["staff-me","店员端：我的","我的"],["staff-performance","店员端：业绩与工作记录","业绩"],["staff-owner","店员端：老板管理","老板管理"],
   ["staff-store","店员端：门店资料与营业设置","门店资料"],["staff-employees","店员端：员工管理","员工"],["staff-services","店员端：服务项目管理","项目"],
@@ -97,7 +105,7 @@ const navCustomer = [
 const navStaff = [
   {id:"workbench",label:"工作台",route:"staff-workbench",icon:"grid"},
   {id:"business",label:"业务",route:"staff-business",icon:"receipt"},
-  {id:"wash",label:"洗美",route:"staff-wash",icon:"wash"},
+  {id:"quick",label:"快捷入口",route:"staff-quick",icon:"plus"},
   {id:"customers",label:"客户",route:"staff-customers",icon:"users"},
   {id:"me",label:"我的",route:"staff-me",icon:"user"}
 ];
@@ -108,7 +116,7 @@ function navigate(route, options = {}) {
   state.route = route;
   state.role = route.startsWith("staff-") ? "staff" : "customer";
   if (state.role === "customer") state.tab = route === "customer-appointment" ? "appointment" : route === "customer-me" ? "me" : state.tab === "appointment" ? "home" : state.tab;
-  else state.tab = route.includes("workbench") ? "workbench" : route.includes("wash") ? "wash" : route.includes("customer") ? "customers" : route === "staff-me" || route.startsWith("staff-owner") || ["staff-performance","staff-store","staff-employees","staff-services","staff-coupons","staff-products","staff-logs"].includes(route) ? "me" : "business";
+  else state.tab = route.includes("workbench") ? "workbench" : route === "staff-quick" ? "quick" : route.includes("customer") ? "customers" : route === "staff-me" || route.startsWith("staff-owner") || ["staff-performance","staff-store","staff-employees","staff-services","staff-coupons","staff-products","staff-logs"].includes(route) ? "me" : "business";
   render();
   if (!options.keepScroll) $("#app-main").scrollTop = 0;
   $("#app-main").focus({preventScroll:true});
@@ -138,7 +146,7 @@ function renderHeader() {
     "customer-home":`<div class="app-title home-store-title"><div><p>上海 · 梧桐社区</p><div class="home-store-line"><h1>暖爪宠物生活馆</h1><button class="home-store-switch" type="button" data-action="switch-store">切换门店</button></div></div></div><div class="app-header-actions"><button class="icon-button" data-route="customer-messages" type="button" aria-label="消息">${icon("bell")}<span class="badge-count" style="position:absolute;transform:translate(13px,-12px)">3</span></button></div>`,
     "customer-appointment":pageTitle("预约","选择期望到店时间"),"customer-me":pageTitle("我的","会员与宠物资料"),
     "staff-workbench":`${pageTitle("今日工作台","11月5日 · 暖爪宠物生活馆")}<span class="pill success">营业中</span>`,
-    "staff-business":pageTitle("业务","完整办理与历史查询"),"staff-wash":pageTitle("洗美","洗护与美容"),"staff-customers":pageTitle("客户","本店客户与宠物"),"staff-me":pageTitle("我的",state.perspective === "owner" ? "老板视角" : "员工视角")
+    "staff-business":pageTitle("业务","完整办理与历史查询"),"staff-quick":pageTitle("快捷入口"),"staff-customers":pageTitle("客户","本店客户与宠物"),"staff-me":pageTitle("我的",state.perspective === "owner" ? "老板视角" : "员工视角")
   };
   const routeInfo = routes.find(([id]) => id === state.route);
   const fallback = backHeader(routeInfo ? routeInfo[1].split("：").pop() : "功能详情", state.role === "staff" ? "店员端" : "客户端");
@@ -249,7 +257,7 @@ function customerPoints() {
 }
 
 function customerOrders() {
-  return `<div class="page-stack"><div class="tabs"><button class="is-active" type="button">全部</button><button type="button">服务</button><button type="button">商品</button></div><div class="list"><button class="list-row is-clickable" type="button" data-route="customer-result"><div class="list-row-main"><strong>洗护 · 豆包</strong><p>11月5日 · 服务中 · 待结算</p></div><div class="list-row-side"><strong>¥88</strong><small>最终应收</small></div></button><button class="list-row is-clickable" type="button" data-route="customer-boarding"><div class="list-row-main"><strong>寄养 · 团子</strong><p>11月3日 · 在住 · 未结算</p></div><div class="list-row-side"><strong>¥294</strong><small>当前基础金额</small></div></button><div class="list-row"><div class="list-row-main"><strong>商品 · 冻干鸡肉粒</strong><p>11月2日 · 已免单 · 无实际支付</p></div><div class="list-row-side"><strong>¥0</strong><small>最终应收</small></div></div><div class="list-row"><div class="list-row-main"><strong>美容 · 豆包</strong><p>10月20日 · 已完成 · 部分退款</p></div><div class="list-row-side"><strong>实付 ¥120</strong><small>退款 ¥30</small></div></div></div>${notice("订单详情展示真实原始应收、调价差额、最终应收和实付；不使用当前项目参考价回算历史。","info")}</div>`;
+  return `<div class="page-stack"><div class="tabs"><button class="is-active" type="button">全部</button><button type="button">服务</button><button type="button">商品</button></div><div class="list"><button class="list-row is-clickable" type="button" data-route="customer-result"><div class="list-row-main"><strong>洗护 · 豆包</strong><p>11月5日 · ${state.orderWaived ? "已免单" : "服务中 · 待结算"}</p></div><div class="list-row-side"><strong>${money(state.orderWaived ? 0 : washOriginalAmount)}</strong><small>最终应收</small></div></button><button class="list-row is-clickable" type="button" data-route="customer-boarding"><div class="list-row-main"><strong>寄养 · 团子</strong><p>11月3日 · 在住 · 未结算</p></div><div class="list-row-side"><strong>¥294</strong><small>当前基础金额</small></div></button><div class="list-row"><div class="list-row-main"><strong>商品 · 冻干鸡肉粒</strong><p>11月2日 · 已免单 · 无实际支付</p></div><div class="list-row-side"><strong>¥0</strong><small>最终应收</small></div></div><div class="list-row"><div class="list-row-main"><strong>美容 · 豆包</strong><p>10月20日 · 已完成 · 部分退款</p></div><div class="list-row-side"><strong>实付 ¥120</strong><small>退款 ¥30</small></div></div></div>${notice("订单详情展示真实原始应收、调价差额、最终应收和实付；不使用当前项目参考价回算历史。","info")}</div>`;
 }
 
 function customerMessages() {
@@ -270,10 +278,9 @@ function customerAdvisor() {
 }
 
 function staffWorkbench() {
-  return `<div class="page-stack"><div class="stat-grid"><div class="stat-card"><strong>6</strong><span>待处理</span></div><div class="stat-card"><strong>4</strong><span>服务中</span></div><div class="stat-card"><strong>3</strong><span>异常/临期</span></div></div><section class="section">${sectionHead("待处理","进入完整业务","staff-business")}<div class="list"><button class="list-row is-clickable" type="button" data-route="staff-appointments"><div class="list-row-main"><strong>预约确认</strong><p>2笔 · 最近期望到店 14:30</p></div><span class="badge-count">2</span></button><button class="list-row is-clickable" type="button" data-route="staff-goods"><div class="list-row-main"><strong>商品处理</strong><p>商品需求 1 · 奖励自提 1</p></div><span class="badge-count">2</span></button><button class="list-row is-clickable" type="button" data-route="staff-feeding"><div class="list-row-main"><strong>上门喂养</strong><p>待门店确认 1</p></div><span class="badge-count">1</span></button><button class="list-row is-clickable" type="button" data-route="staff-disputes"><div class="list-row-main"><strong>其他</strong><p>待回应消费争议 1 · 食品风险待知悉</p></div><span class="badge-count">2</span></button></div></section>
+  return `<div class="page-stack"><div class="stat-grid"><div class="stat-card"><strong>6</strong><span>待处理</span></div><div class="stat-card"><strong>4</strong><span>服务中</span></div><div class="stat-card"><strong>3</strong><span>异常/临期</span></div></div><section class="section">${sectionHead("待处理","进入完整业务","staff-business")}<div class="list"><button class="list-row is-clickable" type="button" data-route="staff-appointments"><div class="list-row-main"><strong>预约确认</strong><p>2笔 · 最近期望到店 14:30</p></div><span class="badge-count">2</span></button><button class="list-row is-clickable" type="button" data-route="staff-goods"><div class="list-row-main"><strong>商品处理</strong><p>商品需求 1 · 奖励自提 1</p></div><span class="badge-count">2</span></button><button class="list-row is-clickable" type="button" data-route="staff-feeding"><div class="list-row-main"><strong>上门喂养</strong><p>待门店确认 1</p></div><span class="badge-count">1</span></button><button class="list-row is-clickable" type="button" data-route="staff-disputes"><div class="list-row-main"><strong>其他</strong><p>${state.disputeResponded ? "争议补证中 1" : "待回应消费争议 1"} · 食品风险待知悉</p></div><span class="badge-count">2</span></button></div></section>
     <section class="section">${sectionHead("服务中")}<div class="list"><button class="list-row is-clickable" type="button" data-route="staff-wash"><div class="list-row-main"><strong>今日洗美</strong><p>豆包 · 吹毛中 · 15:10开始</p></div>${statusPill("2","info")}</button><button class="list-row is-clickable" type="button" data-route="staff-boarding"><div class="list-row-main"><strong>在住寄养</strong><p>团子等 2 只 · 今日照护 5 条</p></div>${statusPill("2","info")}</button><div class="list-row"><div class="list-row-main"><strong>其他服务</strong><p>独立护理 1</p></div>${statusPill("1","info")}</div></div></section>
-    <section class="section">${sectionHead("异常与临期")}<div class="list"><button class="list-row is-clickable" data-route="staff-disputes" type="button"><div class="list-row-main"><strong>投诉回应</strong><p>剩余 18 小时 · 7天回应期限</p></div>${statusPill("重点","danger")}</button><button class="list-row is-clickable" data-route="staff-boarding" type="button"><div class="list-row-main"><strong>寄养异常</strong><p>1只宠物需确认异常处理结果</p></div>${statusPill("1","danger")}</button><div class="list-row"><div class="list-row-main"><strong>洗护异常 / 其他异常</strong><p>当前无待处理</p></div>${statusPill("0","neutral")}</div></div></section>
-    <section class="section">${sectionHead("快捷操作")}<div class="quick-grid"><button type="button" data-route="staff-customers">${icon("search")}<span>查客户/宠物</span></button><button type="button" data-action="temporary-order">${icon("plus")}<span>临时开单</span></button><button type="button" data-route="staff-boarding">${icon("boarding")}<span>寄养入住</span></button><button type="button" data-action="member-order">${icon("wash")}<span>会员开单</span></button></div></section></div>`;
+    <section class="section">${sectionHead("异常与临期")}<div class="list"><button class="list-row is-clickable" data-route="staff-disputes" type="button"><div class="list-row-main"><strong>投诉回应</strong><p>${state.disputeResponded ? "另有1笔逾期，仍需回应" : "剩余 18 小时 · 7天回应期限"}</p></div>${statusPill("重点","danger")}</button><button class="list-row is-clickable" data-route="staff-boarding" type="button"><div class="list-row-main"><strong>寄养异常</strong><p>1只宠物需确认异常处理结果</p></div>${statusPill("1","danger")}</button><div class="list-row"><div class="list-row-main"><strong>洗护异常 / 其他异常</strong><p>当前无待处理</p></div>${statusPill("0","neutral")}</div></div></section></div>`;
 }
 
 function staffBusiness() {
@@ -283,9 +290,10 @@ function staffBusiness() {
     ["寄养","入住、照护、离店结算与历史","staff-boarding","boarding","2"],
     ["上门喂养","门店确认、撤销与联系方式","staff-feeding","feed","1"],
     ["消费争议","回应、追加材料与处理情况","staff-disputes","warning","1"],
-    ["订单与收银","待结算、挂单、补收与退款","staff-orders","receipt","3"]
+    ["订单与收银","待结算、挂单、补收与退款","staff-orders","receipt","3"],
+    ["洗美","待接宠、服务中、待结算、历史记录","staff-wash","wash"]
   ];
-  return `<div class="page-stack"><div class="menu-list">${items.map(i=>menuItem(...i)).join("")}</div>${notice("工作台只专注当天需要处理的事项；完整办理与历史查询统一在业务页。","info")}</div>`;
+  return `<div class="page-stack"><div class="menu-list">${items.map(i=>menuItem(...i)).join("")}</div>${notice("工作台只专注当天需要处理的事项；在业务页查看各项办理和历史。","info")}</div>`;
 }
 
 function staffAppointments() {
@@ -308,20 +316,34 @@ function staffFeeding() {
 function staffDisputes() {
   const tab = state.activeTab.disputes || "待回应";
   const groups = ["待回应","补充材料中","待平台裁决","已结束"];
+  const responseCase = {id:"CP20261029012",customer:"林女士",subject:"洗护服务争议",submitted:"10月29日 10:00",status:"待正式回应",deadline:"剩余18小时 · 11月6日 10:00",tone:"danger"};
   const rows = {
     "待回应": [
       {id:"CP20261028007",customer:"陈先生",subject:"美容服务争议",submitted:"10月28日 09:20",status:"已逾期，仍需回应",deadline:"原截止 11月4日 09:20",tone:"danger"},
-      {id:"CP20261029012",customer:"林女士",subject:"洗护服务争议",submitted:"10月29日 10:00",status:"待正式回应",deadline:"剩余18小时 · 11月6日 10:00",tone:"danger"}
+      ...(!state.disputeResponded ? [responseCase] : [])
     ],
-    "补充材料中": [{id:"CP20261026003",customer:"周女士",subject:"商品处理争议",submitted:"10月26日 14:30",status:"补充材料中",deadline:"3天补证剩余1天",tone:"info"}],
+    "补充材料中": [
+      ...(state.disputeResponded ? [{
+        ...responseCase, status:"补充材料中", deadline:"3天补证 · 11月8日 16:00截止（示例）", tone:"info"
+      }] : []),
+      {id:"CP20261026003",customer:"周女士",subject:"商品处理争议",submitted:"10月26日 14:30",status:"补充材料中",deadline:"3天补证剩余1天",tone:"info"}],
     "待平台裁决": [{id:"CP20261022009",customer:"吴先生",subject:"寄养服务争议",submitted:"10月22日 18:10",status:"待平台裁决",deadline:"平台处理中",tone:"info"}],
     "已结束": [{id:"CP20261012005",customer:"赵女士",subject:"护理服务争议",submitted:"10月12日 11:40",status:"平台裁决：不成立",deadline:"10月20日结束",tone:"neutral"}]
   };
-  return `<div class="page-stack"><div class="card danger"><div class="card-header"><div><p class="eyebrow">重点待办</p><h2 class="card-title">剩余 18 小时 · 7天回应</h2><p class="card-subtitle">消费争议由本店在7天内正式回应；食品问题另由平台处理。</p></div>${statusPill(state.disputeResponded ? "已回应" : "待回应","danger")}</div></div><div class="tabs">${groups.map(g=>`<button class="${tab===g?"is-active":""}" type="button" data-staff-dispute-tab="${g}">${g}</button>`).join("")}</div><div class="search-control">${icon("search")}<input type="search" aria-label="按顾客手机号或争议编号查询" placeholder="手机号／争议编号"><button class="icon-button small" type="button" data-action="filter-disputes" aria-label="查询争议">查</button></div><div class="toolbar"><button class="button outline small" type="button" data-action="filter-disputes">状态</button><button class="button outline small" type="button" data-action="filter-disputes">日期</button></div><div class="list">${rows[tab].map(r=>`<article class="card"><div class="card-header"><div><h3 class="card-title">${r.id} · ${r.customer}</h3><p class="card-subtitle">${r.subject} · 提交 ${r.submitted}</p></div>${statusPill(r.status,r.tone)}</div><div class="meta-row"><span>当前期限：${r.deadline}</span><span>${tab==="待回应"?"逾期优先排序":"按当前阶段归组"}</span></div>${r.id==="CP20261029012"&&!state.disputeResponded?`<div class="action-row"><button class="button" type="button" data-action="respond-dispute">直接回应</button><button class="button outline" type="button" data-action="invite-witness">邀请佐证</button><button class="button outline" type="button" data-action="submit-progress">提交处理情况</button></div>`:""}</article>`).join("")}</div>${state.disputeResponded&&tab==="补充材料中"?notice("首个正式回应已提交，当前重点期限为3天补充材料截止；原7天逾期历史不会删除。","success","check"):""}<article class="card"><div class="card-header"><div><h3 class="card-title">食品投诉与风险提醒</h3><p class="card-subtitle">平台统一调查与厂家沟通，门店仅知悉</p></div>${statusPill(state.foodRiskAcknowledged ? "已知悉" : "待知悉",state.foodRiskAcknowledged ? "success" : "danger")}</div><p class="card-subtitle">食品问题由平台直接联系厂家并在Web后台处理；门店不参与前置核实、厂家沟通或回信维护。平台录入并审核通过厂家回应即算回应，不设期限。</p>${!state.foodRiskAcknowledged ? `<div class="action-row"><button class="button" type="button" data-action="ack-food-risk">已知悉</button></div>` : ""}</article>${notice("本店老板和所有有效员工可继续处理本店争议，不领取、不转交；消费争议没有自助申诉，如有异议请联系客服。最终裁决由平台决定。","info")}</div>`;
+  return `<div class="page-stack"><div class="card ${state.disputeResponded ? "tint" : "danger"}"><div class="card-header"><div><p class="eyebrow">重点待办</p><h2 class="card-title">${state.disputeResponded ? "3天补证期限" : "剩余 18 小时 · 7天回应"}</h2><p class="card-subtitle">${state.disputeResponded ? "已正式回应，查看补充材料分组。" : "消费争议由本店在7天内正式回应；食品问题另由平台处理。"}</p></div>${statusPill(state.disputeResponded ? "补充材料中" : "待回应",state.disputeResponded ? "info" : "danger")}</div></div><div class="tabs">${groups.map(g=>`<button class="${tab===g?"is-active":""}" type="button" data-staff-dispute-tab="${g}">${g}</button>`).join("")}</div><div class="search-control">${icon("search")}<input type="search" aria-label="按顾客手机号或争议编号查询" placeholder="手机号／争议编号"><button class="icon-button small" type="button" data-action="filter-disputes" aria-label="查询争议">查</button></div><div class="toolbar"><button class="button outline small" type="button" data-action="filter-disputes">状态</button><button class="button outline small" type="button" data-action="filter-disputes">日期</button></div><div class="list">${rows[tab].map(r=>`<article class="card"><div class="card-header"><div><h3 class="card-title">${r.id} · ${r.customer}</h3><p class="card-subtitle">${r.subject} · 提交 ${r.submitted}</p></div>${statusPill(r.status,r.tone)}</div><div class="meta-row"><span>当前期限：${r.deadline}</span><span>${tab==="待回应"?"逾期优先排序":"按当前阶段归组"}</span></div>${r.id==="CP20261029012"&&!state.disputeResponded?`<div class="action-row"><button class="button" type="button" data-action="respond-dispute">直接回应</button><button class="button outline" type="button" data-action="invite-witness">邀请佐证</button><button class="button outline" type="button" data-action="submit-progress">提交处理情况</button></div>`:""}</article>`).join("")}</div>${state.disputeResponded&&tab==="补充材料中"?notice("首个正式回应已提交，当前重点期限为3天补充材料截止；原7天逾期历史不会删除。","success","check"):""}<article class="card"><div class="card-header"><div><h3 class="card-title">食品投诉与风险提醒</h3><p class="card-subtitle">平台统一调查与厂家沟通，门店仅知悉</p></div>${statusPill(state.foodRiskAcknowledged ? "已知悉" : "待知悉",state.foodRiskAcknowledged ? "success" : "danger")}</div><p class="card-subtitle">食品问题由平台直接联系厂家并在Web后台处理；门店不参与前置核实、厂家沟通或回信维护。平台录入并审核通过厂家回应即算回应，不设期限。</p>${!state.foodRiskAcknowledged ? `<div class="action-row"><button class="button" type="button" data-action="ack-food-risk">已知悉</button></div>` : ""}</article>${notice("本店老板和所有有效员工可继续处理本店争议，不领取、不转交；消费争议没有自助申诉，如有异议请联系客服。最终裁决由平台决定。","info")}</div>`;
 }
 
 function staffOrders() {
-  return `<div class="page-stack"><div class="tabs"><button class="is-active" type="button">待结算</button><button type="button">挂单</button><button type="button">收退款记录</button></div><div class="list"><button class="list-row is-clickable" type="button" data-route="staff-wash-detail"><div class="list-row-main"><strong>OD2026110508 · 豆包洗护</strong><p>服务已完成 · 最终应收 ¥88</p></div><div class="list-row-side">${statusPill("待结算")}<small>15:20开单</small></div></button><div class="list-row"><div class="list-row-main"><strong>OD2026110412 · 独立护理</strong><p>挂单原因：顾客稍后到店 · 原应收 ¥60</p></div><div class="list-row-side">${statusPill("挂单","danger")}<small>昨日 18:40</small></div></div><div class="list-row"><div class="list-row-main"><strong>OD2026110306 · 寄养</strong><p>已离店／挂单未收款 · 按实际接走停止计费</p></div><div class="list-row-side"><strong>¥294</strong><small>待结算</small></div></div></div>${notice("结算成功后金额、付款拆分和收款时间锁定；少收从原单补收，多收或不应收从原单退款，不提供更正收款。","info")}</div>`;
+  return `<div class="page-stack"><div class="tabs"><button class="is-active" type="button">待结算</button><button type="button">挂单</button><button type="button">收退款记录</button></div><div class="list"><button class="list-row is-clickable" type="button" data-route="staff-wash-detail"><div class="list-row-main"><strong>OD2026110508 · 豆包洗护</strong><p>最终应收 ${money(state.orderWaived ? 0 : washOriginalAmount)}</p></div><div class="list-row-side">${statusPill(state.orderWaived ? "已免单" : "待结算")}<small>15:20开单</small></div></button><div class="list-row"><div class="list-row-main"><strong>OD2026110412 · 独立护理</strong><p>挂单原因：顾客稍后到店 · 原应收 ¥60</p></div><div class="list-row-side">${statusPill("挂单","danger")}<small>昨日 18:40</small></div></div><div class="list-row"><div class="list-row-main"><strong>OD2026110306 · 寄养</strong><p>已离店／挂单未收款 · 按实际接走停止计费</p></div><div class="list-row-side"><strong>¥294</strong><small>待结算</small></div></div></div>${notice("结算成功后金额、付款拆分和收款时间锁定；少收从原单补收，多收或不应收从原单退款，不提供更正收款。","info")}</div>`;
+}
+
+function staffQuick() {
+  return `<div class="quick-grid">
+    <button type="button" data-action="temporary-order">${icon("plus")}<span>临时开单</span></button>
+    <button type="button" data-action="member-order">${icon("wash")}<span>会员开单</span></button>
+    <button type="button" data-route="staff-customers">${icon("search")}<span>客户查询</span></button>
+    <button type="button" data-action="quick-boarding-checkin">${icon("boarding")}<span>寄养入住</span></button>
+  </div>`;
 }
 
 function staffWash() {
@@ -333,12 +355,13 @@ function staffWash() {
     "待结算":[["可乐 · 洗护","已完成 · 未收款","¥98"],["皮皮 · 美容","已中止 · 费用待确认","待确认"]],
     "历史记录":[["毛球 · 洗护","11月4日 · 已完成/已收款","¥88"],["布丁 · 美容","11月3日 · 已取消/未结算","¥0"]]
   };
-  return `<div class="page-stack"><div class="action-row" style="margin-top:0"><button class="button" type="button" data-action="temporary-order">临时开单</button><button class="button outline" type="button" data-action="member-order">会员开单</button></div><div class="tabs">${groups.map(g=>`<button class="${tab===g?"is-active":""}" type="button" data-staff-wash-tab="${g}">${g}</button>`).join("")}</div><div class="search-control">${icon("search")}<input type="search" aria-label="按顾客手机号搜索洗美" placeholder="顾客手机号"><button class="icon-button small" type="button" aria-label="清除搜索" hidden>×</button></div><div class="list">${rows[tab].map(r=>`<button class="list-row is-clickable" type="button" data-route="staff-wash-detail"><div class="list-row-main"><strong>${r[0]}</strong><p>${r[1]}</p></div><div class="list-row-side"><strong>${r[2]}</strong><small>最终应收</small></div></button>`).join("")}</div>${tab==="历史记录"?notice("默认查询近15个自然日，支持手机号、洗护/美容、服务状态、结算状态和日期筛选；价格只显示最终应收。","info"):""}</div>`;
+  return `<div class="page-stack"><div class="tabs">${groups.map(g=>`<button class="${tab===g?"is-active":""}" type="button" data-staff-wash-tab="${g}">${g}</button>`).join("")}</div><div class="search-control">${icon("search")}<input type="search" aria-label="按顾客手机号搜索洗美" placeholder="顾客手机号"><button class="icon-button small" type="button" aria-label="清除搜索" hidden>×</button></div><div class="list">${rows[tab].map(r=>`<button class="list-row is-clickable" type="button" data-route="staff-wash-detail"><div class="list-row-main"><strong>${r[0]}</strong><p>${r[1]}</p></div><div class="list-row-side"><strong>${r[2]}</strong><small>最终应收</small></div></button>`).join("")}</div>${tab==="历史记录"?notice("默认查询近15个自然日，支持手机号、洗护/美容、服务状态、结算状态和日期筛选；价格只显示最终应收。","info"):""}</div>`;
 }
 
 function staffWashDetail() {
+  const finalAmount = state.orderWaived ? 0 : washOriginalAmount;
   const photoParts = ["皮肤","耳道","眼睛","口腔","指甲","毛发","全身"];
-  return `<div class="page-stack"><div class="card"><div class="card-header"><div><p class="eyebrow">OD2026110508</p><h2 class="card-title">豆包 · 洗护</h2><p class="card-subtitle">林女士 · 138****6608 · 比熊</p></div>${statusPill(state.washState === "completed" ? "已完成" : "服务中",state.washState === "completed" ? "success" : "info")}</div><div class="service-ribbon"><span style="width:${state.washState === "completed" ? 100 : 62}%"></span></div><div class="meta-row"><span>业绩归属：店长小林</span><span>参考价 ¥88</span></div></div><div class="card"><h3 class="card-title">服务前六项检查</h3><div class="check-grid" style="margin-top:10px">${["皮肤","耳道","眼睛","口腔","指甲","毛发"].map(x=>`<label class="check-item"><span>${x}</span><select aria-label="${x}检查结果"><option>未见明显异常</option><option>发现异常</option><option>无法检查</option></select></label>`).join("")}</div><p class="field-help" style="margin-top:8px">发现异常或无法检查时，须先告知主人并记录主人明确决定。</p></div><form class="card form" data-form="wash-photos" novalidate><div class="card-header"><div><h3 class="card-title">洗护前后照片</h3><p class="card-subtitle">六个检查位置和全身，各可上传洗护前、洗护后照片；全部选填，可分次补充。补图或修改普通说明均不发送通知。</p></div>${icon("camera")}</div><div class="wash-photo-grid">${photoParts.map((part,index)=>`<fieldset class="wash-photo-row"><legend>${part}</legend><div class="wash-photo-pair"><label class="photo-field" for="wash-before-${index}"><span>洗护前</span><input id="wash-before-${index}" name="wash-before-${index}" type="file" accept="image/*"></label><label class="photo-field" for="wash-after-${index}"><span>洗护后</span><input id="wash-after-${index}" name="wash-after-${index}" type="file" accept="image/*"></label></div></fieldset>`).join("")}</div><button class="button outline full" type="submit">保存已选照片</button></form><div class="card"><h3 class="card-title">服务状态</h3><div class="action-row"><button class="button outline small" type="button" data-action="start-wash">开始服务</button><button class="button small" type="button" data-action="complete-wash">完成服务</button><button class="button ghost small" type="button" data-action="interrupt-wash">中止服务</button></div><p class="card-subtitle">取消/中止后要重新开始，必须重新开单；不恢复原服务。</p></div><div class="card"><h3 class="card-title">结算</h3><div class="price-line"><span>原始应收</span><span>¥88.00</span></div><div class="price-line"><span>人工调价</span><span>¥0.00</span></div><div class="price-line total"><span>最终应收</span><span class="price">¥88.00</span></div><div class="action-row"><button class="button" type="button" data-action="checkout-order">完成服务后收款</button><button class="button outline" type="button" data-action="hold-order">挂单</button><button class="button ghost" type="button" data-action="waive-order">调为0并免单</button></div></div></div>`;
+  return `<div class="page-stack"><div class="card"><div class="card-header"><div><p class="eyebrow">OD2026110508</p><h2 class="card-title">豆包 · 洗护</h2><p class="card-subtitle">林女士 · 138****6608 · 比熊</p></div>${statusPill(state.washState === "completed" ? "已完成" : "服务中",state.washState === "completed" ? "success" : "info")}</div><div class="service-ribbon"><span style="width:${state.washState === "completed" ? 100 : 62}%"></span></div><div class="meta-row"><span>业绩归属：店长小林</span><span>参考价 ¥88</span></div></div><div class="card"><h3 class="card-title">服务前六项检查</h3><div class="check-grid" style="margin-top:10px">${["皮肤","耳道","眼睛","口腔","指甲","毛发"].map(x=>`<label class="check-item"><span>${x}</span><select aria-label="${x}检查结果"><option>未见明显异常</option><option>发现异常</option><option>无法检查</option></select></label>`).join("")}</div><p class="field-help" style="margin-top:8px">发现异常或无法检查时，须先告知主人并记录主人明确决定。</p></div><form class="card form" data-form="wash-photos" novalidate><div class="card-header"><div><h3 class="card-title">洗护前后照片</h3><p class="card-subtitle">六个检查位置和全身，各可上传洗护前、洗护后照片；全部选填，可分次补充。补图或修改普通说明均不发送通知。</p></div>${icon("camera")}</div><div class="wash-photo-grid">${photoParts.map((part,index)=>`<fieldset class="wash-photo-row"><legend>${part}</legend><div class="wash-photo-pair"><label class="photo-field" for="wash-before-${index}"><span>洗护前</span><input id="wash-before-${index}" name="wash-before-${index}" type="file" accept="image/*"></label><label class="photo-field" for="wash-after-${index}"><span>洗护后</span><input id="wash-after-${index}" name="wash-after-${index}" type="file" accept="image/*"></label></div></fieldset>`).join("")}</div><button class="button outline full" type="submit">保存已选照片</button></form><div class="card"><h3 class="card-title">服务状态</h3><div class="action-row"><button class="button outline small" type="button" data-action="start-wash">开始服务</button><button class="button small" type="button" data-action="complete-wash">完成服务</button><button class="button ghost small" type="button" data-action="interrupt-wash">中止服务</button></div><p class="card-subtitle">取消/中止后要重新开始，必须重新开单；不恢复原服务。</p></div><div class="card"><h3 class="card-title">结算</h3><div class="price-line"><span>原始应收</span><span>${money(washOriginalAmount)}</span></div><div class="price-line"><span>人工调价</span><span>${money(finalAmount - washOriginalAmount)}</span></div><div class="price-line total"><span>最终应收</span><span class="price">${money(finalAmount)}</span></div>${state.orderWaived ? notice("已免单 · 实收 ¥0.00","success","check") : `<div class="action-row"><button class="button" type="button" data-action="checkout-order">完成服务后收款</button><button class="button outline" type="button" data-action="hold-order">挂单</button><button class="button ghost" type="button" data-action="waive-order">调为0并免单</button></div>`}</div></div>`;
 }
 
 function staffCustomers() {
@@ -350,7 +373,7 @@ function staffCustomerDetail() {
     <div class="card tint"><div class="card-header"><div><h2 class="card-title">林女士</h2><p class="card-subtitle">13800136608 · 微信已留 · 本店会员</p></div><div class="pet-avatar round">林</div></div><div class="stat-grid" style="margin-top:12px"><div class="stat-card"><strong>¥286</strong><span>余额</span></div><div class="stat-card"><strong>${state.couponCount}</strong><span>券</span></div><div class="stat-card"><strong>2</strong><span>宠物</span></div></div></div>
     <div class="menu-list">${menuItem("关联宠物","豆包、团子 · 护理注意事项","staff-customer-detail","pet")}${menuItem("订单与服务","仅本店订单与服务记录","staff-orders","receipt")}${menuItem("会员资产","充值、充值退款、赠券与可用券","staff-customer-detail","wallet")}${menuItem("本店私有备注","不会跨店共享","staff-customer-detail","edit")}</div>
     <div class="card"><h3 class="card-title">宠物当前食用品牌（只读）</h3><div class="list"><div class="list-row"><div class="list-row-main"><strong>豆包 · 汪选低敏粮</strong><p>由主人在客户端维护；商品购买或寄养粮食不会覆盖</p></div></div><div class="list-row"><div class="list-row-main"><strong>团子 · 主人暂未填写</strong><p>如需更新，请提示主人在客户端填写；店员不能代填</p></div></div></div></div>
-    <div class="card"><div class="card-header"><div><h3 class="card-title">跨店护理提醒与顾客风险</h3><p class="card-subtitle">只按认证手机号匹配；仅展示授权有效、审核通过且12个月内的最小信息</p></div>${statusPill("本月查询 1/3","info")}</div><div class="list"><div class="list-row"><div class="list-row-main"><strong>宠物护理注意事项 · 豆包</strong><p>吹风时对高频噪声紧张，请逐步适应</p></div><div class="list-row-side"><small>来源：安心宠护</small></div></div><div class="list-row"><div class="list-row-main"><strong>顾客风险 · 顾客相关</strong><p>2026-08-16 · 到店后临时改变服务范围，与门店现场协商后取消</p></div><div class="list-row-side"><small>来源：邻里宠屋</small><small>有效至 2027-08-16</small></div></div><div class="list-row"><div class="list-row-main"><strong>顾客风险 · 宠物相关 · 豆包</strong><p>2026-09-03 · 吹毛过程中持续躲避高频吹风设备，暂停后恢复</p></div><div class="list-row-side"><small>来源：安心宠护</small><small>有效至 2027-09-03</small></div></div></div><div class="action-row"><button class="button outline" type="button" data-action="submit-customer-risk">提交顾客风险</button></div>${state.riskSubmitted?notice("已提交客服审核（原型模拟）。审核通过前不跨店展示；顾客端不会显示记录存在或状态。","info"):""}<p class="permission-note">不显示未脱敏证据、内部备注，不支持下载、批量导出或转发；同店员工查看已取得结果不重复扣查询次数。</p></div>
+    <div class="card"><div class="card-header"><div><h3 class="card-title">跨店护理提醒与顾客风险</h3><p class="card-subtitle">只按认证手机号匹配；仅展示授权有效、审核通过且12个月内的最小信息</p></div>${statusPill("本月查询 1/3","info")}</div><div class="list"><div class="list-row"><div class="list-row-main"><strong>宠物护理注意事项 · 豆包</strong><p>吹风时对高频噪声紧张，请逐步适应</p></div><div class="list-row-side"><small>来源：安心宠护</small></div></div><div class="list-row"><div class="list-row-main"><strong>顾客风险 · 顾客相关</strong><p>2026-08-16 · 到店后临时改变服务范围，与门店现场协商后取消</p></div><div class="list-row-side"><small>来源：邻里宠屋</small><small>有效至 2027-08-16</small></div></div><div class="list-row"><div class="list-row-main"><strong>顾客风险 · 宠物相关 · 豆包</strong><p>2026-09-03 · 吹毛过程中持续躲避高频吹风设备，暂停后恢复</p></div><div class="list-row-side"><small>来源：安心宠护</small><small>有效至 2027-09-03</small></div></div></div><div class="action-row"><button class="button outline" type="button" data-action="submit-customer-risk">提交顾客风险</button></div>${state.riskSubmitted?notice("已提交平台审核（原型模拟）。审核通过前不跨店展示；顾客端不会显示记录存在或状态。","info"):""}<p class="permission-note">不显示未脱敏证据、内部备注，不支持下载、批量导出或转发；同店员工查看已取得结果不重复扣查询次数。</p></div>
     <div class="action-row"><button class="button" type="button" data-action="recharge">充值</button><button class="button outline" type="button" data-action="recharge-refund">充值退款</button><button class="button outline" type="button" data-action="gift-coupon">赠券</button></div>
     <div class="card"><h3 class="card-title">优惠券／活动券</h3><p class="card-subtitle">结算时选择可用券，系统自动校验并在成功结算后核销；此处只允许删除未使用且未锁定的券。</p><div class="action-row"><button class="button ghost small" type="button" data-action="delete-coupon">删除一张未使用券</button></div></div>
     ${notice("V1不提供跨店普通档案、服务报告或护理历史导入；手机号相同也不会自动复制其他门店资料。","info")}
@@ -366,7 +389,7 @@ function staffPerformance() {
 }
 
 function staffOwner() {
-  return `<div class="page-stack"><div class="stat-grid"><button class="stat-card" data-route="staff-performance" type="button"><strong>¥3,820</strong><span>今日实收</span></button><button class="stat-card" data-route="staff-performance" type="button"><strong>-¥120</strong><span>今日退款</span></button><button class="stat-card" data-route="staff-performance" type="button"><strong>¥3,700</strong><span>净消费</span></button></div><div class="menu-list">${menuItem("门店资料","门头、名称、地址、营业执照与审核","staff-store","home")}${menuItem("营业与预约设置","营业时间、临时关闭两项","staff-store","calendar")}${menuItem("员工管理","邀请、停用、删除、恢复员工","staff-employees","users")}${menuItem("服务项目管理","洗护、美容、护理与商品关联","staff-services","wash")}${menuItem("优惠券与邀请码","创建、赠送、删除与一次性邀请码","staff-coupons","gift")}${menuItem("商品与库存","商品管理、手工入库、AI拍照入库","staff-products","box")}${menuItem("操作日志","三列倒序与只读详情","staff-logs","log")}</div>${notice("日常经营和老板设置都在小程序；网页后台只给平台使用。不做独立日结、交接班、现金盘点或对账。","info")}</div>`;
+  return `<div class="page-stack"><div class="stat-grid"><button class="stat-card" data-route="staff-performance" type="button"><strong>¥3,820</strong><span>今日实收</span></button><button class="stat-card" data-route="staff-performance" type="button"><strong>-¥120</strong><span>今日退款</span></button><button class="stat-card" data-route="staff-performance" type="button"><strong>¥3,700</strong><span>净消费</span></button></div><div class="menu-list">${menuItem("门店资料","门头、名称、地址、营业执照与审核","staff-store","home")}${menuItem("营业与预约设置","营业时间、临时关闭两项","staff-store","calendar")}${menuItem("员工管理","邀请、停用、删除、恢复员工","staff-employees","users")}${menuItem("服务项目管理","洗护、美容、其他","staff-services","wash")}${menuItem("优惠券与邀请码","创建、赠送、删除与一次性邀请码","staff-coupons","gift")}${menuItem("商品与库存","商品管理、手工入库、AI拍照入库","staff-products","box")}${menuItem("操作日志","三列倒序与只读详情","staff-logs","log")}</div>${notice("日常经营和老板设置都在小程序；网页后台只给平台使用。不做独立日结、交接班、现金盘点或对账。","info")}</div>`;
 }
 
 function staffStore() {
@@ -378,7 +401,19 @@ function staffEmployees() {
 }
 
 function staffServices() {
-  return `<div class="page-stack"><div class="tabs"><button class="is-active" type="button">洗护</button><button type="button">美容</button><button type="button">护理</button><button type="button">商品</button></div><button class="button full" type="button" data-action="new-service-item">新增项目</button><div class="list"><div class="list-row"><div class="list-row-main"><strong>基础洗护</strong><p>参考价 ¥88 · 客户端可预约</p></div>${statusPill("启用","success")}</div><div class="list-row"><div class="list-row-main"><strong>精修美容</strong><p>参考价 ¥168 · 客户端可预约</p></div>${statusPill("启用","success")}</div><div class="list-row"><div class="list-row-main"><strong>足部护理</strong><p>参考价 ¥58 · 仅门店开单</p></div>${statusPill("启用","success")}</div><div class="list-row"><div class="list-row-main"><strong>口腔护理（旧）</strong><p>已停用 · 可恢复并沿用原项目ID</p></div><button class="button outline small" type="button" data-action="restore-service">恢复</button></div></div>${notice("项目参考价在结算时必须支持修改；所有到店订单不设调价上限、不需老板审批，改为0需明确确认免单。","info")}</div>`;
+  const selected = state.activeTab.serviceCategory || "wash";
+  const items = {
+    wash: `<div class="list-row"><div class="list-row-main"><strong>基础洗护</strong><p>参考价 ¥88 · 客户端可预约</p></div>${statusPill("启用","success")}</div>`,
+    groom: `<div class="list-row"><div class="list-row-main"><strong>精修美容</strong><p>参考价 ¥168 · 客户端可预约</p></div>${statusPill("启用","success")}</div>`,
+    other: `<div class="list-row"><div class="list-row-main"><strong>足部护理</strong><p>参考价 ¥58 · 仅门店开单</p></div>${statusPill("启用","success")}</div>
+      <div class="list-row"><div class="list-row-main"><strong>口腔护理（旧）</strong><p>已停用 · 可恢复并沿用原项目ID</p></div><button class="button outline small" type="button" data-action="restore-service">恢复</button></div>`
+  };
+  return `<div class="page-stack">
+    <div class="tabs" role="group" aria-label="服务分类">${serviceCategories.map(({id,label}) => `<button class="${selected === id ? "is-active" : ""}" aria-pressed="${selected === id}" type="button" data-service-category="${id}">${label}</button>`).join("")}</div>
+    <button class="button full" type="button" data-action="new-service-item">新增项目</button>
+    <div class="list">${items[selected]}</div>
+    ${notice("项目参考价不锁定本单成交价。结算前可调价，改为0需明确确认免单。","info")}
+  </div>`;
 }
 
 function staffCoupons() {
@@ -396,7 +431,7 @@ function staffLogs() {
 function renderRoute() {
   const routeMap = {
     "customer-home":customerHome,"customer-appointment":customerAppointment,"customer-me":customerMe,"customer-boarding":customerBoarding,"customer-result":customerResult,"customer-risk":customerRisk,"customer-feeding":customerFeeding,"customer-products":customerProducts,"customer-pets":customerPets,"customer-wallet":customerWallet,"customer-points":customerPoints,"customer-orders":customerOrders,"customer-messages":customerMessages,"customer-complaints":customerComplaints,"customer-settings":customerSettings,"customer-advisor":customerAdvisor,
-    "staff-workbench":staffWorkbench,"staff-business":staffBusiness,"staff-appointments":staffAppointments,"staff-goods":staffGoods,"staff-boarding":staffBoarding,"staff-feeding":staffFeeding,"staff-disputes":staffDisputes,"staff-orders":staffOrders,"staff-wash":staffWash,"staff-wash-detail":staffWashDetail,"staff-customers":staffCustomers,"staff-customer-detail":staffCustomerDetail,"staff-me":staffMe,"staff-performance":staffPerformance,"staff-owner":staffOwner,"staff-store":staffStore,"staff-employees":staffEmployees,"staff-services":staffServices,"staff-coupons":staffCoupons,"staff-products":staffProducts,"staff-logs":staffLogs
+    "staff-workbench":staffWorkbench,"staff-business":staffBusiness,"staff-appointments":staffAppointments,"staff-goods":staffGoods,"staff-boarding":staffBoarding,"staff-feeding":staffFeeding,"staff-disputes":staffDisputes,"staff-orders":staffOrders,"staff-quick":staffQuick,"staff-wash":staffWash,"staff-wash-detail":staffWashDetail,"staff-customers":staffCustomers,"staff-customer-detail":staffCustomerDetail,"staff-me":staffMe,"staff-performance":staffPerformance,"staff-owner":staffOwner,"staff-store":staffStore,"staff-employees":staffEmployees,"staff-services":staffServices,"staff-coupons":staffCoupons,"staff-products":staffProducts,"staff-logs":staffLogs
   };
   const ownerOnlyRoutes = new Set(["staff-owner","staff-store","staff-employees","staff-services","staff-coupons"]);
   const forbidden = state.role === "staff" && state.perspective !== "owner" && ownerOnlyRoutes.has(state.route);
@@ -462,6 +497,10 @@ function actionHandler(action) {
     "clear-customer-search":"搜索已清除","boarding-history":"寄养历史已打开","filter-disputes":"已按当前条件查询争议（原型本地数据）"
   };
   if (simpleToast[action]) return showToast(simpleToast[action]);
+  if (action === "quick-boarding-checkin") {
+    navigate("staff-boarding");
+    return $("#app-main [data-action=boarding-checkin]")?.focus();
+  }
   if (action === "back") return state.previousRoute ? navigate(state.previousRoute) : navigate(state.role === "staff" ? "staff-workbench" : "customer-home");
   if (action === "dismiss-launch") { state.launchVisible=false; closeOverlay(); render(); return showToast("已恢复原业务目标"); }
   if (action === "simulate-reward-store-disabled") { state.rewardStoreDisabled=true; state.points+=800; render(); return showToast("原兑换已自动取消，积分已退回并生成重要通知"); }
@@ -493,7 +532,7 @@ function actionHandler(action) {
   if (action === "respond-dispute") return openSheet("正式回应消费争议","直接提交，无草稿；原回应不可覆盖/删除",`<form class="form" data-form="dispute-response" novalidate><div class="field"><label for="position">回应立场</label><select id="position" required><option value="">请选择</option><option>认可部分事实</option><option>说明现有服务记录</option><option>对事实有异议</option></select></div><div class="field"><label for="response-text">回应文字</label><textarea id="response-text" required></textarea></div><div class="field"><label for="response-media">图片/视频（选填）</label><input id="response-media" type="file" accept="image/*,video/*"></div><button class="button full" type="submit">提交正式回应</button></form>`);
   if (action === "ack-food-risk") { state.foodRiskAcknowledged=true;render();return showToast("已知悉；不代表责任、成立或已解决"); }
   if (action === "invite-witness") return showToast("佐证邀请卡已生成；邀请人可看本店有权查看的该争议全部内容");
-  if (action === "submit-customer-risk") return openSheet("提交顾客风险","仅记录本店真实发生的客观事件；提交后由客服审核",`<form class="form" data-form="customer-risk" novalidate><div class="field"><label for="risk-subject">风险对象</label><select id="risk-subject" required><option value="">请选择</option><option>顾客相关 · 林女士</option><option>宠物相关 · 豆包</option><option>宠物相关 · 团子</option></select></div><div class="field"><label for="risk-type">事件类型</label><select id="risk-type" required><option value="">请选择</option><option>服务沟通事件</option><option>服务安全事件</option><option>到店履约事件</option></select></div><div class="field"><label for="risk-time">实际发生时间</label><input id="risk-time" type="datetime-local" required value="2026-11-05T16:20"></div><div class="field"><label for="risk-description">客观经过</label><textarea id="risk-description" required placeholder="只写可核实的实际经过，不写性格、人格或主观标签"></textarea></div><div class="field"><label for="risk-media">图片／视频（选填）</label><input id="risk-media" type="file" accept="image/*,video/*" multiple></div><button class="button full" type="submit">提交客服审核</button></form>`);
+  if (action === "submit-customer-risk") return openSheet("提交顾客风险","仅记录本店真实发生的客观事件；提交后由平台审核",`<form class="form" data-form="customer-risk" novalidate><div class="field"><label for="risk-subject">风险对象</label><select id="risk-subject" required><option value="">请选择</option><option>顾客相关 · 林女士</option><option>宠物相关 · 豆包</option><option>宠物相关 · 团子</option></select></div><div class="field"><label for="risk-type">事件类型</label><select id="risk-type" required><option value="">请选择</option><option>服务沟通事件</option><option>服务安全事件</option><option>到店履约事件</option></select></div><div class="field"><label for="risk-time">实际发生时间</label><input id="risk-time" type="datetime-local" required value="2026-11-05T16:20"></div><div class="field"><label for="risk-description">客观经过</label><textarea id="risk-description" required placeholder="只写可核实的实际经过，不写性格、人格或主观标签"></textarea></div><div class="field"><label for="risk-media">图片／视频（选填）</label><input id="risk-media" type="file" accept="image/*,video/*" multiple></div><button class="button full" type="submit">提交平台审核</button></form>`);
   if (action === "temporary-order" || action === "member-order") return openOrderSheet(action);
   if (action === "add-customer") return openSheet("新增顾客","保存后触发独立提醒，不核验资料真实性",`<form class="form" data-form="add-customer" novalidate><div class="field"><label for="contact">手机号或微信号</label><input id="contact" required placeholder="至少填写一个"></div><div class="field"><label for="pet-name">宠物昵称</label><input id="pet-name"></div><div class="field"><label for="pet-breed">品种</label><input id="pet-breed"></div><button class="button full" type="submit">保存并继续</button></form>`);
   if (action === "start-wash") { state.washState="in_progress";render();return showToast("服务状态已切换为服务中"); }
@@ -523,7 +562,7 @@ function openOrderSheet(type) {
   const customerField = isMember
     ? `<div class="field"><label for="order-customer">选择顾客</label><select id="order-customer" name="customer" required><option value="">请选择已有顾客</option><option value="c1">林女士 · 138****6608</option><option value="c2">陈先生 · 微信已留</option></select><p class="field-help">会员开单从本店已有顾客中选择，不重复填写手机号或微信号。</p></div>`
     : `<div class="field"><label for="order-contact">手机号或微信号</label><input id="order-contact" name="contact" required placeholder="至少填写一个"></div>`;
-  return openSheet(isMember ? "会员开单" : "临时开单",isMember ? "选择已有顾客后填写本次宠物信息；提交后直接开始服务" : "临时顾客填写联系方式和宠物信息；提交后直接开始服务",`<form class="form" data-form="${type}" novalidate>${customerField}<div class="field"><label for="order-pet-name">宠物昵称</label><input id="order-pet-name" name="petName" required></div><div class="field"><label for="order-pet-breed">品种</label><input id="order-pet-breed" name="petBreed" required></div><div class="field"><label for="order-service-type">服务项目</label><select id="order-service-type" name="serviceType" required><option value="">请选择服务项目</option><option value="wash">洗护</option><option value="grooming">美容</option><option value="other">其他</option></select></div><div class="field"><label for="order-price">价格</label><input id="order-price" name="price" type="number" min="0" step="0.01" inputmode="decimal" required placeholder="请输入本单价格"><p class="field-help">本单开单价格，结算前仍可按现有规则调整。</p></div><button class="button full" type="submit">开单并开始服务</button></form>`);
+  return openSheet(isMember ? "会员开单" : "临时开单",isMember ? "选择已有顾客后填写本次宠物信息；提交后直接开始服务" : "临时顾客填写联系方式和宠物信息；提交后直接开始服务",`<form class="form" data-form="${type}" novalidate>${customerField}<div class="field"><label for="order-pet-name">宠物昵称</label><input id="order-pet-name" name="petName" required></div><div class="field"><label for="order-pet-breed">品种</label><input id="order-pet-breed" name="petBreed" required></div><div class="field"><label for="order-service-type">服务分类</label><select id="order-service-type" name="serviceType" required><option value="">请选择服务分类</option>${serviceCategories.map(({id,label}) => `<option value="${id}">${label}</option>`).join("")}</select></div><div class="field"><label for="order-price">价格</label><input id="order-price" name="price" type="number" min="0" step="0.01" inputmode="decimal" required placeholder="请输入本单价格"><p class="field-help">本单开单价格，结算前仍可按现有规则调整。</p></div><button class="button full" type="submit">开单并开始服务</button></form>`);
 }
 
 function handleForm(form) {
@@ -534,11 +573,17 @@ function handleForm(form) {
   if(type==="appointment"){state.appointmentSubmitted=true;render();showToast("预约申请已提交");return;}
   if(type==="advisor"){form.reset();showToast("问题已发送，AI回答为原型模拟");return;}
   if(type==="dispute-response"){state.disputeResponded=true;state.activeTab.disputes="补充材料中";closeOverlay();render();showToast("正式回应已提交，进入3天补证期");return;}
-  if(type==="customer-risk"){state.riskSubmitted=true;closeOverlay();render();showToast("已提交客服审核；原型未连接真实审核后台");return;}
+  if(type==="customer-risk"){state.riskSubmitted=true;closeOverlay();render();showToast("已提交平台审核；原型未连接真实审核后台");return;}
   if(type==="care-record"){state.boardingCareCount+=1;closeOverlay();render();showToast("照护记录已保存");return;}
   if(type==="boarding-settle"){closeOverlay();showToast("已核对时间并生成离店结算；结算即离店");return;}
   if(type==="checkout"){closeOverlay();showToast("收款已记入线下账本；所选优惠券已自动核销并关联本单");return;}
-  if(type==="waive-order"){state.orderPaid=true;closeOverlay();showToast("已确认免单并记录必填原因，实付0元");return;}
+  if (type === "waive-order" && !state.orderWaived) {
+    state.orderWaived = true;
+    closeOverlay();
+    render();
+    showToast("已确认免单并记录必填原因，实付0元");
+    return;
+  }
   if(type==="recharge-refund"){closeOverlay();showToast("充值退款已登记并关联原充值记录");return;}
   if(type==="gift-coupon"){closeOverlay();showToast("优惠券已赠送，原因按选填留痕");return;}
   if(type==="store-profile"){showToast("门店资料修改已提交后台审核");return;}
@@ -561,6 +606,13 @@ document.addEventListener("click", (event) => {
   const launch=event.target.closest("[data-launch-mode]"); if(launch){const mode=launch.dataset.launchMode;if(mode==="No Fill"||mode==="Failed"){state.launchVisible=false;render();showToast(`${mode}：已恢复原目标`,"error");}else{state.launchMode=mode;render();}return;}
   const ad=event.target.closest("[data-ad]"); if(ad){state.adState=ad.dataset.ad;render();return;}
   const add=event.target.closest("[data-add-cart]"); if(add){state.cart.push(add.dataset.addCart);if($(".sheet")){closeOverlay();showToast("已加入寄养加餐购买需求");}else{render();showToast("已加入购物车");}return;}
+  const serviceCategory = event.target.closest("[data-service-category]");
+  if (serviceCategory) {
+    state.activeTab.serviceCategory = serviceCategory.dataset.serviceCategory;
+    render();
+    $("[data-service-category].is-active")?.focus();
+    return;
+  }
   const washTab=event.target.closest("[data-staff-wash-tab]");if(washTab){state.activeTab.wash=washTab.dataset.staffWashTab;render();return;}
   const disputeTab=event.target.closest("[data-staff-dispute-tab]");if(disputeTab){state.activeTab.disputes=disputeTab.dataset.staffDisputeTab;render();return;}
   const advisor=event.target.closest("[data-advisor-side]");if(advisor){state.advisorSide=advisor.dataset.advisorSide;showToast(`悬浮入口已调整到${state.advisorSide==='left'?'左侧':'右侧'}`);return;}
